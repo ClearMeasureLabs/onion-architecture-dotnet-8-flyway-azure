@@ -4,6 +4,7 @@ Create one-time-setup Resource Group
     Create Azure Container Registry (Azure Portal)
     Create User Assigned Managed Identity (Azure Portal)
 Create Azure DevOps Service Connection (Azure DevOps/Project Settings/Service Connections) using Service Principal - Automated. Check "Grant pipeline permissions" in the lower left corner.
+Replace 'onion8-clean-serviceconnection' with new Service Connection name in onion8-clean-pipeline.yml and deploy-env.yml (AzDo no longer supports variables as service connections, this has to be done manually)
 Create UAT Resource Group
     Create loganalyticsworkspace
     Create appinsights pointed to loganalytics
@@ -13,6 +14,7 @@ Create Prod Resource Group
 Create Variable Groups for pipeline (one per desired environment - it's easiest to create tdd and clone it for successive environments)
     *appInsightsConnectionString         gathered from App Insights/Properties in the appsinsights instance in the environment's resource group
     AzureLocation                       appropriate Azure location for resources
+    AzureFeedName                       projectname\name-of-nuget-feed-for-storing-and-retrieving-packages
     *containerAppEnvironmentName        arbitrary name for container app environment
     *containerAppLogAnalyticsName       gathered from the Overview page of the App Insights instance in the environment's resource group
     *containerAppName                   arbitrary name for the container app
@@ -37,9 +39,17 @@ Create Variable Groups for pipeline (one per desired environment - it's easiest 
     Variables marked with ! should be consistent across all variable groups.
     Unmarked variables can be set per-environment without impact to other environments.
 
+Change line 127 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
+Change line 203 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
+Change line 244 in onion8-clean-pipeline to read "- group: <name of uat variable group>"
+Change line 322 in onion8-clean-pipeline to read "- group: <name of prod variable group>"
+
+
 Create Environments (one per desired Environment) - these will require authorization when invoked during the first run of the pipeline.
 
 Create Pipeline (Azure DevOps Portal)
+
+Run Pipeline.  This will require a number of one-time authorizations.
 
 
 

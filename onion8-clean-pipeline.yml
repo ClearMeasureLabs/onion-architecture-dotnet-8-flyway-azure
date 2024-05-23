@@ -5,7 +5,7 @@ trigger:
     
 variables:
     major: 2
-    minor: 0
+    minor: 1
 name: $(major).$(minor).$(Rev:r)
 
 stages:
@@ -124,7 +124,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: onion8-clean-start-tdd
+      - group: onion8-otc-tdd
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
@@ -200,7 +200,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: onion8-clean-start-tdd 
+      - group: onion8-otc-tdd 
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
       - name: TDD-Resource-Group
@@ -241,7 +241,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: onion8-clean-start-uat
+      - group: onion8-otc-uat
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
@@ -319,7 +319,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: onion8-clean-start-prod
+      - group: onion8-otc-prod
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
