@@ -5,7 +5,7 @@ trigger:
     
 variables:
     major: 2
-    minor: 1
+    minor: 0
 name: $(major).$(minor).$(Rev:r)
 
 stages:
@@ -18,7 +18,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: onion8-clean-start-tdd
+      - group: onion8-otc-tdd
       steps:
       # Dependencies
       - task: UseDotNet@2
@@ -86,7 +86,7 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       variables:
-        - group: onion8-clean-start-tdd
+        - group: onion8-otc-tdd
       dependsOn: Build
  
       steps:

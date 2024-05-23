@@ -3,6 +3,7 @@ Pre-work:
 Create one-time-setup Resource Group
     Create Azure Container Registry (Azure Portal)
     Create User Assigned Managed Identity (Azure Portal)
+    Assign User Assigned Managed Identity "AcrPull" role in the setup Resource Group
 Create Azure DevOps Service Connection (Azure DevOps/Project Settings/Service Connections) using Service Principal - Automated. Check "Grant pipeline permissions" in the lower left corner.
 Replace 'onion8-clean-serviceconnection' with new Service Connection name in onion8-clean-pipeline.yml and deploy-env.yml (AzDo no longer supports variables as service connections, this has to be done manually)
 Create UAT Resource Group
@@ -21,29 +22,35 @@ Create Variable Groups for pipeline (one per desired environment - it's easiest 
     containerAppScaledUpCPU             .5
     containerAppScaledUpMem             1.0
     containerAppScaledUpReplicas        2
-    !databaseAction                      Update
+    containerImage                      $(registryLoginServer)/reponame:tag
+    !databaseAction                     Update
     databaseEdition                     Basic
     *databaseName                       arbitrary name for Azure SQL database
-    databasePassword                    arbitrary password to be set in Azure SQL 
+    databasePassword                    arbitrary password to be set in Azure SQL (MS enforces complexity - lower, upper, number)
     databasePerformanceLevel            Basic
     databaseUser                        arbitrary user name to be set in Azure SQL 
     *databaseServerName
     *environment                        three/four-letter abbreviation for environment name
     httpPort                            8080
-    !registryLoginServer                 gathered from Azure Container Registry/Overview
-    *resourceGroupName                   arbitrary name for given resource group, frequently constructed from text-$(environment)
-    !uamiName                            arbitrary name for User Assigned Managed Identity
-    !uamiRGName                          the name of the Resource Group in which the User Assigned Managed Identity exists
+    !registryLoginServer                gathered from Azure Container Registry/Overview
+    *resourceGroupName                  arbitrary name for given resource group, frequently constructed from text-$(environment)
+    !uamiName                           arbitrary name for User Assigned Managed Identity
+    !uamiRGName                         the name of the Resource Group in which the User Assigned Managed Identity exists
 
     The variables marked with * need to be customized per-environment in the Variable Group.
     Variables marked with ! should be consistent across all variable groups.
     Unmarked variables can be set per-environment without impact to other environments.
 
-Change line 127 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
-Change line 203 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
-Change line 244 in onion8-clean-pipeline to read "- group: <name of uat variable group>"
-Change line 322 in onion8-clean-pipeline to read "- group: <name of prod variable group>"
+Update variable group references:
+    Change line 21 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
+    Change line 21 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
+    Change line 127 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
+    Change line 203 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
+    Change line 244 in onion8-clean-pipeline to read "- group: <name of uat variable group>"
+    Change line 322 in onion8-clean-pipeline to read "- group: <name of prod variable group>"
+Increment minor version number by one. (This prevents pipeline failure in re-used Artifact feeds)
 
+Commit pipeline changes and push.
 
 Create Environments (one per desired Environment) - these will require authorization when invoked during the first run of the pipeline.
 
