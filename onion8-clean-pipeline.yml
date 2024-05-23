@@ -109,7 +109,7 @@ stages:
 
       - task: Docker@2
         inputs:
-          containerRegistry: '$(containerRegistry)'
+          containerRegistry: 'onion8-otc-docker-srvconn'
           repository: 'ChurchBulletin.UI'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'

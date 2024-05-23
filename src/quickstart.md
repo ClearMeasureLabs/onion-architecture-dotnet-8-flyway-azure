@@ -2,16 +2,25 @@ Pre-work:
 
 Create one-time-setup Resource Group
     Create Azure Container Registry (Azure Portal)
+        Navigate to Access Keys
+        Check "Enable Admin user" - this is needed for the pipeline to push containers to the registry.
     Create User Assigned Managed Identity (Azure Portal)
-    Assign User Assigned Managed Identity "AcrPull" role in the setup Resource Group
-Create Azure DevOps Service Connection (Azure DevOps/Project Settings/Service Connections) using Service Principal - Automated. Check "Grant pipeline permissions" in the lower left corner.
+         Assign User Assigned Managed Identity "AcrPull" role in the setup Resource Group
+
+Create Azure DevOps Service Connection (Azure DevOps/Project Settings/Service Connections) using Azure Resource Manage/Service Principal - Automated. Check "Grant pipeline permissions" in the lower left corner.
+
+Create Azure DevOps Service Connection (Azure DevOps/Project Settings/Service Connections) using Docker Registry - Other Registry - obtain relevant information from the Azure Portal page for the Azure Container Registry.
+
 Replace 'onion8-clean-serviceconnection' with new Service Connection name in onion8-clean-pipeline.yml and deploy-env.yml (AzDo no longer supports variables as service connections, this has to be done manually)
+
 Create UAT Resource Group
     Create loganalyticsworkspace
     Create appinsights pointed to loganalytics
+
 Create Prod Resource Group
     Create loganalyticsworkspace
     Create appinsights pointed to loganalytics
+    
 Create Variable Groups for pipeline (one per desired environment - it's easiest to create tdd and clone it for successive environments)
     *appInsightsConnectionString         gathered from App Insights/Properties in the appsinsights instance in the environment's resource group
     AzureLocation                       appropriate Azure location for resources
@@ -42,12 +51,14 @@ Create Variable Groups for pipeline (one per desired environment - it's easiest 
     Unmarked variables can be set per-environment without impact to other environments.
 
 Update variable group references:
-    Change line 21 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
-    Change line 21 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
+    Change line 21 in onion8-clean-pipeline to read  "- group: <name of tdd variable group>"
+    Change line 21 in onion8-clean-pipeline to read  "- group: <name of tdd variable group>"
+    Change line 112 in onion8-clean-pipeline to read "containerRegistry: 'name of Docker service connection created above'"
     Change line 127 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
     Change line 203 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
     Change line 244 in onion8-clean-pipeline to read "- group: <name of uat variable group>"
     Change line 322 in onion8-clean-pipeline to read "- group: <name of prod variable group>"
+
 Increment minor version number by one. (This prevents pipeline failure in re-used Artifact feeds)
 
 Commit pipeline changes and push.
