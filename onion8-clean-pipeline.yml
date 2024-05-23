@@ -215,7 +215,7 @@ stages:
 
             # - task: AzureCLI@2
             #   inputs:
-            #     azureSubscription: 'onion8-clean-serviceconnection'
+            #     azureSubscription: 'onion8-otc-serviceconnection'
             #     scriptType: 'ps'
             #     scriptLocation: 'inlineScript'
             #     inlineScript: |
@@ -227,7 +227,7 @@ stages:
             - task: AzureCLI@2
               displayName: 'Delete TDD Resources'
               inputs:
-                azureSubscription: 'onion8-clean-serviceconnection'
+                azureSubscription: 'onion8-otc-serviceconnection'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
