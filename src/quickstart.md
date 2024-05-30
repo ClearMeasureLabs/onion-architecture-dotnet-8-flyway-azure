@@ -38,10 +38,11 @@ Create Variable Groups for pipeline (one per desired environment - it's easiest 
     databasePassword                    arbitrary password to be set in Azure SQL (MS enforces complexity - lower, upper, number)
     databasePerformanceLevel            Basic
     databaseUser                        arbitrary user name to be set in Azure SQL 
-    *databaseServerName
+    *databaseServerName                 arbitrary name for Azure SQL server
     *environment                        three/four-letter abbreviation for environment name
     httpPort                            8080
     !registryLoginServer                gathered from Azure Container Registry/Overview
+    SubscriptionId                      gathered from Azure Portal on any resource in the subscription
     *resourceGroupName                  arbitrary name for given resource group, frequently constructed from text-$(environment)
     !uamiName                           arbitrary name for User Assigned Managed Identity
     !uamiRGName                         the name of the Resource Group in which the User Assigned Managed Identity exists
@@ -68,6 +69,3 @@ Create Environments (one per desired Environment) - these will require authoriza
 Create Pipeline (Azure DevOps Portal)
 
 Run Pipeline.  This will require a number of one-time authorizations.
-
-
-
