@@ -53,6 +53,7 @@ Create Variable Groups for pipeline (one per desired environment - it's easiest 
 
 Update variable group references:
     Change line 21 in onion8-clean-pipeline to read  "- group: <name of tdd variable group>"
+    Change line 21 in onion8-clean-pipeline to read  "- group: <name of tdd variable group>"
     Change line 112 in onion8-clean-pipeline to read "containerRegistry: 'name of Docker service connection created above'"
     Change line 127 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
     Change line 203 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"

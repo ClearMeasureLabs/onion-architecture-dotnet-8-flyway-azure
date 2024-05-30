@@ -86,7 +86,7 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       variables:
-        - group: onion8-otc-tdd
+        - group: onion8-from-scratch-tdd
       dependsOn: Build
  
       steps:
