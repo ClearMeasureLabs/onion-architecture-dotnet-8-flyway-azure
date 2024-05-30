@@ -3,7 +3,7 @@ steps:
 - task: AzureCLI@2
   displayName: 'Query and store subscription id for unique resource name'
   inputs:
-    azureSubscription: 'onion8-otc-serviceconnection'
+    azureSubscription: 'onion8-from-scratch-sc'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
@@ -15,7 +15,7 @@ steps:
 - task: AzureCLI@2
   displayName: 'Create resource group'
   inputs:
-    azureSubscription: 'onion8-otc-serviceconnection'
+    azureSubscription: 'onion8-from-scratch-sc'
     scriptType: 'ps'
     scriptLocation: 'inlineScript'
     inlineScript: az group create --name $(TDDResourceGroup) --location $(AzureLocation)
@@ -23,7 +23,7 @@ steps:
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create container app environment'
   inputs:
-    azureSubscription: 'onion8-otc-serviceconnection'
+    azureSubscription: 'onion8-from-scratch-sc'
     resourceGroupName: $(TDDResourceGroup)
     location: $(AzureLocation)
     csmFile: src/Core/ContainerEnvironmentARM.json
@@ -43,7 +43,7 @@ steps:
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create database resource in Azure'
   inputs:
-    azureSubscription: 'onion8-otc-serviceconnection'
+    azureSubscription: 'onion8-from-scratch-sc'
     resourceGroupName: $(TDDResourceGroup)
     location: $(AzureLocation)
     csmFile: src/Database/DatabaseARM.json
@@ -59,7 +59,7 @@ steps:
 - task: AzureCLI@2
   displayName: 'Get database connection string'
   inputs: 
-    azureSubscription: 'onion8-otc-serviceconnection'
+    azureSubscription: 'onion8-from-scratch-sc'
     scriptType: 'ps'
     scriptLocation: 'inlineScript' 
     inlineScript: |
@@ -71,7 +71,7 @@ steps:
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create container app environment'
   inputs:
-    azureSubscription: 'onion8-otc-serviceconnection'
+    azureSubscription: 'onion8-from-scratch-sc'
     resourceGroupName: $(TDDResourceGroup)
     location: $(AzureLocation)
     csmFile: src/Core/ContainerEnvironmentARM.json
@@ -80,7 +80,7 @@ steps:
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create container app'
   inputs:
-    azureSubscription: 'onion8-otc-serviceconnection'
+    azureSubscription: 'onion8-from-scratch-sc'
     resourceGroupName: $(TDDResourceGroup)
     location: $(AzureLocation)
     csmFile: src/Core/ContainerARM.json
@@ -90,7 +90,7 @@ steps:
 - task: AzureCLI@2
   displayName: 'Get the Fully Qualified Domain Name for the container app'
   inputs:
-    azureSubscription: 'onion8-otc-serviceconnection'
+    azureSubscription: 'onion8-from-scratch-sc'
     scriptType: 'ps'
     scriptLocation: 'inlineScript'
     inlineScript: |
@@ -103,7 +103,7 @@ steps:
 - task: AzureCLI@2
   displayName: 'Add revision to container app'
   inputs:
-    azureSubscription: 'onion8-otc-serviceconnection'
+    azureSubscription: 'onion8-from-scratch-sc'
     scriptType: 'ps'
     scriptLocation: 'inlineScript'
     inlineScript: az containerapp update --name $(containerAppName) --resource-group $(TDDResourceGroup) --image $(containerImage) --set-env-vars ConnectionStrings__SqlConnectionString="$(DbConnString)" HTTP_PORT=$(HttpPort) 

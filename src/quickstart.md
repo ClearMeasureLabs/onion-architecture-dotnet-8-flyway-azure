@@ -53,7 +53,6 @@ Create Variable Groups for pipeline (one per desired environment - it's easiest 
 
 Update variable group references:
     Change line 21 in onion8-clean-pipeline to read  "- group: <name of tdd variable group>"
-    Change line 21 in onion8-clean-pipeline to read  "- group: <name of tdd variable group>"
     Change line 112 in onion8-clean-pipeline to read "containerRegistry: 'name of Docker service connection created above'"
     Change line 127 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
     Change line 203 in onion8-clean-pipeline to read "- group: <name of tdd variable group>"
@@ -66,6 +65,6 @@ Commit pipeline changes and push.
 
 Create Environments (one per desired Environment) - these will require authorization when invoked during the first run of the pipeline.
 
-Create Pipeline (Azure DevOps Portal)
+Create Pipeline (Azure DevOps Portal) - use /onion8-clean-pipeline.yml as the YAML source.
 
 Run Pipeline.  This will require a number of one-time authorizations.

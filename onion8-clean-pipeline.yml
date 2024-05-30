@@ -5,7 +5,7 @@ trigger:
     
 variables:
     major: 2
-    minor: 1
+    minor: 4
 name: $(major).$(minor).$(Rev:r)
 
 stages:
@@ -18,7 +18,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: onion8-otc-tdd
+      - group: onion8-from-scratch-tdd
       steps:
       # Dependencies
       - task: UseDotNet@2
@@ -109,7 +109,7 @@ stages:
 
       - task: Docker@2
         inputs:
-          containerRegistry: 'onion8-otc-docker-srvconn'
+          containerRegistry: 'onion8-from-scratch-docker-sc'
           repository: 'ChurchBulletin.UI'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
@@ -124,7 +124,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: onion8-otc-tdd
+      - group: onion8-from-scratch-tdd
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
@@ -200,7 +200,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: onion8-otc-tdd 
+      - group: onion8-from-scratch-tdd
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
       - name: TDD-Resource-Group
@@ -215,7 +215,7 @@ stages:
 
             # - task: AzureCLI@2
             #   inputs:
-            #     azureSubscription: 'onion8-otc-serviceconnection'
+            #     azureSubscription: 'onion8-from-scratch-sc'
             #     scriptType: 'ps'
             #     scriptLocation: 'inlineScript'
             #     inlineScript: |
@@ -227,7 +227,7 @@ stages:
             - task: AzureCLI@2
               displayName: 'Delete TDD Resources'
               inputs:
-                azureSubscription: 'onion8-otc-serviceconnection'
+                azureSubscription: 'onion8-from-scratch-sc'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
@@ -241,7 +241,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: onion8-otc-uat
+      - group: onion8-from-scratch-uat
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
@@ -319,7 +319,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: onion8-otc-prod
+      - group: onion8-from-scratch-prod
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
