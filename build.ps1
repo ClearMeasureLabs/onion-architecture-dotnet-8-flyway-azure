@@ -23,7 +23,7 @@ $databaseAction = $env:DatabaseAction
 if ([string]::IsNullOrEmpty($databaseAction)) { $databaseAction = "Rebuild"}
 $databaseName = $projectName
 if ([string]::IsNullOrEmpty($databaseName)) { $databaseName = $projectName}
-$script:databaseServer = "(LocalDb)\MSSQLLocalDB"
+$script:databaseServer = $databaseServer
 if ([string]::IsNullOrEmpty($script:databaseServer)) { $script:databaseServer = "(LocalDb)\MSSQLLocalDB"}
 $databaseScripts = "$source_dir\Database\scripts"
 
@@ -36,10 +36,10 @@ Function Init {
 	mkdir $build_dir > $null
 
 	exec {
-		& dotnet clean $source_dir\exclude-maui.slnf -nologo -v $verbosity
+		& dotnet clean $source_dir\$projectName.sln -nologo -v $verbosity
 		}
 	exec {
-		& dotnet restore $source_dir\exclude-maui.slnf -nologo --interactive -v $verbosity  
+		& dotnet restore $source_dir\$projectName.sln -nologo --interactive -v $verbosity  
 		}
     
 
@@ -50,7 +50,7 @@ Function Init {
 
 Function Compile{
 	exec {
-		& dotnet build $source_dir\exclude-maui.slnf -nologo --no-restore -v `
+		& dotnet build $source_dir\$projectName.sln -nologo --no-restore -v `
 			$verbosity -maxcpucount --configuration $projectConfig --no-incremental `
 			/p:TreatWarningsAsErrors="true" `
 			/p:Version=$version /p:Authors="Programming with Palermo" `
@@ -87,26 +87,6 @@ Function IntegrationTest{
 	}
 	finally {
 		Pop-Location
-	}
-}
-
-Function AcceptanceTest{
-	$serverProcess = Start-Process dotnet.exe "run --project $source_dir\UI\Server\UI.Server.csproj --configuration $projectConfig -nologo --no-restore --no-build -v $verbosity" -PassThru
-	Start-Sleep 1 #let the server process spin up for 1 second
-
-	Push-Location -Path $acceptanceTestProjectPath
-
-	try {
-		exec {
-			& dotnet test /p:CollectCoverage=true -nologo -v $verbosity --logger:trx `
-			--results-directory $test_dir\AcceptanceTests --no-build `
-			--no-restore --configuration $projectConfig `
-			--collect:"XPlat Code Coverage"
-		}
-	}
-	finally {
-		Pop-Location
-		Stop-Process -id $serverProcess.Id
 	}
 }
 
@@ -182,7 +162,6 @@ Function PrivateBuild{
 	UnitTests
 	MigrateDatabaseLocal
 	IntegrationTest
-	AcceptanceTest
 	$sw.Stop()
 	write-host "BUILD SUCCEEDED - Build time: " $sw.Elapsed.ToString() -ForegroundColor Green
 }

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "UI.Wpf": {
-      "commandName": "Project",
-      "jsWebView2Debugging": false
-    }
-  }
-}
