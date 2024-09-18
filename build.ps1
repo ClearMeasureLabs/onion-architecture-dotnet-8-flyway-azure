@@ -21,10 +21,22 @@ $test_dir = "$build_dir\test"
 $aliaSql = "$source_dir\Database\scripts\AliaSql.exe"
 $databaseAction = $env:DatabaseAction
 if ([string]::IsNullOrEmpty($databaseAction)) { $databaseAction = "Rebuild"}
+
+#We will create 3x databases for Flyway
 $databaseName = $projectName
 if ([string]::IsNullOrEmpty($databaseName)) { $databaseName = $projectName}
+
+$devDatabaseName = $databaseName + "_Dev"
+$shadowDatabaseName = $databaseName + "_Shadow"
+
+#We may need three separate servers, but for initialization and/or testing, just use the same, root SQL Server for the 3x test Flyway dbs.
 $script:databaseServer = $databaseServer
 if ([string]::IsNullOrEmpty($script:databaseServer)) { $script:databaseServer = "(LocalDb)\MSSQLLocalDB"}
+
+$script:devDatabaseServer = $databaseServer
+$script:shadowDatabaseServer = $databaseServer
+
+
 $databaseScripts = "$source_dir\Database\scripts"
 
 if ([string]::IsNullOrEmpty($version)) { $version = "1.0.0"}
@@ -91,8 +103,17 @@ Function IntegrationTest{
 }
 
 Function MigrateDatabaseLocal {
+	param (
+	    [Parameter(Mandatory=$true)]
+		[ValidateNotNullOrEmpty()]
+		[string]$databaseServerFunc,
+		
+	    [Parameter(Mandatory=$true)]
+		[ValidateNotNullOrEmpty()]
+		[string]$databaseNameFunc
+	)
 	exec{
-		& $aliaSql $databaseAction $script:databaseServer $databaseName $databaseScripts
+		& $aliaSql $databaseAction $databaseServerFunc $databaseNameFunc $databaseScripts
 	}
 }
 
@@ -130,18 +151,6 @@ Function PackageScript {
 	}
 }
 
-Function PackageMaui {   
-	 $keystoreFilePath = [Environment]::GetEnvironmentVariable("keystoreFilepath","User")
-	 $signingStorePass = [Environment]::GetEnvironmentVariable("signingStorePass","User")
-	 $signingKeyPass = [Environment]::GetEnvironmentVariable("signingKeyPass","User")
-	 Write-Output "keystoreFilepath: $keystoreFilePath"
-    exec{
-		& dotnet publish $mauiProjectPath -nologo --no-restore -v $verbosity -c Release -f net8.0-android -p:AndroidPackageFormat=aab -p:AndroidKeyStore=True -p:AndroidSigningKeyStore=$keystoreFilePath -p:AndroidSigningStorePass=OnionArch8 -p:AndroidSigningKeyAlias=release -p:AndroidSigningKeyPass=OnionArch8
-    }
-	exec{
-		& dotnet-octo pack --id "$projectName.Maui" --version $version --basePath $mauiProjectPath\bin\$projectConfig\net8.0-android\publish  --include "*-Signed.aab" --outFolder $build_dir --overwrite
-	}
-}
 
 Function Package{
 	Write-Output "Packaging nuget packages"
@@ -150,7 +159,6 @@ Function Package{
     PackageDatabase
     PackageAcceptanceTests
 	PackageScript
-	# PackageMaui
 }
 
 Function PrivateBuild{
@@ -160,7 +168,11 @@ Function PrivateBuild{
 	Init
 	Compile
 	UnitTests
-	MigrateDatabaseLocal
+	
+	#We need 3 databases for 
+	MigrateDatabaseLocal -databaseServerFunc $databaseServer -databaseNameFunc $databaseName
+	MigrateDatabaseLocal -databaseServerFunc $devDatabaseServer -databaseNameFunc $devDatabaseName
+	MigrateDatabaseLocal -databaseServerFunc $shadowDatabaseServer -databaseNameFunc $shadowDatabaseName
 	IntegrationTest
 	$sw.Stop()
 	write-host "BUILD SUCCEEDED - Build time: " $sw.Elapsed.ToString() -ForegroundColor Green
@@ -171,7 +183,7 @@ Function CIBuild{
 	Init
 	Compile
 	UnitTests
-	MigrateDatabaseLocal
+	MigrateDatabaseLocal $databaseName
 	IntegrationTest
 	Package
 	$sw.Stop()
