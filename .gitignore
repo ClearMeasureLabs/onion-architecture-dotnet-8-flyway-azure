@@ -355,3 +355,6 @@ coverage.cobertura.xml
 /src/AcceptanceTests/coverage.json
 /src/IntegrationTests/coverage.json
 /src/UnitTests/coverage.json
+
+#Ignore the Flyway CLI
+/flyway/

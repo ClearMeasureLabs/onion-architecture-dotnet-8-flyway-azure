@@ -35,3 +35,12 @@ Function Poke-Xml($filePath, $xpath, $value) {
 
     $fileXml.Save($filePath) 
 } 
+
+Function Log-Message {
+    param (
+        [string]$Message,
+        [string]$Type = "INFO"
+    )
+    $logEntry = "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] [$Type] $Message"
+    Write-Host $logEntry
+}

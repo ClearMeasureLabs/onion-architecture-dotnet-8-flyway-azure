@@ -1,4 +1,6 @@
 . .\BuildFunctions.ps1
+. .\FlywayFunctions.ps1
+
 $projectName = "ChurchBulletin"
 $base_dir = resolve-path .\
 $source_dir = "$base_dir\src"
@@ -7,6 +9,7 @@ $integrationTestProjectPath = "$source_dir\IntegrationTests"
 $acceptanceTestProjectPath = "$source_dir\AcceptanceTests"
 $uiProjectPath = "$source_dir\UI\Server"
 $databaseProjectPath = "$source_dir\Database"
+$databaseFlywayProjectPath = "$source_dir\DatabaseFlyway"
 $mauiProjectPath = "$source_dir\UI\Maui"
 $projectConfig = $env:BuildConfiguration
 $framework = "net8.0"
@@ -19,6 +22,9 @@ $test_dir = "$build_dir\test"
 
 
 $aliaSql = "$source_dir\Database\scripts\AliaSql.exe"
+$flywayCliDir = "$base_dir\flyway"
+$flywayCli = "$flywayCliDir\flyway.cmd"
+
 $databaseAction = $env:DatabaseAction
 if ([string]::IsNullOrEmpty($databaseAction)) { $databaseAction = "Rebuild"}
 
@@ -53,12 +59,14 @@ Function Init {
 	exec {
 		& dotnet restore $source_dir\$projectName.sln -nologo --interactive -v $verbosity  
 		}
-    
+	
+	Setup-FlywayCLI -flywayCliDir $flywayCliDir # Optionally, you can provide a secondary  parameter for a different 
+												# download/version of the Flyway CLI. It will default to the latest 
+												# version as of Sept-18-2024
 
     Write-Output $projectConfig
     Write-Output $version
 }
-
 
 Function Compile{
 	exec {
@@ -114,6 +122,21 @@ Function MigrateDatabaseLocal {
 	)
 	exec{
 		& $aliaSql $databaseAction $databaseServerFunc $databaseNameFunc $databaseScripts
+	}
+	
+	if ($migrateDbWithFlyway) {
+		#call 'flyaway migrate' with db parameters
+		$migrationsPath = "$databaseFlywayProjectPath\migrations"
+		$flywayParameters = @(
+			"-configFiles=$databaseFlywayProjectPath\flyway.toml"
+			"-url=jdbc:sqlserver://$databaseServerFunc;databaseName=$databaseNameFunc;encrypt=false;integratedSecurity=true;trustServerCertificate=true"
+			"-locations=filesystem:$migrationsPath"
+			"migrate"
+		)
+
+		exec {
+				& $flywayCli $flywayParameters
+		}
 	}
 }
 
@@ -171,9 +194,14 @@ Function PrivateBuild{
 	
 	#We need 3 databases for 
 	MigrateDatabaseLocal -databaseServerFunc $databaseServer -databaseNameFunc $databaseName
-	MigrateDatabaseLocal -databaseServerFunc $devDatabaseServer -databaseNameFunc $devDatabaseName
-	MigrateDatabaseLocal -databaseServerFunc $shadowDatabaseServer -databaseNameFunc $shadowDatabaseName
+	
+	#These are extra Dbs that are can be part of a Flyway setup
+	if ($migrateDbWithFlyway) {
+		MigrateDatabaseLocal -databaseServerFunc $devDatabaseServer -databaseNameFunc $devDatabaseName
+		MigrateDatabaseLocal -databaseServerFunc $shadowDatabaseServer -databaseNameFunc $shadowDatabaseName
+	}
 	IntegrationTest
+	
 	$sw.Stop()
 	write-host "BUILD SUCCEEDED - Build time: " $sw.Elapsed.ToString() -ForegroundColor Green
 }
