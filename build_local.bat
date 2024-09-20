@@ -7,7 +7,7 @@
 setlocal
 
 :: Step #1 - Run this to build the Db through AliasSql
-::powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& { .\PrivateBuild.ps1 -databaseServer 'RLHDELL01' -databaseServerInstance 'SQLEXPRESS' %*; if ($lastexitcode -ne 0) {write-host 'ERROR: $lastexitcode' -fore RED; exit $lastexitcode} }"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& { .\PrivateBuild.ps1 -databaseServer 'RLHDELL01' -databaseServerInstance 'SQLEXPRESS' %*; if ($lastexitcode -ne 0) {write-host 'ERROR: $lastexitcode' -fore RED; exit $lastexitcode} }"
 
 :: Step #2 
 ::   - Comment the line above uncomment this one and run again.
@@ -16,6 +16,6 @@ setlocal
 ::   - Last, uncomment the line below and re-run to get migrations from Flyway with Docker
 
 :: 192.168.1.14
-powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& { .\PrivateBuild.ps1 -databaseServer 'localhost' -databaseServerInstance 'SQLEXPRESS' -databaseAddLoginPermissions $true -migrateDbWithFlywayDocker $true %*; if ($lastexitcode -ne 0) {write-host 'ERROR: $lastexitcode' -fore RED; exit $lastexitcode} }"
+::powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& { .\PrivateBuild.ps1 -databaseServer 'localhost' -databaseServerInstance 'SQLEXPRESS' -databaseAddLoginPermissions $true -migrateDbWithFlywayDocker $true %*; if ($lastexitcode -ne 0) {write-host 'ERROR: $lastexitcode' -fore RED; exit $lastexitcode} }"
 
 		
