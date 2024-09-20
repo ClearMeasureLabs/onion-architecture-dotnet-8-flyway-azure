@@ -11,6 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Filter.scpf" />
+    <None Remove="flyway.user.toml" />
+    <None Remove="migrations\R__001_CREATE_TABLE_ChurchBulletinItem.sql" />
+    <None Remove="migrations\V002__ALTER_TABLE_ChurchBulletinIem_ADD_Foo_Column.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="migrations\" />
     <Folder Include="schema-model\" />
   </ItemGroup>

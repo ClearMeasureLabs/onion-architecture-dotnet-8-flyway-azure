@@ -20,10 +20,10 @@ $verbosity = "minimal"
 $build_dir = "$base_dir\build"
 $test_dir = "$build_dir\test"
 
-
 $aliaSql = "$source_dir\Database\scripts\AliaSql.exe"
 $flywayCliDir = "$base_dir\flyway"
 $flywayCli = "$flywayCliDir\flyway.cmd"
+$dockerSettingsDir = "$base_dir\Docker"
 
 $databaseAction = $env:DatabaseAction
 if ([string]::IsNullOrEmpty($databaseAction)) { $databaseAction = "Rebuild"}
@@ -32,16 +32,12 @@ if ([string]::IsNullOrEmpty($databaseAction)) { $databaseAction = "Rebuild"}
 $databaseName = $projectName
 if ([string]::IsNullOrEmpty($databaseName)) { $databaseName = $projectName}
 
-$devDatabaseName = $databaseName + "_Dev"
-$shadowDatabaseName = $databaseName + "_Shadow"
-
 #We may need three separate servers, but for initialization and/or testing, just use the same, root SQL Server for the 3x test Flyway dbs.
 $script:databaseServer = $databaseServer
-if ([string]::IsNullOrEmpty($script:databaseServer)) { $script:databaseServer = "(LocalDb)\MSSQLLocalDB"}
+if ([string]::IsNullOrEmpty($script:databaseServer)) { $script:databaseServer = "(LocalDb)"}
 
-$script:devDatabaseServer = $databaseServer
-$script:shadowDatabaseServer = $databaseServer
-
+$script:databaseServerInstance = $databaseServerInstance
+if ([string]::IsNullOrEmpty($script:databaseServerInstance)) { $script:databaseServerInstance = "MSSQLLocalDB"}
 
 $databaseScripts = "$source_dir\Database\scripts"
 
@@ -60,9 +56,9 @@ Function Init {
 		& dotnet restore $source_dir\$projectName.sln -nologo --interactive -v $verbosity  
 		}
 	
-	Setup-FlywayCLI -flywayCliDir $flywayCliDir # Optionally, you can provide a secondary  parameter for a different 
-												# download/version of the Flyway CLI. It will default to the latest 
-												# version as of Sept-18-2024
+	if ($migrateDbWithFlywayDocker) {
+		Setup-FlywayDocker
+	}
 
     Write-Output $projectConfig
     Write-Output $version
@@ -118,25 +114,39 @@ Function MigrateDatabaseLocal {
 		
 	    [Parameter(Mandatory=$true)]
 		[ValidateNotNullOrEmpty()]
+		[string]$databaseServerInstanceFunc,
+		
+	    [Parameter(Mandatory=$true)]
+		[ValidateNotNullOrEmpty()]
 		[string]$databaseNameFunc
 	)
-	exec{
-		& $aliaSql $databaseAction $databaseServerFunc $databaseNameFunc $databaseScripts
-	}
 	
-	if ($migrateDbWithFlyway) {
-		#call 'flyaway migrate' with db parameters
-		$migrationsPath = "$databaseFlywayProjectPath\migrations"
-		$flywayParameters = @(
-			"-configFiles=$databaseFlywayProjectPath\flyway.toml"
-			"-url=jdbc:sqlserver://$databaseServerFunc;databaseName=$databaseNameFunc;encrypt=false;integratedSecurity=true;trustServerCertificate=true"
-			"-locations=filesystem:$migrationsPath"
-			"migrate"
-		)
-
-		exec {
-				& $flywayCli $flywayParameters
+	#Run Docker Migration
+	if ($migrateDbWithFlywayDocker) {
+		if ($databaseServerFunc -ceq "localhost")
+		{
+			Log-Message "Changing the serverName"
+			$databaseServerFunc = "host.docker.internal"
 		}
+		else {
+			Log-Message "Did not change the value"
+		}
+		Log-Message "ATTEMPTING TO EXEC DOCKER MIGRATION FOR $databaseNameFunc" "INFO"
+				# -e "FLYWAY_URL=jdbc:sqlserver://192.168.1.14;instanceName=$databaseServerInstanceFunc;databaseName=$databaseNameFunc;encrypt=false;user=$databaseUserId;password=$databaseUserPassword" `
+		exec {
+			& docker run `
+				-v "${databaseFlywayProjectPath}\migrations:/flyway/migrations" `
+				-v "${dockerSettingsDir}:/flyway/conf" `
+				-e "FLYWAY_URL=jdbc:sqlserver://$databaseServerFunc\$databaseServerInstanceFunc;databaseName=$databaseNameFunc;encrypt=false;user=$databaseUserId;password=$databaseUserPassword" `
+				redgate/flyway migrate
+		}
+		#Drop/Create the DB
+	} else {
+		$databaseServerFull = "$databaseServerFunc\$databaseServerInstanceFunc"
+		exec{
+			& $aliaSql $databaseAction $databaseServerFull $databaseNameFunc $databaseScripts
+		}
+		Log-Message "** NOTICE ** The database was just dropped and re-created. Before running the Flyway Docker Migration, you will need to give your Sql login account owner priviledges on the new database." "WARNING"
 	}
 }
 
@@ -191,15 +201,7 @@ Function PrivateBuild{
 	Init
 	Compile
 	UnitTests
-	
-	#We need 3 databases for 
-	MigrateDatabaseLocal -databaseServerFunc $databaseServer -databaseNameFunc $databaseName
-	
-	#These are extra Dbs that are can be part of a Flyway setup
-	if ($migrateDbWithFlyway) {
-		MigrateDatabaseLocal -databaseServerFunc $devDatabaseServer -databaseNameFunc $devDatabaseName
-		MigrateDatabaseLocal -databaseServerFunc $shadowDatabaseServer -databaseNameFunc $shadowDatabaseName
-	}
+	MigrateDatabaseLocal -databaseServerFunc $databaseServer -databaseServerInstanceFunc $databaseServerInstance -databaseNameFunc $databaseName
 	IntegrationTest
 	
 	$sw.Stop()

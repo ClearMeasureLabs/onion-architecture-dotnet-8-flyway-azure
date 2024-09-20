@@ -97,4 +97,6 @@ Function Setup-FlywayCLI {
 }
 
 
-
+Function Setup-FlywayDocker {
+	 docker pull redgate/flyway
+}
