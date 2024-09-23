@@ -211,7 +211,7 @@ Function CIBuild{
 	Init
 	Compile
 	UnitTests
-	MigrateDatabaseLocal $databaseName
+	MigrateDatabaseLocal  -databaseServerFunc $databaseServer -databaseNameFunc $databaseName
 	IntegrationTest
 	Package
 	$sw.Stop()
