@@ -109,7 +109,7 @@ stages:
 
       - task: Docker@2
         inputs:
-          containerRegistry: 'onion8-from-scratch-docker-sc'
+          containerRegistry: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC'
           repository: 'ChurchBulletin.UI'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
