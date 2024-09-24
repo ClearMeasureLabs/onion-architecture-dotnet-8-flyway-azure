@@ -1,3 +1,7 @@
+param(
+    [string]$flywayCliDir = "$base_dir\flyway"
+)
+
 . .\BuildFunctions.ps1
 . .\FlywayFunctions.ps1
 
@@ -22,7 +26,6 @@ $test_dir = "$build_dir\test"
 
 
 $aliaSql = "$source_dir\Database\scripts\AliaSql.exe"
-$flywayCliDir = "$base_dir\flyway"
 $flywayCli = "$flywayCliDir\flyway.cmd"
 
 $databaseAction = $env:DatabaseAction

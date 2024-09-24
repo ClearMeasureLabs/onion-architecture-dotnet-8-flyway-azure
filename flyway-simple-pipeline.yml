@@ -43,12 +43,19 @@ stages:
             echo $env:Version
             echo $(Build.BuildNumber)
 
+      - task: Cache@2
+        inputs:
+          inputs:
+            key: 'FlywayCLI | $(Agent.OS)'
+            path: '$(Pipeline.Workspace)/Flyway'
+            cacheHitVar: 'FLCACHE_RESTORED'
+     
       - task: PowerShell@2
         displayName: Build.ps1
         inputs:
           targetType: filePath
           filePath: ./build.ps1
-          arguments: '; CIBuild'
+          arguments: '-flywayCliDir "$(Pipeline.Workspace)/flyway"; CIBuild'
       - task: PublishTestResults@2
         displayName: 'Publish Test Results ./build/test/*.trx'
         inputs:
