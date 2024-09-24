@@ -46,7 +46,7 @@ stages:
       - task: Cache@2
         inputs:
           key: 'FlywayCLI | $(Agent.OS) | $(FlywayCacheVersion)'
-          path: '$(Pipeline.Workspace)/Flyway'
+          path: '$(Pipeline.Workspace)\flyway'
           cacheHitVar: 'FLCACHE_RESTORED'
      
       - task: PowerShell@2
