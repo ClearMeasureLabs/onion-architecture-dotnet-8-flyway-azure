@@ -6,6 +6,7 @@ trigger:
 variables:
     major: 2
     minor: 4
+    FLYWAY_CACHE_FOLDER: $(Pipeline.Workspace)/flyway
 name: $(major).$(minor).$(Rev:r)
 
 stages:
@@ -21,11 +22,13 @@ stages:
       - group: onion8-from-scratch-flyway-tdd
       steps:
       # Dependencies
-      - task: Cache@2
-        inputs:
-          key: 'FlywayCLI | $(Agent.OS) | $(FlywayCacheVersion)'
-          path: '$(Pipeline.Workspace)/flyway'
-          displayName: Cache Flyway CLI
+      
+      ## WE SHOULD BE ABLE TO USE CACHING, BUT IT WON'T SAVE. TODO, (Maybe)
+      #- task: Cache@2
+      #  inputs:
+      #    key: 'FlywayCLI | $(Agent.OS) | $(FlywayCacheVersion)'
+      #    path: '$(FLYWAY_CACHE_FOLDER)'
+      #    displayName: Cache Flyway CLI
       - task: UseDotNet@2
         displayName: 'Install SDK 8.0.100'
         inputs:
