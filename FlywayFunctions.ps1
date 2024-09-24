@@ -14,7 +14,7 @@ Function Setup-FlywayCLI {
 	#check that the CLI folder exists
     if (-Not (Test-Path -Path $flywayCliDir -PathType Container)) {
         try {
-			Log-Message "Creating Directory '$flywayCliDir'. Error: $_" "ERROR"
+			Log-Message "Creating Directory '$flywayCliDir'" "INFO"
             New-Item -Path $flywayCliDir -ItemType Directory -Force | Out-Null
         } catch {
             Log-Message "Failed to create directory '$flywayCliDir'. Error: $_" "ERROR"
