@@ -9,6 +9,9 @@ Function Setup-FlywayCLI {
         [string]$flywayDownloadUrl = "https://download.red-gate.com/maven/release/com/redgate/flyway/flyway-commandline/10.18.0/flyway-commandline-10.18.0-windows-x64.zip"
     )
 	
+	# Normalize the path to ensure compatibility with both Linux and Windows
+	$flywayCliDir = $flywayCliDir -replace '/', '\'
+	
 	$base_dir = resolve-path .\
 
 	#check that the CLI folder exists
@@ -21,6 +24,10 @@ Function Setup-FlywayCLI {
             return $false
         }
     } 
+	else 
+	{
+		Log-Message "Found Directory '$flywayCliDir'" "INFO"
+	}
     
     $flywayCmdPath = Join-Path -Path $flywayCliDir -ChildPath "flyway.cmd"
 
