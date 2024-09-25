@@ -152,9 +152,9 @@ stages:
       # - name: containerImage
       #   value: '$(registryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
       - name: containerAppLogAnalyticsName
-        value: 'tdd-Log-Analytics'
+        value: '$(environment)-Flyway-Log-Analytics'
       - name: appInsightsName
-        value: 'onion8-clean-tdd-insights'
+        value: '$(environment)-insights-flyway'
       # - name: appInsightsConnectionString
       #   value: $(appInsightsConnectionStringTDD)
       - name: AspnetcoreEnvironment
