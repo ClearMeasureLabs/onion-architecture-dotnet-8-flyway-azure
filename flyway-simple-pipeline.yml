@@ -136,7 +136,7 @@ stages:
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
       - name: TDDResourceGroup
-        value: '$(ResourceGroupName)-$(Build.BuildNumber)'
+        value: '$(DeployResourceGroup)'
       - name: Environment
         value: 'tdd'
       # - name: databaseServerName
