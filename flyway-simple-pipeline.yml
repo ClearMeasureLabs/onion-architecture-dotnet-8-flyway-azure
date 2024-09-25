@@ -124,7 +124,7 @@ stages:
           tags: |
             $(Build.BuildNumber)
 
-Deploying to TDD
+#Deploying to TDD
 - stage: 'TDD'
   displayName: 'TDD'
   jobs:
