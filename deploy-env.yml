@@ -12,13 +12,13 @@ steps:
 
 - checkout: self
 
-- task: AzureCLI@2
-  displayName: 'Create resource group'
-  inputs:
-    azureSubscription: 'Onion-Architecture-Dotnet-8-Flyway-Azure-RG'
-    scriptType: 'ps'
-    scriptLocation: 'inlineScript'
-    inlineScript: az group create --name $(TDDResourceGroup) --location $(AzureLocation)
+# - task: AzureCLI@2
+#   displayName: 'Create resource group'
+#   inputs:
+#     azureSubscription: 'Onion-Architecture-Dotnet-8-Flyway-Azure-RG'
+#     scriptType: 'ps'
+#     scriptLocation: 'inlineScript'
+#     inlineScript: az group create --name $(TDDResourceGroup) --location $(AzureLocation)
 
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create container app environment'
