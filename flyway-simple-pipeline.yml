@@ -124,79 +124,79 @@ stages:
           tags: |
             $(Build.BuildNumber)
 
-# Deploying to TDD
-# - stage: 'TDD'
-#   displayName: 'TDD'
-#   jobs:
-#     - deployment: 'DeployToTDD'
-#       pool:
-#         vmImage: 'windows-latest'
-#       variables:
-#       - group:  onion8-from-scratch-flyway-tdd
-#       - name: branch
-#         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
-#       - name: TDDResourceGroup
-#         value: '$(DeployResourceGroup)'
-#       - name: Environment
-#         value: 'tdd'
-#       # - name: databaseServerName
-#       #   value: $(databaseServerName)
-#       # - name: databaseUser
-#       #   value: '$(databaseUser)'
-#       # - name: databasePassword
-#       #   value: '$(databasePassword)'
-#       # - name: databaseName
-#       #   value: '$(databaseName)'
-#       # - name: containerAppName
-#       #   value: '$(ContainerAppName)'
-#       # - name: containerImage
-#       #   value: '$(registryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
-#       - name: containerAppLogAnalyticsName
-#         value: 'tdd-Log-Analytics'
-#       - name: appInsightsName
-#         value: 'onion8-clean-tdd-insights'
-#       # - name: appInsightsConnectionString
-#       #   value: $(appInsightsConnectionStringTDD)
-#       - name: AspnetcoreEnvironment
-#         value: $(AspnetcoreEnvironmentTest)
+Deploying to TDD
+- stage: 'TDD'
+  displayName: 'TDD'
+  jobs:
+    - deployment: 'DeployToTDD'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group:  onion8-from-scratch-flyway-tdd
+      - name: branch
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
+      - name: TDDResourceGroup
+        value: '$(DeployResourceGroup)'
+      - name: Environment
+        value: 'tdd'
+      # - name: databaseServerName
+      #   value: $(databaseServerName)
+      # - name: databaseUser
+      #   value: '$(databaseUser)'
+      # - name: databasePassword
+      #   value: '$(databasePassword)'
+      # - name: databaseName
+      #   value: '$(databaseName)'
+      # - name: containerAppName
+      #   value: '$(ContainerAppName)'
+      # - name: containerImage
+      #   value: '$(registryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
+      - name: containerAppLogAnalyticsName
+        value: 'tdd-Log-Analytics'
+      - name: appInsightsName
+        value: 'onion8-clean-tdd-insights'
+      # - name: appInsightsConnectionString
+      #   value: $(appInsightsConnectionStringTDD)
+      - name: AspnetcoreEnvironment
+        value: $(AspnetcoreEnvironmentTest)
 
-#       environment: 'TDD'
-#       strategy:
-#         runOnce:
-#           deploy:
-#             steps:
+      environment: 'TDD'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
             
-#             - template: .\deploy-env.yml
+            - template: .\deploy-env.yml
             
-#             - task: DownloadPackage@1
-#               displayName: 'Download Acceptance Test Package'
-#               inputs:
-#                 packageType: 'nuget'
-#                 feed: '$(AzureFeedName)'
-#                 view: 'Local'
-#                 definition: 'ChurchBulletin.AcceptanceTests'
-#                 version: '$(Build.Buildnumber)'
-#                 downloadPath: '$(System.DefaultWorkingDirectory)/tests'
-#                 extract: true
+            - task: DownloadPackage@1
+              displayName: 'Download Acceptance Test Package'
+              inputs:
+                packageType: 'nuget'
+                feed: '$(AzureFeedName)'
+                view: 'Local'
+                definition: 'ChurchBulletin.AcceptanceTests'
+                version: '$(Build.Buildnumber)'
+                downloadPath: '$(System.DefaultWorkingDirectory)/tests'
+                extract: true
 
-#             - task: PowerShell@2
-#               displayName: 'Download Playwright'
-#               inputs:
-#                 targetType: filePath
-#                 filePath: ./tests/playwright.ps1
-#                 arguments: 'install'
+            - task: PowerShell@2
+              displayName: 'Download Playwright'
+              inputs:
+                targetType: filePath
+                filePath: ./tests/playwright.ps1
+                arguments: 'install'
 
-#             # - task: VSTest@2
-#             #   displayName: 'VsTest - AcceptanceTests'
-#             #   inputs:
-#             #     testSelector: 'testAssemblies'
-#             #     testAssemblyVer2: |
-#             #       **\*AcceptanceTests.dll
-#             #       !**\*TestAdapter.dll
-#             #       !**\obj\**
-#             #       searchFolder: '$(System.DefaultWorkingDirectory)/tests'
-#             #     uiTests: true
-#             #     codeCoverageEnabled: true
-#             #     testRunTitle: 'Acceptance Tests'
-#             #     diagnosticsEnabled: True
+            # - task: VSTest@2
+            #   displayName: 'VsTest - AcceptanceTests'
+            #   inputs:
+            #     testSelector: 'testAssemblies'
+            #     testAssemblyVer2: |
+            #       **\*AcceptanceTests.dll
+            #       !**\*TestAdapter.dll
+            #       !**\obj\**
+            #       searchFolder: '$(System.DefaultWorkingDirectory)/tests'
+            #     uiTests: true
+            #     codeCoverageEnabled: true
+            #     testRunTitle: 'Acceptance Tests'
+            #     diagnosticsEnabled: True
 
