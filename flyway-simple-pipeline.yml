@@ -18,8 +18,6 @@ stages:
       displayName: 'Build job'
       pool:
         vmImage: 'windows-latest'
-      variables:
-      - group: onion8-from-scratch-flyway-tdd
       steps:
       # Dependencies
       
