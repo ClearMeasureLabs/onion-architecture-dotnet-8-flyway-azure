@@ -55,19 +55,16 @@
     },
     "databaseserverName": {
       "type": "string"
-    },
-    "serverLocation": {
-      "type": "string"
     }
   },
   "variables": {
-    "resourceGroupUniqueString": "[uniqueString(resourceGroup().id,parameters('serverLocation'),subscription().subscriptionId)]"
+    "resourceGroupUniqueString": "[uniqueString(resourceGroup().id,'southcentralus',subscription().subscriptionId)]"
   },
   "resources": [
     {
       "name": "[parameters('databaseserverName')]",
       "type": "Microsoft.Sql/servers",
-      "location": "[parameters('serverLocation')]",
+      "location": "southcentralus",
       "apiVersion": "2022-05-01-preview",
       "dependsOn": [ ],
       "tags": {
@@ -81,7 +78,7 @@
         {
           "name": "[parameters('databaseName')]",
           "type": "databases",
-          "location": "[parameters('serverLocation')]",
+          "location": "southcentralus",
           "tags": {
             "displayName": "Database"
           },
@@ -99,7 +96,7 @@
         {
           "name": "AllowAllWindowsAzureIps",
           "type": "firewallrules",
-          "location": "[parameters('serverLocation')]",
+          "location": "southcentralus",
           "apiVersion": "2022-05-01-preview",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', parameters('databaseserverName'))]"

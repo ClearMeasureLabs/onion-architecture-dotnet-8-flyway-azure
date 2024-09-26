@@ -3,16 +3,16 @@ variable "az_location" {
 }
 
 variable "DatabaseName" {
-    value "oniondb" {
+    value "oniondb-flyway" {
         environment = ["tdd"]
     }
 
-    value "oniondb-uat" {
+    value "oniondb-flyway-uat" {
         description = ""
         environment = ["uat"]
     }
 
-    value "oniondb-prod" {
+    value "oniondb-flyway-prod" {
         description = ""
         environment = ["prod"]
     }
@@ -48,6 +48,10 @@ variable "connection_string" {
     value "#{Octopus.Action[Get DB Connection String].Output.connstring}" {}
 }
 
+variable "jdbc_connection_url" {
+    value "#{Octopus.Action[Get JDBC Connection URL].Output.connurl}" {}
+}
+
 variable "container_image" {
     value "#{registry_login_server}/churchbulletin.ui:#{Octopus.Release.Number}" {
         environment = ["tdd", "uat", "prod"]
@@ -73,7 +77,7 @@ variable "DatabaseServer" {
 }
 
 variable "container_app_environment_name" {
-    value "onion-architecture-maui-azure-dotnet-8-#{Octopus.Environment.Name}-cae" {
+    value "onion-architecture-dotnet-8-flyway-azure-#{Octopus.Environment.Name}-cae" {
         description = ""
     }
 }
@@ -83,13 +87,13 @@ variable "DatabaseAction" {
 }
 
 variable "DatabaseEdition" {
-    value "Basic" {
+    value "Standard" {
         description = ""
     }
 }
 
 variable "DatabasePerformanceLevel" {
-    value "Basic" {
+    value "S0" {
         description = ""
     }
 }
@@ -129,12 +133,12 @@ variable "az_login_tenant" {
 }
 
 variable "ResourceGroupName" {
-    value "onion-architecture-maui-azure-dotnet-8-#{Octopus.Environment.Name}" {
+    value "onion-architecture-dotnet-8-flyway-azure-#{Octopus.Environment.Name}" {
         description = ""
         environment = ["uat", "prod"]
     }
 
-    value "onion-architecture-maui-azure-dotnet-8-#{Octopus.Release.Number}" {
+    value "onion-architecture-dotnet-8-flyway-azure-#{Octopus.Release.Number}" {
         description = ""
         environment = ["tdd"]
 
