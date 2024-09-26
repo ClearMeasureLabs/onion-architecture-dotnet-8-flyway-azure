@@ -57,8 +57,7 @@
       "type": "string"
     },
     "serverLocation": {
-      "type": "string",
-      "default": "southcentralus"
+      "type": "string"
     }
   },
   "variables": {
@@ -82,7 +81,7 @@
         {
           "name": "[parameters('databaseName')]",
           "type": "databases",
-          "location": "[rparameters('serverLocation')]",
+          "location": "[parameters('serverLocation')]",
           "tags": {
             "displayName": "Database"
           },
