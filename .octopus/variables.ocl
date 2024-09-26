@@ -73,7 +73,7 @@ variable "DatabaseServer" {
 }
 
 variable "container_app_environment_name" {
-    value "onion-architecture-maui-azure-dotnet-8-#{Octopus.Environment.Name}-cae" {
+    value "onion-architecture-dotnet-8-flyway-azure-#{Octopus.Environment.Name}-cae" {
         description = ""
     }
 }
@@ -129,12 +129,12 @@ variable "az_login_tenant" {
 }
 
 variable "ResourceGroupName" {
-    value "onion-architecture-maui-azure-dotnet-8-#{Octopus.Environment.Name}" {
+    value "onion-architecture-dotnet-8-flyway-azure-#{Octopus.Environment.Name}" {
         description = ""
         environment = ["uat", "prod"]
     }
 
-    value "onion-architecture-maui-azure-dotnet-8-#{Octopus.Release.Number}" {
+    value "onion-architecture-dotnet-8-flyway-azure-#{Octopus.Release.Number}" {
         description = ""
         environment = ["tdd"]
 
