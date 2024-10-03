@@ -110,8 +110,8 @@ stages:
       #     artifactName: ChurchBulletin.Ui
 
       - task: Docker@2
-        inputs:
         displayName: 'Build & Push Docker Image'
+        inputs:
           containerRegistry: 'Onion-Architecture-Dotnet-8-Flyway-Azure-DR'
           repository: 'ChurchBulletin.UI'
           command: 'buildAndPush'
