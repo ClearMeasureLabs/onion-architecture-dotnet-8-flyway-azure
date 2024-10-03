@@ -52,14 +52,18 @@ variable "jdbc_connection_url" {
     value "#{Octopus.Action[Get JDBC Connection URL].Output.connurl}" {}
 }
 
+variable "container_version": {
+    value "2.4.46"
+}
+
 variable "container_image" {
-    value "#{registry_login_server}/churchbulletin.ui:#{Octopus.Release.Number}" {
+    value "#{registry_login_server}/churchbulletin.ui:#{container_version}" {
         environment = ["tdd", "uat", "prod"]
     }
 }
 
 variable "registry_login_server" {
-    value "onionarchitecturemauiazuredotnet8.azurecr.io" {
+    value "onionarchitecturedotnet8flywayazuresc.azurecr.io" {
         environment = ["tdd", "uat", "prod"]
     }
 }
