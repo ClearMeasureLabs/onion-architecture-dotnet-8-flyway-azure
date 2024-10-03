@@ -52,7 +52,7 @@ variable "jdbc_connection_url" {
     value "#{Octopus.Action[Get JDBC Connection URL].Output.connurl}" {}
 }
 
-variable "container_version": {
+variable "container_version" {
     value "2.4.46"
 }
 
