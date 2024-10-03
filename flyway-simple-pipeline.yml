@@ -111,6 +111,7 @@ stages:
 
       - task: Docker@2
         inputs:
+        displayName: 'Build & Push Docker Image'
           containerRegistry: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC'
           repository: 'ChurchBulletin.UI'
           command: 'buildAndPush'
