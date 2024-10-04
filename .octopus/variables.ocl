@@ -63,7 +63,7 @@ variable "container_image" {
 }
 
 variable "registry_login_server" {
-    value "onionarchitecturedotnet8flywayazuresc.azurecr.io" {
+    value "onionarchitecturedotnet8flywayazuresccr.azurecr.io" {
         environment = ["tdd", "uat", "prod"]
     }
 }
