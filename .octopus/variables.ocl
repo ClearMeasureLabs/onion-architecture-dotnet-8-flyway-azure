@@ -53,7 +53,7 @@ variable "jdbc_connection_url" {
 }
 
 variable "container_version" {
-    value "2.4.46" {}
+    value "2.4.49" {}
 }
 
 variable "container_image" {
@@ -71,7 +71,7 @@ variable "registry_login_server" {
 variable "AzureAccount" {
     type = "AzureAccount"
 
-    value "azure-onion-containers" {}
+    value "cmplayground" {}
 }
 
 variable "DatabaseServer" {
