@@ -58,6 +58,7 @@ step "install-flyway-cli" {
 
     action {
         action_type = "Octopus.Script"
+        is_disabled = true
         properties = {
             Octopus.Action.Script.ScriptBody = <<-EOT
                 Function Setup-FlywayCLI {
@@ -331,26 +332,27 @@ step "flyway-database-migrations-from-local-cli" {
 
     action {
         action_type = "Octopus.Script"
+        is_disabled = true
         properties = {
             Octopus.Action.Script.ScriptBody = <<-EOT
                 $flywayCli = "c:\flyway\flyway.cmd"
-
+                
                 # Try to use the Package Output Installation Path
                 #$packageDirectory = $OctopusParameters["Octopus.Action.Package[ChurchBulletin.DatabaseFlyway].Output.InstallationPath"]
                 $packageDirectory =  $OctopusParameters["Octopus.Action.Package[ChurchBulletin.DatabaseFlyway].ExtractedPath"]
-
+                
                 # Fallback to default installation directory if empty
                 if (-Not $packageDirectory) {
                     Write-Host "Attmempting to use fallback path to the Package Directory"
                     $packageDirectory = $OctopusParameters["Octopus.Action.Package.DefaultInstallationDirectory"]
                 }
-
+                
                 # Let's Hail Mary and see if we can pinpoint the right property for the package.
                 if (-Not $packageDirectory) {
                   Write-Host "Listing all Octopus parameters:"
                   $OctopusParameters.Keys | ForEach-Object { Write-Host "$_`: $($OctopusParameters[$_])" }
                 }
-
+                
                 # Log the package directory for debugging purposes
                 Write-Host "Package Directory: $packageDirectory"
                 
@@ -388,12 +390,12 @@ step "flyway-database-migrations-from-local-cli" {
                 		#call 'flyaway migrate' with db parameters
                         
                 		$migrationsPath = Join-Path $packageDirectory "migrations"
-
+                
                     if (-Not (Test-Path $migrationsPath)) {
                         Write-Host "ERROR: Migrations folder not found at $migrationsPath"
                         exit 1
                     }
-
+                
                 		$flywayParameters = @(
                 			"-configFiles=$packageDirectory\flyway.toml"
                 			"-url=$jdbc_connection_url"
