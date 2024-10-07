@@ -58,7 +58,6 @@ step "install-flyway-cli" {
 
     action {
         action_type = "Octopus.Script"
-        is_disabled = true
         properties = {
             Octopus.Action.Script.ScriptBody = <<-EOT
                 Function Setup-FlywayCLI {
@@ -332,7 +331,6 @@ step "flyway-database-migrations-from-local-cli" {
 
     action {
         action_type = "Octopus.Script"
-        is_disabled = true
         properties = {
             Octopus.Action.Script.ScriptBody = <<-EOT
                 $flywayCli = "c:\flyway\flyway.cmd"
@@ -793,6 +791,7 @@ step "healthcheck" {
 
     action {
         action_type = "Octopus.Script"
+        is_disabled = true
         properties = {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "onion-architecture-dotnet-8-flyway-azure"
