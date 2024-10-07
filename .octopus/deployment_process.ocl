@@ -770,7 +770,7 @@ step "checkversion" {
             Octopus.Action.Package.FeedId = "onion-architecture-dotnet-8-flyway-azure"
             Octopus.Action.Package.PackageId = "ChurchBulletin.Script"
             Octopus.Action.Script.ScriptFileName = "CheckVersion.ps1"
-            Octopus.Action.Script.ScriptParameters = "-server #{containerAppURL} -version #{Octopus.Release.Number}"
+            Octopus.Action.Script.ScriptParameters = "-server #{containerAppURL} -version #{container_version}"
             Octopus.Action.Script.ScriptSource = "Package"
         }
         worker_pool = "hosted-windows"

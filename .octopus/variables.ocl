@@ -53,7 +53,7 @@ variable "jdbc_connection_url" {
 }
 
 variable "container_version" {
-    value "2.4.49" {}
+    value "2.4.49.0" {}
 }
 
 variable "container_image" {
