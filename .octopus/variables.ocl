@@ -52,10 +52,6 @@ variable "jdbc_connection_url" {
     value "#{Octopus.Action[Get JDBC Connection URL].Output.connurl}" {}
 }
 
-variable "container_version" {
-    value "2.4.49.0" {}
-}
-
 variable "container_image" {
     value "#{registry_login_server}/churchbulletin.ui:#{container_version}" {
         environment = ["tdd", "uat", "prod"]
@@ -243,4 +239,8 @@ variable "EnsureEnvironmentsExist" {
     value "False" {
         environment = ["uat"]
     }
+}
+
+variable "container_version" {
+    value "2.4.49" {}
 }
