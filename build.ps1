@@ -63,10 +63,6 @@ Function Init {
 		& dotnet restore $source_dir\$projectName.sln -nologo --interactive -v $verbosity  
 		}
 	
-	Setup-FlywayCLI -flywayCliDir $flywayCliDir # Optionally, you can provide a secondary  parameter for a different 
-												# download/version of the Flyway CLI. It will default to the latest 
-												# version as of Sept-18-2024
-
     Write-Output $projectConfig
     Write-Output $version
 }
@@ -158,6 +154,12 @@ Function PackageDatabase {
 	}
 }
 
+Function PackageDatabaseFlyway {    
+    exec{
+		& dotnet-octo pack --id "$projectName.DatabaseFlyway" --version $version --basePath $databaseFlywayProjectPath --outFolder $build_dir --overwrite
+	}
+}
+
 Function PackageAcceptanceTests {       
     # Use Debug configuration so full symbols are available to display better error messages in test failures
     exec{
@@ -183,6 +185,7 @@ Function Package{
 	dotnet tool install --global Octopus.DotNet.Cli | Write-Output $_ -ErrorAction SilentlyContinue #prevents red color is already installed
     PackageUI
     PackageDatabase
+    PackageDatabaseFlyway
     PackageAcceptanceTests
 	PackageScript
 }

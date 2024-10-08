@@ -5,6 +5,7 @@ step "create-resource-group" {
         action_type = "Octopus.AzurePowerShell"
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.RunOnServer = "false"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
                 ###################################################################
@@ -52,6 +53,109 @@ step "create-resource-group" {
     }
 }
 
+step "install-flyway-cli" {
+    name = "Install Flyway CLI"
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                Function Setup-FlywayCLI {
+                    param (
+                        [Parameter(Mandatory = $true)]
+                        [string]$flywayCliDir,
+                
+                        [Parameter(Mandatory = $false)]
+                        [string]$flywayDownloadUrl = "https://download.red-gate.com/maven/release/com/redgate/flyway/flyway-commandline/10.18.0/flyway-commandline-10.18.0-windows-x64.zip"
+                    )
+                	
+                	# Normalize the path to ensure compatibility with both Linux and Windows
+                	$flywayCliDir = $flywayCliDir -replace '/', '\'
+                
+                	$base_dir = resolve-path .\
+                
+                	#check that the CLI folder exists
+                    if (-Not (Test-Path -Path $flywayCliDir -PathType Container)) {
+                        try {
+                            New-Item -Path $flywayCliDir -ItemType Directory -Force | Out-Null
+                        } catch {
+                            return $false
+                        }
+                    } 
+                    
+                    $flywayCmdPath = Join-Path -Path $flywayCliDir -ChildPath "flyway.cmd"
+                
+                    # Check if flyway.cmd exists
+                    if (-Not (Test-Path -Path $flywayCmdPath -PathType Leaf)) {
+                
+                        $tempZipPath = Join-Path -Path $base_dir -ChildPath "flyway-cli.zip"
+                        try {
+                
+                            # Download the Flyway CLI zip
+                            Invoke-WebRequest -Uri $flywayDownloadUrl -OutFile $tempZipPath -UseBasicParsing
+                        } catch {
+                            return $false
+                        }
+                
+                        try {
+                
+                            # Create a temporary extraction directory
+                            $tempExtractDir = Join-Path -Path $base_dir -ChildPath "FlywayExtract"
+                            New-Item -Path $tempExtractDir -ItemType Directory -Force | Out-Null
+                
+                            # Extract the zip to the temporary directory
+                            Expand-Archive -Path $tempZipPath -DestinationPath $tempExtractDir -Force
+                
+                            # Move the contents from the extracted folder to flywayCliDir
+                            # Assuming the zip extracts to a single folder
+                            $extractedSubDir = Get-ChildItem -Path $tempExtractDir -Directory | Select-Object -First 1
+                
+                            if ($extractedSubDir) {
+                                Get-ChildItem -Path $extractedSubDir.FullName -Recurse | ForEach-Object {
+                                    $destinationPath = $_.FullName.Replace($extractedSubDir.FullName, $flywayCliDir)
+                                    if ($_.PSIsContainer) {
+                                        New-Item -Path $destinationPath -ItemType Directory -Force | Out-Null
+                                    } else {
+                                        Move-Item -Path $_.FullName -Destination $destinationPath -Force
+                                    }
+                                }
+                            } else {
+                                return $false
+                            }
+                        } catch {
+                            return $false
+                        } finally {
+                            # Clean up temporary files
+                            if (Test-Path -Path $tempZipPath) {
+                                Remove-Item -Path $tempZipPath -Force
+                            }
+                            if ($tempExtractDir -and (Test-Path -Path $tempExtractDir)) {
+                                Remove-Item -Path $tempExtractDir -Recurse -Force
+                            }
+                        }
+                
+                        # Verify that flyway.cmd now exists
+                        if (Test-Path -Path $flywayCmdPath -PathType Leaf) {
+                            Write-Host "Flyway installed."    
+                            return $true
+                        } else {
+                            return $false
+                        }
+                    } else {
+                        Write-Host "Flyway already exists, skipping install."
+                        return $true
+                    }
+                }
+                
+                Setup-FlywayCLI -flywayCliDir "c:\flyway"
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+        }
+        worker_pool = "hosted-windows"
+    }
+}
+
 step "deploy-an-azure-resource-manager-template" {
     condition = "Variable"
     name = "Create AZ DB"
@@ -71,6 +175,7 @@ step "deploy-an-azure-resource-manager-template" {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "onion-architecture-dotnet-8-flyway-azure"
             Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
+            Octopus.Action.RunOnServer = "false"
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
@@ -99,7 +204,6 @@ step "create-db-schema" {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "onion-architecture-dotnet-8-flyway-azure"
             Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
-            Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "Scripts\\UpdateAzureSql.ps1"
             Octopus.Action.Script.ScriptSource = "Package"
         }
@@ -123,6 +227,7 @@ step "get-db-connection-string" {
         action_type = "Octopus.AzurePowerShell"
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.RunOnServer = "false"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
                 ###################################################################
@@ -186,6 +291,158 @@ step "get-db-connection-string" {
     }
 }
 
+step "get-jdbc-connection-url" {
+    name = "Get JDBC Connection URL"
+
+    action {
+        action_type = "Octopus.AzurePowerShell"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.RunOnServer = "false"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
+                $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
+                $Env:PATH += ";C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"
+                Write-Host $env:PATH -Split ';'
+                & az extension add --name containerapp
+                & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
+                $connurl = az sql db show-connection-string --server $DatabaseServerName --name $DatabaseName --client jdbc
+                
+                #$connurl = $connurl -replace '<username>', $DatabaseUser -replace '<password>', $DatabasePassword -replace '"', ''
+                $connurl = $connurl -replace ';User ID=<username>;', '' -replace ';Password=<password>;', ''
+                
+                Write-Host "Connection String: $connurl"
+                Set-OctopusVariable -name "connurl" -value $connurl
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
+step "flyway-database-migrations-from-local-cli" {
+    condition = "Variable"
+    name = "Flyway Database Migrations - From local CLI"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                $flywayCli = "c:\flyway\flyway.cmd"
+                
+                # Try to use the Package Output Installation Path
+                #$packageDirectory = $OctopusParameters["Octopus.Action.Package[ChurchBulletin.DatabaseFlyway].Output.InstallationPath"]
+                $packageDirectory =  $OctopusParameters["Octopus.Action.Package[ChurchBulletin.DatabaseFlyway].ExtractedPath"]
+                
+                # Fallback to default installation directory if empty
+                if (-Not $packageDirectory) {
+                    Write-Host "Attmempting to use fallback path to the Package Directory"
+                    $packageDirectory = $OctopusParameters["Octopus.Action.Package.DefaultInstallationDirectory"]
+                }
+                
+                # Let's Hail Mary and see if we can pinpoint the right property for the package.
+                if (-Not $packageDirectory) {
+                  Write-Host "Listing all Octopus parameters:"
+                  $OctopusParameters.Keys | ForEach-Object { Write-Host "$_`: $($OctopusParameters[$_])" }
+                }
+                
+                # Log the package directory for debugging purposes
+                Write-Host "Package Directory: $packageDirectory"
+                
+                ###################################################################
+                #Intalls az cli latest version from Microsoft. Essentially 
+                #a copy/paste from MS documentation.
+                $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
+                ###################################################################
+                
+                ###################################################################
+                #az cli installer doesn't consistently add the install
+                #directory to PATH.  This is here to make sure we can run
+                #from whatever default directory the agent lands on.
+                $Env:PATH += ";C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"
+                Write-Host $env:PATH -Split ';'
+                ###################################################################
+                
+                ###################################################################
+                #They heavy lifting.  With the cli installed and PATH set
+                #all that's left to do is configure it for the subscription.
+                & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
+                
+                
+                
+                Function MigrateDatabaseLocal {
+                	param (
+                	  [Parameter(Mandatory=$true)]
+                		[ValidateNotNullOrEmpty()]
+                		[string]$databaseServerFunc,
+                		
+                	  [Parameter(Mandatory=$true)]
+                		[ValidateNotNullOrEmpty()]
+                		[string]$databaseNameFunc
+                	)
+                		#call 'flyaway migrate' with db parameters
+                        
+                		$migrationsPath = Join-Path $packageDirectory "migrations"
+                
+                    if (-Not (Test-Path $migrationsPath)) {
+                        Write-Host "ERROR: Migrations folder not found at $migrationsPath"
+                        exit 1
+                    }
+                
+                		$flywayParameters = @(
+                			"-configFiles=$packageDirectory\flyway.toml"
+                			"-url=$jdbc_connection_url"
+                			"-locations=filesystem:$migrationsPath"
+                      "-user=$DatabaseUser"
+                      "-password=$DatabasePassword"
+                			"migrate"
+                		)
+                
+                		exec {
+                				& $flywayCli $flywayParameters
+                		}
+                }
+                
+                function Exec
+                {
+                    [CmdletBinding()]
+                    param(
+                        [Parameter(Position=0,Mandatory=1)][scriptblock]$cmd,
+                        [Parameter(Position=1,Mandatory=0)][string]$errorMessage = ($msgs.error_bad_command -f $cmd)
+                    )
+                    & $cmd
+                    if ($lastexitcode -ne 0) {
+                        throw ("Exec: " + $errorMessage)
+                    }
+                }
+                
+                MigrateDatabaseLocal -databaseServerFunc $DatabaseServer -databaseNameFunc $DatabaseName
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool = "hosted-windows"
+        worker_pool_variable = ""
+
+        packages "ChurchBulletin.DatabaseFlyway" {
+            acquisition_location = "Server"
+            feed = "onion-architecture-dotnet-8-flyway-azure"
+            package_id = "ChurchBulletin.DatabaseFlyway"
+            properties = {
+                Extract = "True"
+                Purpose = ""
+                SelectionMode = "immediate"
+            }
+        }
+    }
+}
+
 step "deploy-an-azure-resource-manager-template-1" {
     condition = "Variable"
     name = "Create Container App Environment"
@@ -228,6 +485,7 @@ step "deploy-an-azure-resource-manager-template-1" {
                 EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
+            Octopus.Action.RunOnServer = "false"
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
@@ -357,6 +615,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                 EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"containerappName\":{\"value\":\"#{container_app_name}\"},\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"},\"container_image\":{\"value\":\"#{container_image}\"},\"registry_password\":{\"value\":\"#{az_login_appkey}\"},\"connection_string\":{\"value\":\"#{connection_string}\"},\"http_port\":{\"value\":\"#{http_port}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
+            Octopus.Action.RunOnServer = "false"
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
@@ -370,6 +629,7 @@ step "get-container-app-fqdn" {
         action_type = "Octopus.AzurePowerShell"
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.RunOnServer = "false"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
                 ###################################################################
@@ -444,7 +704,6 @@ step "add-revision-to-container-app" {
         environments = ["uat", "prod"]
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
-            Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 
                 #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
@@ -510,9 +769,8 @@ step "checkversion" {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "onion-architecture-dotnet-8-flyway-azure"
             Octopus.Action.Package.PackageId = "ChurchBulletin.Script"
-            Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "CheckVersion.ps1"
-            Octopus.Action.Script.ScriptParameters = "-server #{containerAppURL} -version #{Octopus.Release.Number}"
+            Octopus.Action.Script.ScriptParameters = "-server #{containerAppURL} -version #{container_version}"
             Octopus.Action.Script.ScriptSource = "Package"
         }
         worker_pool = "hosted-windows"
@@ -533,11 +791,11 @@ step "healthcheck" {
 
     action {
         action_type = "Octopus.Script"
+        is_disabled = true
         properties = {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "onion-architecture-dotnet-8-flyway-azure"
             Octopus.Action.Package.PackageId = "ChurchBulletin.Script"
-            Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "CallHealthCheckEndpoint.ps1"
             Octopus.Action.Script.ScriptParameters = "-server #{containerAppURL}"
             Octopus.Action.Script.ScriptSource = "Package"
@@ -637,6 +895,7 @@ step "create-log-analytics-workspace" {
                 EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"workspaceName\":{\"value\":\"#{LogAnalyticsWorkspaceName}\"},\"location\":{\"value\":\"#{az_location}\"},\"sku\":{\"value\":\"PerGB2018\"},\"retentionInDays\":{\"value\":120},\"resourcePermissions\":{\"value\":\"True\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
+            Octopus.Action.RunOnServer = "false"
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
@@ -706,6 +965,7 @@ step "create-app-insights" {
                 EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"name\":{\"value\":\"#{AppInsightsName}\"},\"regionId\":{\"value\":\"#{az_location}\"},\"tagsArray\":{\"value\":{}},\"workspaceResourceId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourcegroups/#{ResourceGroupName}/providers/microsoft.operationalinsights/workspaces/#{LogAnalyticsWorkspaceName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
+            Octopus.Action.RunOnServer = "false"
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
@@ -801,6 +1061,7 @@ step "create-availability-test" {
                 EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"webtests_healthcheck_name\":{\"value\":\"#{AvailabilityTestName}\"},\"healthcheck_url\":{\"value\":\"http://#{containerAppURL}/_healthcheck\"},\"location\":{\"value\":\"#{az_location}\"},\"hidden-link\":{\"value\":\"hidden-link:/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{AppInsightsName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
+            Octopus.Action.RunOnServer = "false"
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
@@ -993,6 +1254,7 @@ step "create-automation-account" {
                 EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"runbookName\":{\"value\":\"#{azrunbookname}\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"webhookExpiryTime\":{\"value\":\"2025-08-31T23:59:59Z\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-8-flyway-azure/main/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"#{OctoInstanceURL}\"},\"octoRunbookValue\":{\"value\":\"#{OctoRunbookName}\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"},\"webhookId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/TDD-releases-28529-automation/webhooks/#{webhookName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
+            Octopus.Action.RunOnServer = "false"
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
@@ -1009,7 +1271,6 @@ step "create-automation-webhook" {
     action {
         action_type = "Octopus.Script"
         properties = {
-            Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 Install-Module -Name Az -Repository PSGallery -Force
                 $securePassword = ConvertTo-SecureString -String $az_login_appkey -AsPlainText -Force
@@ -1119,6 +1380,7 @@ step "create-email-alert-action" {
                 EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_runRunbook_name\":{\"value\":\"#{ActionName}\"},\"automationAccounts_TDD_releases_28553_automation_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"uri\":{\"value\":\"#{Octopus.Action[Create Automation Webhook].Output.webhookUri}\"},\"webhookId\":{\"value\":\"#{webhookName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
+            Octopus.Action.RunOnServer = "false"
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
@@ -1202,6 +1464,7 @@ step "create-low-availability-metric-alert" {
                 EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"metricAlerts_Prod_UI_Low_Availability_name\":{\"value\":\"#{LowAvailabilityAlertName}\"},\"components_onion_architecture_maui_azure_dotnet_8_Prod_Insights_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{AppInsightsName}\"},\"actionGroups_Email_Alert_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/actionGroups/#{ActionName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
+            Octopus.Action.RunOnServer = "false"
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""

@@ -47,7 +47,7 @@ steps:
     resourceGroupName: $(TDDResourceGroup)
     location: $(AzureLocation)
     csmFile: src/Database/DatabaseARM.json
-    overrideParameters: -databaseserverName $(databaseName) -databaseLogin $(DatabaseUser) -databaseLoginPassword $(DatabasePassword) -skuCapacity 1 -databaseName onioncleandb-$(Environment) -requestedServiceObjectiveName $(DatabasePerformanceLevel) -serverLocation $(AzureLocation)
+    overrideParameters: -databaseserverName $(databaseName) -databaseLogin $(DatabaseUser) -databaseLoginPassword $(DatabasePassword) -skuCapacity 1 -databaseName onioncleandb-$(Environment) -requestedServiceObjectiveName $(DatabasePerformanceLevel)
 
 - task: PowerShell@2
   displayName: 'Create database schema'

@@ -3,16 +3,16 @@ variable "az_location" {
 }
 
 variable "DatabaseName" {
-    value "oniondb" {
+    value "oniondb-flyway" {
         environment = ["tdd"]
     }
 
-    value "oniondb-uat" {
+    value "oniondb-flyway-uat" {
         description = ""
         environment = ["uat"]
     }
 
-    value "oniondb-prod" {
+    value "oniondb-flyway-prod" {
         description = ""
         environment = ["prod"]
     }
@@ -48,14 +48,18 @@ variable "connection_string" {
     value "#{Octopus.Action[Get DB Connection String].Output.connstring}" {}
 }
 
+variable "jdbc_connection_url" {
+    value "#{Octopus.Action[Get JDBC Connection URL].Output.connurl}" {}
+}
+
 variable "container_image" {
-    value "#{registry_login_server}/churchbulletin.ui:#{Octopus.Release.Number}" {
+    value "#{registry_login_server}/churchbulletin.ui:#{container_version}" {
         environment = ["tdd", "uat", "prod"]
     }
 }
 
 variable "registry_login_server" {
-    value "onionarchitecturemauiazuredotnet8.azurecr.io" {
+    value "onionarchitecturedotnet8flywayazuresccr.azurecr.io" {
         environment = ["tdd", "uat", "prod"]
     }
 }
@@ -83,13 +87,13 @@ variable "DatabaseAction" {
 }
 
 variable "DatabaseEdition" {
-    value "Basic" {
+    value "Standard" {
         description = ""
     }
 }
 
 variable "DatabasePerformanceLevel" {
-    value "Basic" {
+    value "S0" {
         description = ""
     }
 }
@@ -235,4 +239,8 @@ variable "EnsureEnvironmentsExist" {
     value "False" {
         environment = ["uat"]
     }
+}
+
+variable "container_version" {
+    value "2.4.49" {}
 }
