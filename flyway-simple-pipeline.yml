@@ -107,7 +107,15 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-        - group: Integration-Build    
+      - group: Integration-Build    
+
+      - name: branch
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
+      
+      - name: TDD-Resource-Group
+        value: onion-architecture-dotnet-8-flyway-azure-${Build.BuildNumber}
+      - name: TDD-App-Name
+        value: tdd-ui 
       environment: 'TDD'  
       strategy:
         runOnce:
@@ -119,15 +127,57 @@ stages:
               inputs:
                 version: '*'
 
-            - task: OctopusDeployRelease@5
-              name: deploytoTDD
+            - task: OctopusCreateRelease@5
+              name: 'CreateRelease'
               inputs:
                 OctoConnectedServiceName: 'octoServiceConnection'
                 Space: '$(OctoSpace)'
                 ProjectGroup: '$(OctoProjectGroup)'
-                Project: '$(OctoProjectName)'
+                ProjectName: '$(OctoProjectName)'
                 ReleaseNumber: '$(Build.BuildNumber)'
-                Environments: 'TDD'
-                ShowProgress: true
-                AdditionalArguments: '--deploymenttimeout=00:30:00'
- 
+                Channel: 'Default'
+                GitRef: '$(branch)'
+                DeployToEnvironment: 'TDD'
+                DeploymentProgress: true
+                AdditionalArguments: '--deploymenttimeout=00:30:00 --variable=ResourceGroupName:$(TDD-Resource-Group) --variable=container_app_name:$(TDD-App-Name)' 
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC-ARM'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az config set extension.use_dynamic_install=yes_without_prompt
+                  $containerAppURL = az containerapp show --resource-group $(TDD-Resource-Group) --name $(TDD-App-Name) --query properties.configuration.ingress.fqdn
+                  $containerAppURL = $containerAppURL -replace '"', ''
+                  [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "User")
+            - task: DownloadPackage@1
+              displayName: 'Download Acceptance Test Package'
+              inputs:
+                packageType: 'nuget'
+                feed: '$(FeedName)'
+                view: 'Local'
+                definition: 'ChurchBulletin.AcceptanceTests'
+                version: '$(Build.BuildNumber)'
+                downloadPath: '$(System.DefaultWorkingDirectory)/tests'
+                extract: true
+            - task: VSTest@2
+              displayName: 'VsTest - AcceptanceTests'
+              inputs:
+                testSelector: 'testAssemblies'
+                testAssemblyVer2: |
+                  **\*AcceptanceTests.dll
+                  !**\*TestAdapter.dll
+                  !**\obj\**
+                  searchFolder: '$(System.DefaultWorkingDirectory)/tests'
+                uiTests: true
+                codeCoverageEnabled: true
+                testRunTitle: 'Acceptance Tests'
+                diagnosticsEnabled: True
+            - task: AzureCLI@2
+              displayName: 'Delete TDD Resources'
+              inputs:
+                azureSubscription: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC-ARM'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az group delete -n $(TDD-Resource-Group) --yes
