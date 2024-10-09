@@ -12,7 +12,6 @@ name: $(major).$(minor).$(Rev:r)
 stages:
 - stage: 'Integration_Build'
   displayName: 'Build Application'
-
   jobs:
     - job: 'Build'
       displayName: 'Build job'
@@ -66,18 +65,6 @@ stages:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/**/In/**/coverage.cobertura.xml'
         
-      # - task: PublishPipelineArtifact@1
-      #   displayName: Publish Ui to Pipeline
-      #   inputs:
-      #     targetPath: .\build\WebApp
-      #     artifactName: ChurchBulletin.Ui
-
-      # - task: PublishPipelineArtifact@1
-      #   displayName: Publish Database to Pipeline
-      #   inputs:
-      #     targetPath: .\build\WebApp
-      #     artifactName: ChurchBulletin.Database
-      
       - task: NuGetCommand@2
         inputs:
           command: 'push'
@@ -103,12 +90,6 @@ stages:
           downloadPath: '$(System.DefaultWorkingDirectory)/built'
           extract: true
 
-      # - task: DownloadPipelineArtifact@2
-      #   displayName: Publish Ui to Pipeline
-      #   inputs:
-      #     targetPath: $(System.DefaultWorkingDirectory)/built
-      #     artifactName: ChurchBulletin.Ui
-
       - task: Docker@2
         displayName: 'Build & Push Docker Image'
         inputs:
@@ -119,79 +100,34 @@ stages:
           tags: |
             $(Build.BuildNumber)
 
-# #Deploying to TDD
-# - stage: 'TDD'
-#   displayName: 'TDD'
-#   jobs:
-#     - deployment: 'DeployToTDD'
-#       pool:
-#         vmImage: 'windows-latest'
-#       variables:
-#       - group:  onion8-from-scratch-flyway-tdd
-#       - name: branch
-#         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]
-#       - name: TDDResourceGroup
-#         value: '$(DeployResourceGroup)'
-#       - name: Environment
-#         value: 'tdd'
-#       # - name: databaseServerName
-#       #   value: $(databaseServerName)
-#       # - name: databaseUser
-#       #   value: '$(databaseUser)'
-#       # - name: databasePassword
-#       #   value: '$(databasePassword)'
-#       # - name: databaseName
-#       #   value: '$(databaseName)'
-#       # - name: containerAppName
-#       #   value: '$(ContainerAppName)'
-#       # - name: containerImage
-#       #   value: '$(registryLoginServer)/churchbulletin.ui:$(Build.BuildNumber)'
-#       - name: containerAppLogAnalyticsName
-#         value: '$(environment)-Flyway-Log-Analytics'
-#       - name: appInsightsName
-#         value: '$(environment)-insights-flyway'
-#       # - name: appInsightsConnectionString
-#       #   value: $(appInsightsConnectionStringTDD)
-#       - name: AspnetcoreEnvironment
-#         value: $(AspnetcoreEnvironmentTest)
+- stage: 'TDD'
+  displayName: 'TDD (via Octopus Deploy)'
+  jobs: 
+    - deployment: 'DeployToTDD'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+        - group: Integration-Build    
+      environment: 'TDD'  
+      strategy:
+        runOnce:
+          deploy:
+            steps:
 
-#       environment: 'TDD'
-#       strategy:
-#         runOnce:
-#           deploy:
-#             steps:
-            
-#             - template: .\deploy-env.yml
-            
-#             - task: DownloadPackage@1
-#               displayName: 'Download Acceptance Test Package'
-#               inputs:
-#                 packageType: 'nuget'
-#                 feed: '$(AzureFeedName)'
-#                 view: 'Local'
-#                 definition: 'ChurchBulletin.AcceptanceTests'
-#                 version: '$(Build.Buildnumber)'
-#                 downloadPath: '$(System.DefaultWorkingDirectory)/tests'
-#                 extract: true
+            - task: OctoInstaller@5
+              displayName: 'Install octo cli tools on Windows agent'
+              inputs:
+                version: '*'
 
-#             - task: PowerShell@2
-#               displayName: 'Download Playwright'
-#               inputs:
-#                 targetType: filePath
-#                 filePath: ./tests/playwright.ps1
-#                 arguments: 'install'
-
-#             # - task: VSTest@2
-#             #   displayName: 'VsTest - AcceptanceTests'
-#             #   inputs:
-#             #     testSelector: 'testAssemblies'
-#             #     testAssemblyVer2: |
-#             #       **\*AcceptanceTests.dll
-#             #       !**\*TestAdapter.dll
-#             #       !**\obj\**
-#             #       searchFolder: '$(System.DefaultWorkingDirectory)/tests'
-#             #     uiTests: true
-#             #     codeCoverageEnabled: true
-#             #     testRunTitle: 'Acceptance Tests'
-#             #     diagnosticsEnabled: True
-
+            - task: OctopusDeployRelease@5
+              name: deploytoTDD
+              inputs:
+                OctoConnectedServiceName: 'octoServiceConnection'
+                Space: '$(OctoSpace)'
+                ProjectGroup: '$(OctoProjectGroup)'
+                Project: '$(OctoProjectName)'
+                ReleaseNumber: '$(Build.BuildNumber)'
+                Environments: 'TDD'
+                ShowProgress: true
+                AdditionalArguments: '--deploymenttimeout=00:30:00'
+ 
