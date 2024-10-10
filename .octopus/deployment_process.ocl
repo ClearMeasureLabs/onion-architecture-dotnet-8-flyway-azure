@@ -678,7 +678,10 @@ step "get-container-app-fqdn" {
                 Set-OctopusVariable -name "app_fqdn" -value $fqdn
                 ###################################################################
                 
-                
+                ## If the statement below fails, use this immediate line, and pass in #{AzureAccount}
+                ## Next step is to pass it in as a parameter
+                #az role assignment create --assignee "{assignee}" --role "Owner" --scope "/subscriptions/f3cfae68-cb4e-4642-9a97-7da7fb774e25"
+                az role assignment create  --role "Owner" --scope "/subscriptions/f3cfae68-cb4e-4642-9a97-7da7fb774e25"
                 
                 
                 
