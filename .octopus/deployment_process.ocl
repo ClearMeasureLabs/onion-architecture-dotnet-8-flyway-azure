@@ -44,6 +44,19 @@ step "create-resource-group" {
                 
                 ###################################################################
                 & az group create --name $ResourceGroupName --location $az_location
+
+
+
+
+                ## If the statement below fails, use this immediate line, and pass in #{AzureAccount}
+                ## Next step is to pass it in as a parameter
+                
+                $scope = "/subscriptions/" + $az_login_appid + "/resourceGroups/" + $ResourceGroupName
+                $azureDevopsSubscription = "83ad9d67-6454-4bd6-9d63-d2bf298687b0"
+                & az role assignment create --assignee $azureDevopsSubscription --role Owner --scope $scope
+
+
+
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
@@ -677,14 +690,6 @@ step "get-container-app-fqdn" {
                 Write-Host "FQDN: $fqdn"
                 Set-OctopusVariable -name "app_fqdn" -value $fqdn
                 ###################################################################
-                
-                ## If the statement below fails, use this immediate line, and pass in #{AzureAccount}
-                ## Next step is to pass it in as a parameter
-                #az role assignment create --assignee "{assignee}" --role "Owner" --scope "/subscriptions/f3cfae68-cb4e-4642-9a97-7da7fb774e25"
-                az role assignment create  --role "Owner" --scope "/subscriptions/f3cfae68-cb4e-4642-9a97-7da7fb774e25"
-                
-                
-                
                 
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
