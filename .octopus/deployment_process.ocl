@@ -52,7 +52,7 @@ step "create-resource-group" {
                 ## Next step is to pass it in as a parameter
                 
                 $scope = "/subscriptions/" + $az_login_appid + "/resourceGroups/" + $ResourceGroupName
-                $azureDevopsSubscription = "83ad9d67-6454-4bd6-9d63-d2bf298687b0"
+                $azureDevopsSubscription = "f3cfae68-cb4e-4642-9a97-7da7fb774e25"
                 & az role assignment create --assignee $azureDevopsSubscription --role Owner --scope $scope
 
 
