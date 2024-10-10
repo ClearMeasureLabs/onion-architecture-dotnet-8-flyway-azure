@@ -142,7 +142,7 @@ stages:
                 AdditionalArguments: '--deploymenttimeout=00:30:00 --variable=ResourceGroupName:$(TDD-Resource-Group) --variable=container_app_name:$(TDD-App-Name)' 
             - task: AzureCLI@2
               inputs:
-                azureSubscription: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC-ARM'
+                azureSubscription: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC-ARM-MVP'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
@@ -176,7 +176,7 @@ stages:
             - task: AzureCLI@2
               displayName: 'Delete TDD Resources'
               inputs:
-                azureSubscription: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC-ARM'
+                azureSubscription: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC-ARM-MVP'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
