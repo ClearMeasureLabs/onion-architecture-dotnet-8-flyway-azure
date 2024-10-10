@@ -160,6 +160,24 @@ stages:
                 version: '$(Build.BuildNumber)'
                 downloadPath: '$(System.DefaultWorkingDirectory)/tests'
                 extract: true
+
+
+
+            # Install Google Chrome
+            - powershell: |
+                $chromeDriverUrl = "https://chromedriver.storage.googleapis.com/109.0.5414.74/chromedriver_win32.zip"
+                Invoke-WebRequest -Uri $chromeDriverUrl -OutFile "chromedriver.zip"
+                Expand-Archive chromedriver.zip -DestinationPath .\chromedriver
+                $env:Path += ";$(System.DefaultWorkingDirectory)\chromedriver"
+              displayName: 'Install ChromeDriver'
+
+            # Ensure Playwright browsers are installed
+            - script: |
+                npx playwright install --with-deps
+              displayName: 'Install Playwright Browsers'
+
+
+
             - task: VSTest@2
               displayName: 'VsTest - AcceptanceTests'
               inputs:
