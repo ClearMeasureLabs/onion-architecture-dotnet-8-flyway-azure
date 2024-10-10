@@ -113,7 +113,7 @@ stages:
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
       
       - name: TDD-Resource-Group
-        value: onion-architecture-dotnet-8-flyway-azure-${Build.BuildNumber}
+        value: onion-architecture-dotnet-8-flyway-azure-$(Build.BuildNumber)
       - name: TDD-App-Name
         value: tdd-ui 
       environment: 'TDD'  
