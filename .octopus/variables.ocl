@@ -232,15 +232,15 @@ variable "EnsureEnvironmentsExist" {
 }
 
 variable "DatabaseServerName" {
-    value "#{az_login_appid}-dn8-flyway-sqlsrv-prod" {
+    value "#{az_login_appid}-dn8-flyway-ss-prd" {
         environment = ["prod"]
     }
 
-    value "#{az_login_appid}-dn8-flyway-sqlsrv-uat" {
+    value "#{az_login_appid}-dn8-flyway-ss-uat" {
         environment = ["uat"]
     }
 
-    value "#{az_login_appid}-dn8-flyway-tdd-#{Octopus.Release.Id | ToLower }" {
+    value "#{az_login_appid}-dn8fwtdd-#{Octopus.Release.Id | ToLower }" {
         environment = ["tdd"]
     }
 }
