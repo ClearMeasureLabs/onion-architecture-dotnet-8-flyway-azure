@@ -231,16 +231,16 @@ variable "DatabaseServerName" {
     }
 }
 
+variable "container_version" {
+    value "2.4.49" {}
+}
+
 variable "EnsureEnvironmentsExist" {
-    value "False" {
+    value "True" {
         environment = ["prod"]
     }
 
-    value "False" {
+    value "True" {
         environment = ["uat"]
     }
-}
-
-variable "container_version" {
-    value "2.4.49" {}
 }
