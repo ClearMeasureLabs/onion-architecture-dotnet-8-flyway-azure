@@ -160,20 +160,6 @@ stages:
                 version: '$(Build.BuildNumber)'
                 downloadPath: '$(System.DefaultWorkingDirectory)/tests'
                 extract: true
-
-            # - task: VSTest@2
-            #   displayName: 'VsTest - AcceptanceTests'
-            #   inputs:
-            #     testSelector: 'testAssemblies'
-            #     testAssemblyVer2: |
-            #       **\*AcceptanceTests.dll
-            #       !**\*TestAdapter.dll
-            #       !**\obj\**
-            #       searchFolder: '$(System.DefaultWorkingDirectory)/tests'
-            #     uiTests: true
-            #     codeCoverageEnabled: true
-            #     testRunTitle: 'Acceptance Tests'
-            #     diagnosticsEnabled: True
             - task: AzureCLI@2
               displayName: 'Delete TDD Resources'
               inputs:
@@ -182,3 +168,70 @@ stages:
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   az group delete -n $(TDD-Resource-Group) --yes
+
+
+
+
+- stage: 'UAT'
+  displayName: 'UAT'
+  jobs: 
+    - deployment: 'DeployToUAT'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+        - group: Integration-Build    
+      environment: 'UAT'  
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+
+            - task: OctoInstaller@5
+              displayName: 'Install octo cli tools on Windows agent'
+              inputs:
+                version: '*'
+
+            - task: OctopusDeployRelease@5
+              name: deploytoUAT
+              inputs:
+                OctoConnectedServiceName: 'octoServiceConnection'
+                Space: '$(OctoSpace)'
+                ProjectGroup: '$(OctoProjectGroup)'
+                Project: '$(OctoProjectName)'
+                ReleaseNumber: '$(Build.BuildNumber)'
+                Environments: 'UAT'
+                ShowProgress: true
+                AdditionalArguments: '--deploymenttimeout=00:30:00'
+
+
+
+- stage: 'Production'
+  displayName: 'Prod'  
+  jobs: 
+    - deployment: 'DeployToProd'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+        - group: Integration-Build    
+      environment: 'Prod'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+      
+            - task: OctoInstaller@5
+              displayName: 'Install octo cli tools on Windows agent'
+              inputs:
+                version: '*'
+
+            - task: OctopusDeployRelease@5
+              name: deploytoProd
+              inputs:
+                OctoConnectedServiceName: 'octoServiceConnection'
+                Space: '$(OctoSpace)'
+                ProjectGroup: '$(OctoProjectGroup)'
+                Project: '$(OctoProjectName)'
+                ReleaseNumber: '$(Build.BuildNumber)'
+                Environments: 'Prod'
+                ShowProgress: true 
+                AdditionalArguments: '--deploymenttimeout=00:30:00'
