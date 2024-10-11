@@ -217,20 +217,6 @@ variable "http_port" {
     value "8080" {}
 }
 
-variable "DatabaseServerName" {
-    value "#{az_login_appid}-dotnet8-sqlserver-prod" {
-        environment = ["prod"]
-    }
-
-    value "#{az_login_appid}-dotnet8-sqlserver-uat" {
-        environment = ["uat"]
-    }
-
-    value "#{az_login_appid}-dotnet8-tdd-#{Octopus.Release.Id | ToLower }" {
-        environment = ["tdd"]
-    }
-}
-
 variable "container_version" {
     value "2.4.49" {}
 }
@@ -242,5 +228,19 @@ variable "EnsureEnvironmentsExist" {
 
     value "True" {
         environment = ["uat"]
+    }
+}
+
+variable "DatabaseServerName" {
+    value "#{az_login_appid}-dotnet8-flyway-sqlserver-prod" {
+        environment = ["prod"]
+    }
+
+    value "#{az_login_appid}-dotnet8-flyway-sqlserver-uat" {
+        environment = ["uat"]
+    }
+
+    value "#{az_login_appid}-dotnet8-flyway-tdd-#{Octopus.Release.Id | ToLower }" {
+        environment = ["tdd"]
     }
 }
