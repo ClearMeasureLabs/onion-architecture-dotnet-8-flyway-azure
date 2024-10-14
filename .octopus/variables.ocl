@@ -93,7 +93,7 @@ variable "DatabaseEdition" {
 }
 
 variable "DatabasePerformanceLevel" {
-    value "S0" {
+    value "Basic" {
         description = ""
     }
 }
