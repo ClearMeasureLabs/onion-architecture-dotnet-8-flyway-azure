@@ -44,19 +44,19 @@ step "create-resource-group" {
                 
                 ###################################################################
                 & az group create --name $ResourceGroupName --location $az_location
-
-
-
-
+                
+                
+                
+                
                 ## If the statement below fails, use this immediate line, and pass in #{AzureAccount}
                 ## Next step is to pass it in as a parameter
                 
                 #$scope = "/subscriptions/" + $az_login_appid + "/resourceGroups/" + $ResourceGroupName
                 #$azureDevopsSubscription = "e4e7fc37-fe62-46ef-8978-2b9bdadd2e4a"
                 #& az role assignment create --assignee $azureDevopsSubscription --role Owner --scope $scope
-
-
-
+                
+                
+                
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
@@ -1474,6 +1474,59 @@ step "create-low-availability-metric-alert" {
             Octopus.Action.Azure.TemplateSource = "Inline"
             Octopus.Action.RunOnServer = "false"
             OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
+step "fetch-appinsights-appid-and-api-key" {
+    name = "Fetch AppInsights AppId and API Key"
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                Write-Host "Resource Group Name: #{ResourceGroupName}"
+                Write-Host "AppInsights Name: #{AppInsightsName}"
+                
+                $appInsights = Get-AzApplicationInsights -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}
+                
+                $appId = $appInsights.AppId
+                
+                $instrumentationKey = (Get-AzApplicationInsights -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}).InstrumentationKey
+                
+                $apiKey = Get-AzApplicationInsightsApiKey -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}
+                 
+                Write-Host "Instrumentation Key: $instrumentationKey"
+                 
+                Set-OctopusVariable -Name "appInsightsInstrumentationKey" -Value $instrumentationKey
+                Set-OctopusVariable -Name "appInsightsAPIKey" -Value $apiKey
+                Set-OctopusVariable -Name "appInsightsAppId" -Value $appId
+                
+                
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+        }
+        worker_pool = "hosted-windows"
+    }
+}
+
+step "application-insights-annotate-release" {
+    name = "Application Insights - Annotate Release"
+    properties = {
+        Octopus.Action.TargetRoles = "TDD,test"
+    }
+
+    action {
+        environments = ["uat", "prod"]
+        properties = {
+            ApiKey = "#{appInsightsAPIKey}"
+            ApplicationId = "#{appInsightsAppId}"
+            Octopus.Action.RunOnServer = "false"
+            Octopus.Action.Template.Id = "ActionTemplates-421"
+            Octopus.Action.Template.Version = "8"
+            ReleaseName = "#{Octopus.Release.Number}"
         }
         worker_pool_variable = ""
     }
