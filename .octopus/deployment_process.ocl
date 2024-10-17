@@ -1514,20 +1514,16 @@ step "fetch-appinsights-appid-and-api-key" {
 
 step "application-insights-annotate-release" {
     name = "Application Insights - Annotate Release"
-    properties = {
-        Octopus.Action.TargetRoles = "TDD,test"
-    }
 
     action {
         environments = ["uat", "prod"]
         properties = {
             ApiKey = "#{appInsightsAPIKey}"
             ApplicationId = "#{appInsightsAppId}"
-            Octopus.Action.RunOnServer = "false"
             Octopus.Action.Template.Id = "ActionTemplates-421"
             Octopus.Action.Template.Version = "8"
             ReleaseName = "#{Octopus.Release.Number}"
         }
-        worker_pool_variable = ""
+        worker_pool = "hosted-windows"
     }
 }
