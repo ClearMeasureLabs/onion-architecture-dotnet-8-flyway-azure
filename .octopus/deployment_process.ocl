@@ -1517,6 +1517,7 @@ step "application-insights-annotate-release" {
 
     action {
         environments = ["uat", "prod", "tdd"]
+        is_disabled = true
         properties = {
             ApiKey = "#{appInsightsAPIKey}"
             ApplicationId = "#{appInsightsAppId}"
@@ -1526,10 +1527,20 @@ step "application-insights-annotate-release" {
             ReleaseName = "#{Octopus.Release.Number}"
         }
         worker_pool = "hosted-windows"
+    }
+}
 
-        container {
-            feed = "docker-hub"
-            image = "octopusdeploy/worker-tools:6.3.0-windows.ltsc2022"
+step "create-release-annotation" {
+    name = "Create Release Annotation"
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.GitRepository.Source = "Project"
+            Octopus.Action.Script.ScriptFileName = "/src/CreateReleaseAnnotation.ps1"
+            Octopus.Action.Script.ScriptParameters = "-appInsightsResourceId #{appInsightsResourceId} -ReleaseName #{Octopus.Release.Id} -releaseProperties @{\"ReleaseDescription\"=\"#{Octopus.Environment.Name}\"; \"TriggeredBy\"=\"OctopusDeploy\" }"
+            Octopus.Action.Script.ScriptSource = "GitRepository"
         }
+        worker_pool = "hosted-windows"
     }
 }
