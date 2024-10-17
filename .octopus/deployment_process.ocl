@@ -1489,19 +1489,25 @@ step "fetch-appinsights-appid-and-api-key" {
                 Write-Host "Resource Group Name: #{ResourceGroupName}"
                 Write-Host "AppInsights Name: #{AppInsightsName}"
                 
-                $appInsights = Get-AzApplicationInsights -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}
+                #$appInsights = Get-AzApplicationInsights -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}
                 
-                $appId = $appInsights.AppId
+                #$appId = $appInsights.AppId
                 
-                $instrumentationKey = (Get-AzApplicationInsights -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}).InstrumentationKey
                 
-                $apiKey = Get-AzApplicationInsightsApiKey -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}
+                #$instrumentationKey = (Get-AzApplicationInsights -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}).InstrumentationKey
+                
+                #$apiKey = Get-AzApplicationInsightsApiKey -ResourceGroupName #{ResourceGroupName} -#Name #{AppInsightsName}
                  
-                Write-Host "Instrumentation Key: $instrumentationKey"
+                #Write-Host "Instrumentation Key: $instrumentationKey"
+                #Set-OctopusVariable -Name "appInsightsInstrumentationKey" -Value $instrumentationKey
+                #Set-OctopusVariable -Name "appInsightsAPIKey" -Value $apiKey
+                #Set-OctopusVariable -Name "appInsightsAppId" -Value $appId
+                
+                $appInsights = Get-AzResource -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}
+                $appInsightsResourceId = $appInsights.ResourceId
                  
-                Set-OctopusVariable -Name "appInsightsInstrumentationKey" -Value $instrumentationKey
-                Set-OctopusVariable -Name "appInsightsAPIKey" -Value $apiKey
-                Set-OctopusVariable -Name "appInsightsAppId" -Value $appId
+                
+                Set-OctopusVariable -Name "appInsightsResourceId" -Value $appInsightsResourceId
                 
                 
                 EOT
