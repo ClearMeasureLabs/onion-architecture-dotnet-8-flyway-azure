@@ -1516,14 +1516,20 @@ step "application-insights-annotate-release" {
     name = "Application Insights - Annotate Release"
 
     action {
-        environments = ["uat", "prod"]
+        environments = ["uat", "prod", "tdd"]
         properties = {
             ApiKey = "#{appInsightsAPIKey}"
             ApplicationId = "#{appInsightsAppId}"
             Octopus.Action.Template.Id = "ActionTemplates-421"
             Octopus.Action.Template.Version = "8"
+            OctopusUseBundledTooling = "False"
             ReleaseName = "#{Octopus.Release.Number}"
         }
         worker_pool = "hosted-windows"
+
+        container {
+            feed = "docker-hub"
+            image = "octopusdeploy/worker-tools:6.3.0-windows.ltsc2022"
+        }
     }
 }
