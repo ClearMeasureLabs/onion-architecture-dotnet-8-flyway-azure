@@ -1542,10 +1542,34 @@ step "create-release-annotation" {
     action {
         action_type = "Octopus.Script"
         properties = {
-            Octopus.Action.GitRepository.Source = "Project"
+            Octopus.Action.GitRepository.Source = "External"
             Octopus.Action.Script.ScriptFileName = "/src/CreateReleaseAnnotation.ps1"
             Octopus.Action.Script.ScriptParameters = "-appInsightsResourceId #{appInsightsResourceId} -ReleaseName #{Octopus.Release.Id} -releaseProperties @{\"ReleaseDescription\"=\"#{Octopus.Environment.Name}\"; \"TriggeredBy\"=\"OctopusDeploy\" }"
             Octopus.Action.Script.ScriptSource = "GitRepository"
+        }
+        worker_pool = "hosted-windows"
+
+        git_dependencies {
+            default_branch = "main"
+            git_credential_type = "Anonymous"
+            repository_uri = "https://github.com/ClearMeasureLabs/onion-architecture-dotnet-8-flyway-azure.git"
+        }
+    }
+}
+
+step "fetch-git-repo" {
+    name = "Fetch Git Repo"
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                & git clone https://github.com/ClearMeasureLabs/onion-architecture-dotnet-8-flyway-azure.git
+                
+                
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
         }
         worker_pool = "hosted-windows"
     }
