@@ -1551,7 +1551,8 @@ step "create-release-annotation" {
 
         git_dependencies {
             default_branch = "main"
-            git_credential_type = "Anonymous"
+            git_credential_id = "GitCredentials-201"
+            git_credential_type = "Library"
             repository_uri = "https://github.com/ClearMeasureLabs/onion-architecture-dotnet-8-flyway-azure.git"
         }
     }
@@ -1562,6 +1563,7 @@ step "fetch-git-repo" {
 
     action {
         action_type = "Octopus.Script"
+        is_disabled = true
         properties = {
             Octopus.Action.Script.ScriptBody = <<-EOT
                 & git clone https://github.com/ClearMeasureLabs/onion-architecture-dotnet-8-flyway-azure.git
