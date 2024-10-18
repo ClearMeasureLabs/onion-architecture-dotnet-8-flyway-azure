@@ -244,3 +244,9 @@ variable "DatabaseServerName" {
         environment = ["tdd"]
     }
 }
+
+variable "gitUser" {
+    value "tonyfauss" {
+        environment = ["uat", "prod", "tdd"]
+    }
+}
