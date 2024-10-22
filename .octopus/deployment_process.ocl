@@ -1542,6 +1542,7 @@ step "create-release-annotation" {
 
     action {
         action_type = "Octopus.Script"
+        is_disabled = true
         properties = {
             Octopus.Action.GitRepository.Source = "External"
             Octopus.Action.Script.ScriptFileName = "/src/CreateReleaseAnnotation.ps1"
