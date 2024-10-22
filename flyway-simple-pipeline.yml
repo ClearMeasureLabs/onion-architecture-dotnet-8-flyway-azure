@@ -136,7 +136,7 @@ stages:
                 ProjectName: '$(OctoProjectName)'
                 ReleaseNumber: '$(Build.BuildNumber)'
                 Channel: 'Default'
-                GitRef: 'main'
+                GitRef: '$(branch)'
                 DeployToEnvironment: 'TDD'
                 DeploymentProgress: true
                 AdditionalArguments: '--deploymenttimeout=00:30:00 --variable=ResourceGroupName:$(TDD-Resource-Group) --variable=container_app_name:$(TDD-App-Name)' 
