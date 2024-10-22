@@ -1551,7 +1551,7 @@ step "create-release-annotation" {
         worker_pool = "hosted-windows"
 
         git_dependencies {
-            default_branch = "flyway-with-docker"
+            default_branch = "main"
             git_credential_id = "GitCredentials-201"
             git_credential_type = "Library"
             repository_uri = "https://github.com/ClearMeasureLabs/onion-architecture-dotnet-8-flyway-azure.git"
