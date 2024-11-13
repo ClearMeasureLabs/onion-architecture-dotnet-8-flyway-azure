@@ -1508,7 +1508,7 @@ step "fetch-appinsights-appid-and-api-key" {
                  
                 
                 Set-OctopusVariable -Name "appInsightsResourceId" -Value $appInsightsResourceId
-                & git clone https://github.com/ClearMeasureLabs/onion-architecture-dotnet-8-flyway-azure.git 
+                #& git clone https://github.com/ClearMeasureLabs/onion-architecture-dotnet-8-flyway-#azure.git 
                 
                 
                 EOT
