@@ -1489,9 +1489,9 @@ step "fetch-appinsights-appid-and-api-key" {
                 Write-Host "Resource Group Name: #{ResourceGroupName}"
                 Write-Host "AppInsights Name: #{AppInsightsName}"
                 
-                #$appInsights = Get-AzApplicationInsights -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}
+                $appInsights = Get-AzApplicationInsights -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}
                 
-                #$appId = $appInsights.AppId
+                $appId = $appInsights.AppId
                 
                 
                 #$instrumentationKey = (Get-AzApplicationInsights -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}).InstrumentationKey
@@ -1501,7 +1501,7 @@ step "fetch-appinsights-appid-and-api-key" {
                 #Write-Host "Instrumentation Key: $instrumentationKey"
                 #Set-OctopusVariable -Name "appInsightsInstrumentationKey" -Value $instrumentationKey
                 #Set-OctopusVariable -Name "appInsightsAPIKey" -Value $apiKey
-                #Set-OctopusVariable -Name "appInsightsAppId" -Value $appId
+                Set-OctopusVariable -Name "appInsightsAppId" -Value $appId
                 
                 $appInsights = Get-AzResource -ResourceGroupName #{ResourceGroupName} -Name #{AppInsightsName}
                 $appInsightsResourceId = $appInsights.ResourceId
@@ -1543,19 +1543,71 @@ step "create-release-annotation" {
     action {
         action_type = "Octopus.Script"
         properties = {
-            Octopus.Action.GitRepository.Source = "External"
-            Octopus.Action.Script.ScriptFileName = "/src/CreateReleaseAnnotation.ps1"
-            Octopus.Action.Script.ScriptParameters = "-appInsightsResourceId #{appInsightsResourceId} -ReleaseName #{Octopus.Release.Id} -releaseProperties @{\"ReleaseDescription\"=\"#{Octopus.Environment.Name}\"; \"TriggeredBy\"=\"OctopusDeploy\" }"
-            Octopus.Action.Script.ScriptSource = "GitRepository"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                param(
+                    [parameter(Mandatory = $true)][string]$aiResourceId = $appInsightsAppId,
+                    [parameter(Mandatory = $true)][string]$releaseName = $OctopusParameters["Octopus.Release.Id"],
+                    [parameter(Mandatory = $false)]$releaseProperties = @()
+                )
+                
+                # Function to ensure all Unicode characters in a JSON string are properly escaped
+                function Convert-UnicodeToEscapeHex {
+                  param (
+                    [parameter(Mandatory = $true)][string]$JsonString
+                  )
+                  $JsonObject = ConvertFrom-Json -InputObject $JsonString
+                  foreach ($property in $JsonObject.PSObject.Properties) {
+                    $name = $property.Name
+                    $value = $property.Value
+                    if ($value -is [string]) {
+                      $value = [regex]::Unescape($value)
+                      $OutputString = ""
+                      foreach ($char in $value.ToCharArray()) {
+                        $dec = [int]$char
+                        if ($dec -gt 127) {
+                          $hex = [convert]::ToString($dec, 16)
+                          $hex = $hex.PadLeft(4, '0')
+                          $OutputString += "\u$hex"
+                        }
+                        else {
+                          $OutputString += $char
+                        }
+                      }
+                      $JsonObject.$name = $OutputString
+                    }
+                  }
+                  return ConvertTo-Json -InputObject $JsonObject -Compress
+                }
+                
+                $annotation = @{
+                    Id = [GUID]::NewGuid();
+                    AnnotationName = $releaseName;
+                    EventTime = (Get-Date).ToUniversalTime().GetDateTimeFormats("s")[0];
+                    Category = "Deployment"; #Application Insights only displays annotations from the "Deployment" Category
+                    Properties = ConvertTo-Json $releaseProperties -Compress
+                }
+                
+                $annotation = ConvertTo-Json $annotation -Compress
+                $annotation = Convert-UnicodeToEscapeHex -JsonString $annotation
+                
+                $accessToken = (az account get-access-token | ConvertFrom-Json).accessToken
+                $headers = @{
+                    "Authorization" = "Bearer $accessToken"
+                    "Accept"        = "application/json"
+                    "Content-Type"  = "application/json"
+                }
+                $params = @{
+                    Headers = $headers
+                    Method  = "Put"
+                    Uri     = "https://management.azure.com$($aiResourceId)/Annotations?api-version=2015-05-01"
+                    Body    = $annotation
+                }
+                Invoke-RestMethod @params
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
         }
         worker_pool = "hosted-windows"
-
-        git_dependencies {
-            default_branch = "main"
-            git_credential_id = "GitCredentials-201"
-            git_credential_type = "Library"
-            repository_uri = "https://github.com/ClearMeasureLabs/onion-architecture-dotnet-8-flyway-azure.git"
-        }
     }
 }
 
