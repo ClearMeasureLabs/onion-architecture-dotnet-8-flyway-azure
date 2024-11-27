@@ -1544,11 +1544,11 @@ step "create-release-annotation" {
         action_type = "Octopus.Script"
         properties = {
             Octopus.Action.Script.ScriptBody = <<-EOT
-                param(
-                    [parameter(Mandatory = $true)][string]$aiResourceId = $appInsightsAppId,
-                    [parameter(Mandatory = $true)][string]$releaseName = $OctopusParameters["Octopus.Release.Id"],
-                    [parameter(Mandatory = $false)]$releaseProperties = @()
-                )
+                #param(
+                #    [parameter(Mandatory = $true)][string]$aiResourceId = $appInsightsAppId,
+                #    [parameter(Mandatory = $true)][string]$releaseName = $OctopusParameters["Octopus.Release.Id"],
+                #    [parameter(Mandatory = $false)]$releaseProperties = @()
+                #)
                 
                 # Function to ensure all Unicode characters in a JSON string are properly escaped
                 function Convert-UnicodeToEscapeHex {
@@ -1586,6 +1586,12 @@ step "create-release-annotation" {
                     Category = "Deployment"; #Application Insights only displays annotations from the "Deployment" Category
                     Properties = ConvertTo-Json $releaseProperties -Compress
                 }
+                
+                $appInsights = Get-AzApplicationInsights -ResourceGroupName $ResourceGroupName -Name $AppInsightsName 
+                
+                $aiResourceId = $appInsights.AppId
+                $releaseName = $OctopusParameters["Octopus.Release.Id"]
+                $releaseProperties = @()
                 
                 $annotation = ConvertTo-Json $annotation -Compress
                 $annotation = Convert-UnicodeToEscapeHex -JsonString $annotation
