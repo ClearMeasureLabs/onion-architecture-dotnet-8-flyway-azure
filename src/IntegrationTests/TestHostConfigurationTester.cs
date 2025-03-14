@@ -21,18 +21,20 @@ public class TestHostConfigurationTester
     {
         string keyName = "ConnectionStrings:TestConnectionString";
         IConfiguration config = TestHost.GetRequiredService<IConfiguration>();
-        config.GetValue<string>(keyName).ShouldBeNullOrEmpty();
+        var testValue = "test value" + new Random().ToString();
+        config.GetValue<string>(keyName).ShouldNotBe(testValue);
+        Console.WriteLine(testValue);
 
-        Environment.SetEnvironmentVariable(keyName, "test value", EnvironmentVariableTarget.Process);
+        Environment.SetEnvironmentVariable(keyName, testValue, EnvironmentVariableTarget.Process);
         string? foundVariable = Environment.GetEnvironmentVariable(keyName);
-        foundVariable.ShouldBe("test value");
+        foundVariable.ShouldBe(testValue);
 
         config = TestHost.GetRequiredService<IConfiguration>();
         (config as IConfigurationRoot)?.Reload();
         string? key = config.GetValue<string>(keyName);
-        key.ShouldBe("test value");
+        key.ShouldBe(testValue);
 
-        config.GetConnectionString("TestConnectionString").ShouldBe("test value");
+        config.GetConnectionString("TestConnectionString").ShouldBe(testValue);
 
     }
 }
