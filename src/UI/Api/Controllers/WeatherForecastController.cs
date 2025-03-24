@@ -23,12 +23,12 @@ public class WeatherForecastController : ControllerBase
     public IEnumerable<WeatherForecast> Get()
     {
 
-        _logger.LogError("LogError Get Weather");
-        _logger.LogCritical("LogCritical Get Weather");
+        // _logger.LogError("LogError Get Weather");
+        // _logger.LogCritical("LogCritical Get Weather");
         _logger.LogDebug("LogDebug Get Weather");
         _logger.LogInformation("LogInformation Get Weather");
         _logger.LogTrace("LogTrace Get Weather");
-        _logger.LogWarning("LogWarning Get Weather");
+        // _logger.LogWarning("LogWarning Get Weather");
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),

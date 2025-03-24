@@ -19,9 +19,11 @@ public class UiServiceRegistry : ServiceRegistry
             scanner.AssemblyContainingType<CanConnectToDatabaseHealthCheck>();
             scanner.AssemblyContainingType<Api.HealthCheck>();
             scanner.AssemblyContainingType<Is64BitProcessHealthCheck>();
+            scanner.AssemblyContainingType<CanConnectToLlmServerHealthCheck>();
         });
 
         this.AddHealthChecks()
+            .AddCheck<CanConnectToLlmServerHealthCheck>("LlmGateway")
             .AddCheck<CanConnectToDatabaseHealthCheck>("DataAccess")
             .AddCheck<Is64BitProcessHealthCheck>("Server")
             .AddCheck<Api.HealthCheck>("API");
