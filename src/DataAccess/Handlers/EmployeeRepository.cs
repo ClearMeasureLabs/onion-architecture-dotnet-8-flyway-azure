@@ -21,7 +21,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers
         {
             return _context.Set<Employee>()
                 .Include("Roles")
-                .SingleOrDefault(emp => emp.UserName == userName)!;
+                .SingleOrDefault(emp => emp.UserName == userName);
         }
 
         public Employee[] GetEmployees(EmployeeSpecification spec)

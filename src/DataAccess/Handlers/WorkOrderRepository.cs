@@ -26,24 +26,27 @@ namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers
         {
             return _context.Set<WorkOrder>()
                 .Include(wo => wo.AuditEntries)
-                .SingleOrDefault(wo => wo.Number == number)!;
+                .SingleOrDefault(wo => wo.Number == number);
         }
 
         public WorkOrder[] GetWorkOrders(WorkOrderSearchSpecification specification)
         {
             IQueryable<WorkOrder> query = _context.Set<WorkOrder>();
 
-            if (specification.Assignee != null!)
+            if (specification.Assignee != null)
             {
                 query = query.Where(wo => wo.Assignee == specification.Assignee);
             }
 
-            if (specification.Creator != null!)
+            if (specification.Creator != null)
             {
                 query = query.Where(wo => wo.Creator == specification.Creator);
             }
 
-            query = query.Where(wo => wo.Status == specification.Status);
+            if (specification.Status != null)
+            {
+                query = query.Where(wo => wo.Status == specification.Status);
+            }
 
             return query.ToArray();
         }
