@@ -41,6 +41,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
+    <PackageReference Include="RhinoMocks" Version="3.6.1" />
     <PackageReference Include="Shouldly" Version="4.2.1" />
   </ItemGroup>
 
