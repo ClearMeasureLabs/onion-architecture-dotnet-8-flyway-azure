@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Core.Model
 {
-    public class Employee : IComparable<Employee>
+    public class Employee : IComparable<Employee>, IEquatable<Employee>
     {
         private string _emailAddress;
         private string _firstName;
@@ -11,7 +11,7 @@ namespace Core.Model
         private string _lastName;
         private ISet<Role> _roles = new HashSet<Role>();
         private string _userName;
-        
+
         public Employee()
         {
         }
@@ -122,49 +122,41 @@ namespace Core.Model
             return EmailAddress;
         }
 
+        #region Equality Members
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (Employee)) return false;
-            return Equals((Employee) obj);
+            if (obj.GetType() != typeof(Employee)) return false;
+            return Equals((Employee)obj);
         }
 
         public virtual bool Equals(Employee other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            if (Id == Guid.Empty) return false;
-            return other._id.Equals(_id);
+            return Id.Equals(other.Id) && !Id.Equals(Guid.Empty);
         }
 
         public override int GetHashCode()
         {
-            if (Id == Guid.Empty) return base.GetHashCode();
-            return _id.GetHashCode();
+            return Id.GetHashCode();
         }
 
-        public static bool operator ==(Employee a, Employee b)
+        public static bool operator ==(Employee left, Employee right)
         {
-            // If both are null, or both are same instance, return true.
-            if (ReferenceEquals(a, b))
-            {
-                return true;
-            }
+            if (ReferenceEquals(left, null))
+                return ReferenceEquals(right, null);
 
-            // If one is null, but not both, return false.
-            if (((object) a == null) || ((object) b == null))
-            {
-                return false;
-            }
-
-            // Return true if the fields match:
-            return a.Equals(b);
+            return left.Equals(right);
         }
 
-        public static bool operator !=(Employee a, Employee b)
+        public static bool operator !=(Employee left, Employee right)
         {
-            return !(a == b);
+            return !(left == right);
         }
+
+        #endregion
     }
 }
