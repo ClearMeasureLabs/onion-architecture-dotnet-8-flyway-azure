@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProgrammingWithPalermo.ChurchBulletin.Core;
+using DataAccess.Mappings;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 
@@ -23,6 +24,8 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         new ChurchBulletinMap().Map(modelBuilder);
+        new WorkOrderMap().Map(modelBuilder);
+        new AuditEntryMap().Map(modelBuilder);
     }
 
     public override string ToString()
