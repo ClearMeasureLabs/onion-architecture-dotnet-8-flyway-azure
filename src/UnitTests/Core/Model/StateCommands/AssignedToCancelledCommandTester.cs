@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using Core.Model;
 using Core.Model.StateCommands;
 using Core.Services;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Shouldly;
 
 namespace UnitTests.Core.Model.StateCommands
 {
@@ -56,24 +58,66 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Creator = employee;
 
-            var mocks = new MockRepository();
-            var dynamicMock = mocks.DynamicMock<IStateCommandVisitor>();
-            dynamicMock.SaveWorkOrder(order);
-            dynamicMock.SendMessage("You have cancelled work order 123");
-            dynamicMock.EditWorkOrder(order);
-            SetupResult.For(dynamicMock.GetService<ICalendar>()).Return(new StubbedCalendar(DateTime.Now));
-            mocks.ReplayAll();
-
             var command = new AssignedToCancelledCommand(order, employee);
-            command.Execute(dynamicMock, new LoggingNotifier());
+            VisitorStub visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
+            command.Execute(visitorStub, new LoggingNotifier());
 
-            mocks.VerifyAll();
+            visitorStub.SentMessage.ShouldBe("You have cancelled work order 123");
+            visitorStub.SavedWorkOrder.ShouldBe(order);
+            visitorStub.EdittedWorkOrder.ShouldBe(order);
             Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Cancelled));
         }
 
         protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)
         {
             return new AssignedToCancelledCommand(order, employee);
+        }
+    }
+
+    public class VisitorStub : IStateCommandVisitor
+    {
+        private object[] _services = [];
+        public WorkOrder SavedWorkOrder { get; set; }
+        public WorkOrder EdittedWorkOrder { get; set; }
+        public string SentMessage { get; set; }
+
+        public VisitorStub(params object[] services)
+        {
+            _services = services;
+        }
+        public void SaveWorkOrder(WorkOrder workOrder)
+        {
+            SavedWorkOrder = workOrder;
+        }
+
+        public void EditWorkOrder(WorkOrder workOrder)
+        {
+            EdittedWorkOrder = workOrder;
+        }
+
+        public void GoToWorkOrderSearch(Employee creator, Employee assignee, WorkOrderStatus status)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendMessage(string message)
+        {
+            SentMessage = message;
+        }
+
+        public void SendError(string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public T GetService<T>()
+        {
+            return (T)_services.Single(o => o is T);
+        }
+
+        public void GoToDashboard()
+        {
+            throw new NotImplementedException();
         }
     }
 }

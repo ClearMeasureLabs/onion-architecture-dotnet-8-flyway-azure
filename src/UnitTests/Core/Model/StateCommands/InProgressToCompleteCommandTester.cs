@@ -4,7 +4,7 @@ using Core.Model.StateCommands;
 using Core.Services;
 using Core.Services.Impl;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Shouldly;
 
 namespace UnitTests.Core.Model.StateCommands
 {
@@ -12,6 +12,7 @@ namespace UnitTests.Core.Model.StateCommands
     public class InProgressToCompleteCommandTester : StateCommandBaseTester
     {
         private ICalendar _calendar = new StubbedCalendar(new DateTime(2008, 3, 14));
+
         [Test]
         public void ShouldNotBeValidInWrongStatus()
         {
@@ -20,7 +21,7 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Assignee = employee;
            
-            var command = new InProgressToCompleteCommand(order, employee,_calendar);
+            var command = new InProgressToCompleteCommand(order, employee, _calendar);
             Assert.That(command.IsValid(), Is.False);
         }
 
@@ -32,7 +33,7 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Assignee = employee;
 
-            var command = new InProgressToCompleteCommand(order, new Employee(),_calendar);
+            var command = new InProgressToCompleteCommand(order, new Employee(), _calendar);
             Assert.That(command.IsValid(), Is.False);
         }
 
@@ -44,7 +45,7 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Assignee = employee;
 
-            var command = new InProgressToCompleteCommand(order, employee,_calendar);
+            var command = new InProgressToCompleteCommand(order, employee, _calendar);
             Assert.That(command.IsValid(), Is.True);
         }
 
@@ -57,29 +58,21 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Assignee = employee;
 
-            var mocks = new MockRepository();
-            var commandVisitor = mocks.StrictMock<IStateCommandVisitor>();
+            var visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
+            
+            var command = new InProgressToCompleteCommand(order, employee, _calendar);
+            command.Execute(visitorStub, new LoggingNotifier());
 
-            commandVisitor.SaveWorkOrder(order);
-            commandVisitor.SendMessage("You have completed work order 123");
-            commandVisitor.EditWorkOrder(order);
-            SetupResult.For(commandVisitor.GetService<ICalendar>()).Return(new StubbedCalendar(DateTime.Now));
-
-            var command = new InProgressToCompleteCommand(order, employee,_calendar);
-
-            mocks.ReplayAll();
-
-
-            command.Execute(commandVisitor, new LoggingNotifier());
-
-            mocks.VerifyAll();
+            visitorStub.SentMessage.ShouldBe("You have completed work order 123");
+            visitorStub.SavedWorkOrder.ShouldBe(order);
+            visitorStub.EdittedWorkOrder.ShouldBe(order);
             Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Complete));
             Assert.That(order.CompletedDate, Is.Not.Null);
         }
 
         protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)
         {
-            return new InProgressToCompleteCommand(order, employee,_calendar);
+            return new InProgressToCompleteCommand(order, employee, _calendar);
         }
     }
 }

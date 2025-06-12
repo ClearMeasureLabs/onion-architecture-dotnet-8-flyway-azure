@@ -6,13 +6,12 @@ using Core.Model;
 using Core.Model.StateCommands;
 using Core.Services;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Shouldly;
 
 namespace UnitTests.Core.Model.StateCommands
 {
     class CompleteToAssignedCommandTester
     {
-
         [Test]
         public void ShouldBeValid()
         {
@@ -46,17 +45,14 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Assignee = employee;
 
-            var mocks = new MockRepository();
-            var commandVisitor = mocks.DynamicMock<IStateCommandVisitor>();
-            commandVisitor.SaveWorkOrder(order);
-            commandVisitor.SendMessage("You have reassigned work order 123");
-            commandVisitor.EditWorkOrder(order);
-            mocks.ReplayAll();
-
+            var visitorStub = new VisitorStub();
+            
             var command = new CompleteToAssignedCommand(order, employee);
-            command.Execute(commandVisitor, new LoggingNotifier());
+            command.Execute(visitorStub, new LoggingNotifier());
 
-            mocks.VerifyAll();
+            visitorStub.SentMessage.ShouldBe("You have reassigned work order 123");
+            visitorStub.SavedWorkOrder.ShouldBe(order);
+            visitorStub.EdittedWorkOrder.ShouldBe(order);
             Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Assigned));
         }
 
@@ -72,7 +68,5 @@ namespace UnitTests.Core.Model.StateCommands
             var command = new CompleteToAssignedCommand(order, differentEmployee);
             Assert.That(command.IsValid(), Is.False);
         }
-
-
     }
 }

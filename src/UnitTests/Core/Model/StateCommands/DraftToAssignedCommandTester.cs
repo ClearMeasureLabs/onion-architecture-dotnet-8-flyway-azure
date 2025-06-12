@@ -4,7 +4,7 @@ using Core.Model.StateCommands;
 using Core.Services;
 using Core.Services.Impl;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Shouldly;
 
 namespace UnitTests.Core.Model.StateCommands
 {
@@ -21,7 +21,7 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Creator = employee;
 
-            var command = new DraftToAssignedCommand(order, employee,_calendar);
+            var command = new DraftToAssignedCommand(order, employee, _calendar);
             Assert.That(command.IsValid(), Is.False);
         }
 
@@ -46,7 +46,7 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Creator = employee;
 
-            var command = new DraftToAssignedCommand(order, employee,_calendar);
+            var command = new DraftToAssignedCommand(order, employee, _calendar);
             Assert.That(command.IsValid(), Is.True);
         }
 
@@ -59,25 +59,21 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Creator = employee;
 
-            var mocks = new MockRepository();
-            var commandVisitor = mocks.DynamicMock<IStateCommandVisitor>();
-            commandVisitor.SaveWorkOrder(order);
-            commandVisitor.SendMessage("You have assigned work order 123");
-            commandVisitor.EditWorkOrder(order);
-            SetupResult.For(commandVisitor.GetService<ICalendar>()).Return(new StubbedCalendar(DateTime.Now));
-            mocks.ReplayAll();
+            var visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
+            
+            var command = new DraftToAssignedCommand(order, employee, _calendar);
+            command.Execute(visitorStub, new LoggingNotifier());
 
-            var command = new DraftToAssignedCommand(order, employee,_calendar);
-            command.Execute(commandVisitor, new LoggingNotifier());
-
-            mocks.VerifyAll();
+            visitorStub.SentMessage.ShouldBe("You have assigned work order 123");
+            visitorStub.SavedWorkOrder.ShouldBe(order);
+            visitorStub.EdittedWorkOrder.ShouldBe(order);
             Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Assigned));
             Assert.That(order.AssignedDate, Is.Not.Null);
         }
-
+           
         protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)
         {
-            return new DraftToAssignedCommand(order, employee,new StubbedCalendar(DateTime.Now));
+            return new DraftToAssignedCommand(order, employee, new StubbedCalendar(DateTime.Now));
         }
     }
 }

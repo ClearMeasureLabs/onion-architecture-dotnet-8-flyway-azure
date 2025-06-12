@@ -2,7 +2,6 @@ using Core.Model;
 using Core.Model.StateCommands;
 using Core.Services;
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace UnitTests.Core.Model.StateCommands
 {
@@ -19,17 +18,13 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Creator = employee;
 
-            var mocks = new MockRepository();
-            var commandVisitor = mocks.DynamicMock<IStateCommandVisitor>();
-            commandVisitor.SaveWorkOrder(order);
-            commandVisitor.EditWorkOrder(order);
-            mocks.ReplayAll();
+            var commandVisitor = new VisitorStub();
 
             var stateCommandBase = GetStateCommand(order, employee);
 
             var notifierMock = new NotifierMock();
             stateCommandBase.Execute(commandVisitor, notifierMock);
-            mocks.VerifyAll();
+            
             if (stateCommandBase.TransitionVerbPastTense == "Saved")
             {
                 Assert.That(notifierMock.SentMessage1 == null);
@@ -40,8 +35,6 @@ namespace UnitTests.Core.Model.StateCommands
             }
         }
 
-
-
         [Test]
         public void ShouldSendMessageWhenStateChangedToAssigned()
         {
@@ -51,17 +44,12 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Assignee = employee;
 
-            var mocks = new MockRepository();
-            var commandVisitor = mocks.DynamicMock<IStateCommandVisitor>();
-            commandVisitor.SaveWorkOrder(order);
-            commandVisitor.EditWorkOrder(order);
-            mocks.ReplayAll();
+            var commandVisitor = new VisitorStub();
 
             var command = GetStateCommand(order, employee);
             var notifierMock = new NotifierMock();
             command.Execute(commandVisitor, notifierMock);
 
-            mocks.VerifyAll();
             if(command.ShouldSendAssignmentNotification())
             {
                 Assert.That(notifierMock.SentMessage != null);

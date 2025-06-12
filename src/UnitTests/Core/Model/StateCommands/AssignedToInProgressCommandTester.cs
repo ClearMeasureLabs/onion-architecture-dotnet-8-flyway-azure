@@ -4,7 +4,7 @@ using Core.Model.StateCommands;
 using Core.Services;
 using Core.Services.Impl;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Shouldly;
 
 namespace UnitTests.Core.Model.StateCommands
 {
@@ -56,18 +56,14 @@ namespace UnitTests.Core.Model.StateCommands
             var employee = new Employee();
             order.Assignee = employee;
 
-            var mocks = new MockRepository();
-            var commandVisitor = mocks.StrictMock<IStateCommandVisitor>();
-            commandVisitor.SaveWorkOrder(order);
-            commandVisitor.SendMessage("You have begun work order 123");
-            commandVisitor.EditWorkOrder(order);
-            SetupResult.For(commandVisitor.GetService<ICalendar>()).Return(new StubbedCalendar(DateTime.Now));
-            mocks.ReplayAll();
-
+            var visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
+            
             var command = new AssignedToInProgressCommand(order, employee);
-            command.Execute(commandVisitor, new LoggingNotifier());
+            command.Execute(visitorStub, new LoggingNotifier());
 
-            mocks.VerifyAll();
+            visitorStub.SentMessage.ShouldBe("You have begun work order 123");
+            visitorStub.SavedWorkOrder.ShouldBe(order);
+            visitorStub.EdittedWorkOrder.ShouldBe(order);
             Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.InProgress));
         }
 

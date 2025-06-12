@@ -4,7 +4,6 @@ using Core.Model.StateCommands;
 using Core.Services;
 using Core.Services.Impl;
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace UnitTests.Core.Services
 {
@@ -22,7 +21,6 @@ namespace UnitTests.Core.Services
             Assert.That(commands.Length, Is.EqualTo(0));
         }
 
-
         [Test]
         public void ShouldReturnAllStateCommandsInCorrectOrder()
         {
@@ -31,36 +29,48 @@ namespace UnitTests.Core.Services
 
             Assert.That(commands.Length, Is.EqualTo(10));
 
-            Assert.That(commands[0], Is.InstanceOf(typeof (SaveDraftCommand)));
-            Assert.That(commands[1], Is.InstanceOf(typeof (DraftToAssignedCommand)));
-            Assert.That(commands[2], Is.InstanceOf(typeof (AssignedToDraftCommand)));
-            Assert.That(commands[3], Is.InstanceOf(typeof (AssignedToInProgressCommand)));
-            Assert.That(commands[4], Is.InstanceOf(typeof (InProgressToAssignedCommand)));
-            Assert.That(commands[5], Is.InstanceOf(typeof (InProgressToCompleteCommand)));
+            Assert.That(commands[0], Is.InstanceOf(typeof(SaveDraftCommand)));
+            Assert.That(commands[1], Is.InstanceOf(typeof(DraftToAssignedCommand)));
+            Assert.That(commands[2], Is.InstanceOf(typeof(AssignedToDraftCommand)));
+            Assert.That(commands[3], Is.InstanceOf(typeof(AssignedToInProgressCommand)));
+            Assert.That(commands[4], Is.InstanceOf(typeof(InProgressToAssignedCommand)));
+            Assert.That(commands[5], Is.InstanceOf(typeof(InProgressToCompleteCommand)));
             Assert.That(commands[6], Is.InstanceOf(typeof(CompleteToAssignedCommand)));
             Assert.That(commands[7], Is.InstanceOf(typeof(AssignedToDraftForWithdrawCommand)));
-            Assert.That(commands[8], Is.InstanceOf(typeof (InProgressToCancelledCommand)));
+            Assert.That(commands[8], Is.InstanceOf(typeof(InProgressToCancelledCommand)));
             Assert.That(commands[9], Is.InstanceOf(typeof(AssignedToCancelledCommand)));
         }
 
         [Test]
         public void ShouldFilterFullListToReturnValidCommands()
         {
-            var mocks = new MockRepository();
-            var facilitator = mocks.PartialMock<WorkflowFacilitator>(new StubbedCalendar(new DateTime(2000, 1, 1)));
+            var stubFacilitator = new StubWorkflowFacilitator(new StubbedCalendar(new DateTime(2000, 1, 1)));
             var commandsToReturn = new IStateCommand[]
-                                       {
-                                           new StubbedStateCommand(true), new StubbedStateCommand(true),
-                                           new StubbedStateCommand(false)
-                                       };
+            {
+                new StubbedStateCommand(true), 
+                new StubbedStateCommand(true),
+                new StubbedStateCommand(false)
+            };
 
-            Expect.Call(facilitator.GetAllStateCommands(null, null)).IgnoreArguments().Return(commandsToReturn);
-            mocks.ReplayAll();
+            stubFacilitator.CommandsToReturn = commandsToReturn;
 
-            IStateCommand[] commands = facilitator.GetValidStateCommands(null, null);
+            IStateCommand[] commands = stubFacilitator.GetValidStateCommands(null, null);
 
-            mocks.VerifyAll();
             Assert.That(commands.Length, Is.EqualTo(2));
+        }
+
+        public class StubWorkflowFacilitator : WorkflowFacilitator
+        {
+            public IStateCommand[] CommandsToReturn { get; set; }
+
+            public StubWorkflowFacilitator(ICalendar calendar) : base(calendar)
+            {
+            }
+
+            public override IStateCommand[] GetAllStateCommands(WorkOrder workOrder, Employee employee)
+            {
+                return CommandsToReturn;
+            }
         }
 
         public class StubbedStateCommand : IStateCommand
