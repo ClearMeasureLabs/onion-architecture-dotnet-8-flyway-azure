@@ -1,5 +1,6 @@
 ﻿using Core.Model;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Core.Services
 {
@@ -7,9 +8,9 @@ namespace Core.Services
     {
         private readonly ILogger<LoggingNotifier> _logger;
 
-        public LoggingNotifier(ILogger<LoggingNotifier> logger)
+        public LoggingNotifier()
         {
-            _logger = logger;
+            _logger = new NullLogger<LoggingNotifier>();
         }
 
         public void SendAssignedNotification(string message, Employee employee)

@@ -19,12 +19,12 @@ public class ChurchBulletinItemController : ControllerBase
     [HttpGet]
     public IEnumerable<ChurchBulletinItem> Get()
     {
-        _logger.LogError("LogError Get ChurchBulletin");
-        _logger.LogCritical("LogCritical Get ChurchBulletin");
+        // _logger.LogError("LogError Get ChurchBulletin");
+        // _logger.LogCritical("LogCritical Get ChurchBulletin");
         _logger.LogDebug("LogDebug Get ChurchBulletin");
         _logger.LogInformation("LogInformation Get ChurchBulletin");
         _logger.LogTrace("LogTrace Get ChurchBulletin");
-        _logger.LogWarning("LogWarning Get ChurchBulletin");
+        // _logger.LogWarning("LogWarning Get ChurchBulletin");
 
         IEnumerable<ChurchBulletinItem> items = _handler.Handle(
             new ChurchBulletinItemByDateAndTimeQuery(new DateTime(2000, 1,1)));

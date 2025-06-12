@@ -1,0 +1,93 @@
+using Core.Model;
+using Core.Model.StateCommands;
+using Core.Services;
+using NUnit.Framework;
+using Rhino.Mocks;
+
+namespace UnitTests.Core.Model.StateCommands
+{
+    public abstract class StateCommandBaseTester
+    {
+        protected abstract StateCommandBase GetStateCommand(WorkOrder order, Employee employee);
+
+
+        [Test]
+        public virtual void SendChangeStateNotificationShouldSendWhenStatusChanges()
+        {
+            var order = new WorkOrder();
+            order.Status = WorkOrderStatus.Complete;
+            var employee = new Employee();
+            order.Creator = employee;
+
+            var mocks = new MockRepository();
+            var commandVisitor = mocks.DynamicMock<IStateCommandVisitor>();
+            commandVisitor.SaveWorkOrder(order);
+            commandVisitor.EditWorkOrder(order);
+            mocks.ReplayAll();
+
+            var stateCommandBase = GetStateCommand(order, employee);
+
+            var notifierMock = new NotifierMock();
+            stateCommandBase.Execute(commandVisitor, notifierMock);
+            mocks.VerifyAll();
+            if (stateCommandBase.TransitionVerbPastTense == "Saved")
+            {
+                Assert.That(notifierMock.SentMessage1 == null);
+            }
+            else
+            {
+                Assert.That(notifierMock.SentMessage1 != null);
+            }
+        }
+
+
+
+        [Test]
+        public void ShouldSendMessageWhenStateChangedToAssigned()
+        {
+            var order = new WorkOrder();
+            order.Number = "123";
+            order.Status = WorkOrderStatus.Assigned;
+            var employee = new Employee();
+            order.Assignee = employee;
+
+            var mocks = new MockRepository();
+            var commandVisitor = mocks.DynamicMock<IStateCommandVisitor>();
+            commandVisitor.SaveWorkOrder(order);
+            commandVisitor.EditWorkOrder(order);
+            mocks.ReplayAll();
+
+            var command = GetStateCommand(order, employee);
+            var notifierMock = new NotifierMock();
+            command.Execute(commandVisitor, notifierMock);
+
+            mocks.VerifyAll();
+            if(command.ShouldSendAssignmentNotification())
+            {
+                Assert.That(notifierMock.SentMessage != null);
+            }
+            else
+            {
+                Assert.That(notifierMock.SentMessage == null);
+            }
+        }
+
+        public class NotifierMock : INotifier
+        {
+            public Employee SentEmployee;
+            public string SentMessage;
+            public string SentMessage1;
+
+            public void SendAssignedNotification(string message, Employee employee)
+            {
+                SentMessage = message;
+                SentEmployee = employee;
+            }
+
+            public void SendChangeStateNotification(string message)
+            {
+                SentMessage1 = message; 
+            }
+        }
+    }
+}

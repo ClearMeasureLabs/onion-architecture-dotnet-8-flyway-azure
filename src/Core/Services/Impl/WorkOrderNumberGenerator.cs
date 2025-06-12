@@ -1,0 +1,12 @@
+using System;
+
+namespace Core.Services.Impl
+{
+	public class WorkOrderNumberGenerator : IWorkOrderNumberGenerator
+	{
+		public string GenerateNumber()
+		{
+			return Guid.NewGuid().ToString().Substring(0, 5).ToUpper();
+		}
+	}
+}
