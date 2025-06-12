@@ -7,7 +7,7 @@ namespace Core.Services
 		Employee GetCurrentUser();
 		void LogIn(Employee employee);
 		void LogOut();
-		void PushUserMessage(FlashMessage message);
+		void PushUserMessage(FlashMessage? message);
 		FlashMessage PopUserMessage();
 	}
 }

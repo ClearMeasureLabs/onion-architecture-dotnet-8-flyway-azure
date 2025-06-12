@@ -1,60 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Core.Model
+﻿namespace Core.Model
 {
     public class AuditEntry
     {
-        private Employee _employee;
-        private DateTime _date;
-        private string _archivedEmployeeName;
-        private WorkOrderStatus _beginStatus;
-        private WorkOrderStatus _endStatus;
-
         public AuditEntry()
         {
+            Employee = null!;
+            Date = DateTime.MinValue;
+            ArchivedEmployeeName = null!;
+            BeginStatus = WorkOrderStatus.None;
+            EndStatus = WorkOrderStatus.None;
         }
 
         public AuditEntry(Employee employee, DateTime date, WorkOrderStatus beginStatus, WorkOrderStatus endStatus)
         {
-            _employee = employee;
-            _date = date;
-            _archivedEmployeeName = employee.GetFullName();
-            _beginStatus = beginStatus;
-            _endStatus = endStatus;
+            Employee = employee;
+            Date = date;
+            ArchivedEmployeeName = employee.GetFullName();
+            BeginStatus = beginStatus;
+            EndStatus = endStatus;
         }
 
-        public virtual Employee Employee
-        {
-            get { return _employee; }
-            set { _employee = value; }
-        }
+        public Employee Employee { get; set; }
 
-        public virtual DateTime Date
-        {
-            get { return _date; }
-            set { _date = value; }
-        }
+        public DateTime Date { get; set; }
 
-        public virtual string ArchivedEmployeeName
-        {
-            get { return _archivedEmployeeName; }
-            set { _archivedEmployeeName = value; }
-        }
+        public string ArchivedEmployeeName { get; set; }
 
-        public virtual WorkOrderStatus BeginStatus
-        {
-            get { return _beginStatus; }
-            set { _beginStatus = value; }
-        }
+        public WorkOrderStatus BeginStatus { get; set; }
 
-        public virtual WorkOrderStatus  EndStatus
-        {
-            get { return _endStatus; }
-            set { _endStatus = value; }
-        }
+        public WorkOrderStatus EndStatus { get; set; }
     }
 }
-          

@@ -1,5 +1,3 @@
-using System;
-
 namespace Core.Model
 {
     public class Role
@@ -13,18 +11,15 @@ namespace Core.Model
 
         public Role()
         {
-            
+            Name = null!;
         }
 
-        public virtual string Name
-        {
-            get; set;
-        }
+        public string Name { get; set; }
 
-        public virtual Guid Id { get; set; }
+        public Guid Id { get; set; }
 
-        public virtual bool CanCreateWorkOrder { get; set; }
+        public bool CanCreateWorkOrder { get; set; }
 
-        public virtual bool CanFulfillWorkOrder { get; set; }
+        public bool CanFulfillWorkOrder { get; set; }
     }
 }

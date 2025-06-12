@@ -19,8 +19,11 @@ namespace Core.Model
 		private string _key;
 
 	    protected WorkOrderStatus()
-		{
-		}
+        {
+            _code = null!;
+			_key = null!;
+			FriendlyName = null!;
+        }
 
 		protected WorkOrderStatus(string code, string key, string friendlyName, byte sortBy)
 		{
@@ -56,12 +59,12 @@ namespace Core.Model
 
 	    public byte SortBy { get; set; }
 
-	    public override bool Equals(object obj)
+	    public override bool Equals(object? obj)
 		{
 			var code = obj as WorkOrderStatus;
 			if (code == null) return false;
 
-			if (!GetType().Equals(obj.GetType())) return false;
+			if (GetType() != obj!.GetType()) return false;
 
 			return _code.Equals(code.Code);
 		}
@@ -85,15 +88,9 @@ namespace Core.Model
 		{
 			WorkOrderStatus[] items = GetAllItems();
 			WorkOrderStatus match =
-				Array.Find(items, delegate(WorkOrderStatus instance) { return instance.Code == code; });
+				Array.Find(items, instance => instance.Code == code)!;
 
-			if (match == null)
-			{
-				_logger.LogWarning("WorkOrderStatusCode code {0} out of range.", code);
-				match = None;
-			}
-
-			return match;
+            return match;
 		}
 
 		public static WorkOrderStatus FromKey(string key) 
@@ -104,11 +101,13 @@ namespace Core.Model
 			}
 
 			WorkOrderStatus[] items = GetAllItems();
-			WorkOrderStatus match = Array.Find(items, delegate(WorkOrderStatus instance) { return (instance.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase)); });
+			WorkOrderStatus match = Array.Find(items,
+                instance => (instance.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase)))!;
 
 			if (match == null)
 			{
-				throw new ArgumentOutOfRangeException(string.Format("Key '{0}' is not a valid key for {1}", key, typeof(WorkOrderStatus).Name));
+				throw new ArgumentOutOfRangeException(
+                    $"Key '{key}' is not a valid key for {nameof(WorkOrderStatus)}");
 			}
 
 			return match;

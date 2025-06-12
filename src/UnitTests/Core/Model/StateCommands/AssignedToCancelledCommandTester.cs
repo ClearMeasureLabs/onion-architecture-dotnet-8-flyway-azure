@@ -15,8 +15,10 @@ namespace UnitTests.Core.Model.StateCommands
         [Test]
         public void ShouldBeValid()
         {
-            var order = new WorkOrder();
-            order.Status = WorkOrderStatus.Assigned;
+            var order = new WorkOrder
+            {
+                Status = WorkOrderStatus.Assigned
+            };
             var employee = new Employee();
             order.Creator = employee;
 
@@ -27,8 +29,10 @@ namespace UnitTests.Core.Model.StateCommands
         [Test]
         public void ShouldNotBeValidInWrongStatus()
         {
-            var order = new WorkOrder();
-            order.Status = WorkOrderStatus.Draft;
+            var order = new WorkOrder
+            {
+                Status = WorkOrderStatus.Draft
+            };
             var employee = new Employee();
             order.Creator = employee;
 
@@ -39,8 +43,10 @@ namespace UnitTests.Core.Model.StateCommands
         [Test]
         public void ShouldNotBeValidWithWrongEmployee()
         {
-            var order = new WorkOrder();
-            order.Status = WorkOrderStatus.Assigned;
+            var order = new WorkOrder
+            {
+                Status = WorkOrderStatus.Assigned
+            };
             var employee = new Employee();
             var differentEmployee = new Employee();
             order.Creator = employee;
@@ -52,9 +58,11 @@ namespace UnitTests.Core.Model.StateCommands
         [Test]
         public void ShouldTransitionStateProperly()
         {
-            var order = new WorkOrder();
-            order.Number = "123";
-            order.Status = WorkOrderStatus.Assigned;
+            var order = new WorkOrder
+            {
+                Number = "123",
+                Status = WorkOrderStatus.Assigned
+            };
             var employee = new Employee();
             order.Creator = employee;
 
@@ -64,7 +72,7 @@ namespace UnitTests.Core.Model.StateCommands
 
             visitorStub.SentMessage.ShouldBe("You have cancelled work order 123");
             visitorStub.SavedWorkOrder.ShouldBe(order);
-            visitorStub.EdittedWorkOrder.ShouldBe(order);
+            visitorStub.EditedWorkOrder.ShouldBe(order);
             Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Cancelled));
         }
 
@@ -74,17 +82,12 @@ namespace UnitTests.Core.Model.StateCommands
         }
     }
 
-    public class VisitorStub : IStateCommandVisitor
+    public class VisitorStub(params object[] services) : IStateCommandVisitor
     {
-        private object[] _services = [];
-        public WorkOrder SavedWorkOrder { get; set; }
-        public WorkOrder EdittedWorkOrder { get; set; }
-        public string SentMessage { get; set; }
+        public WorkOrder SavedWorkOrder { get; set; } = null!;
+        public WorkOrder EditedWorkOrder { get; set; } = null!;
+        public string SentMessage { get; set; } = null!;
 
-        public VisitorStub(params object[] services)
-        {
-            _services = services;
-        }
         public void SaveWorkOrder(WorkOrder workOrder)
         {
             SavedWorkOrder = workOrder;
@@ -92,7 +95,7 @@ namespace UnitTests.Core.Model.StateCommands
 
         public void EditWorkOrder(WorkOrder workOrder)
         {
-            EdittedWorkOrder = workOrder;
+            EditedWorkOrder = workOrder;
         }
 
         public void GoToWorkOrderSearch(Employee creator, Employee assignee, WorkOrderStatus status)
@@ -112,7 +115,7 @@ namespace UnitTests.Core.Model.StateCommands
 
         public T GetService<T>()
         {
-            return (T)_services.Single(o => o is T);
+            return (T)services.Single(o => o is T);
         }
 
         public void GoToDashboard()

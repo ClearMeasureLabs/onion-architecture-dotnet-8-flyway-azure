@@ -13,7 +13,7 @@ namespace Core.Services.Impl
         public void SendMessage(string emailAddress, string message)
         {
             string flashMessage = string.Format("'{0}' sent to '{1}'", message, emailAddress);
-            FlashMessage flash = new FlashMessage(FlashMessage.MessageType.Message, flashMessage);
+            FlashMessage? flash = new FlashMessage(FlashMessage.MessageType.Message, flashMessage);
            _session.PushUserMessage(flash);
         }
     }

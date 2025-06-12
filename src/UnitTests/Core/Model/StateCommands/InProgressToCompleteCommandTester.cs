@@ -65,7 +65,7 @@ namespace UnitTests.Core.Model.StateCommands
 
             visitorStub.SentMessage.ShouldBe("You have completed work order 123");
             visitorStub.SavedWorkOrder.ShouldBe(order);
-            visitorStub.EdittedWorkOrder.ShouldBe(order);
+            visitorStub.EditedWorkOrder.ShouldBe(order);
             Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Complete));
             Assert.That(order.CompletedDate, Is.Not.Null);
         }

@@ -54,18 +54,14 @@ namespace UnitTests.Core.Services
 
             stubFacilitator.CommandsToReturn = commandsToReturn;
 
-            IStateCommand[] commands = stubFacilitator.GetValidStateCommands(null, null);
+            IStateCommand[] commands = stubFacilitator.GetValidStateCommands(null!, null!);
 
             Assert.That(commands.Length, Is.EqualTo(2));
         }
 
-        public class StubWorkflowFacilitator : WorkflowFacilitator
+        public class StubWorkflowFacilitator(ICalendar calendar) : WorkflowFacilitator(calendar)
         {
-            public IStateCommand[] CommandsToReturn { get; set; }
-
-            public StubWorkflowFacilitator(ICalendar calendar) : base(calendar)
-            {
-            }
+            public IStateCommand[] CommandsToReturn { get; set; } = null!;
 
             public override IStateCommand[] GetAllStateCommands(WorkOrder workOrder, Employee employee)
             {

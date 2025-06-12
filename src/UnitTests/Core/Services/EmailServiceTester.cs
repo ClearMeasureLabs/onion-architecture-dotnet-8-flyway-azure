@@ -17,13 +17,13 @@ namespace UnitTests.Core.Services
             IEmailService service = new EmailService(userSession);
             service.SendMessage("bleh", "that's cool");
 
-            Assert.That(userSession.FlashMessage.Message,
+            Assert.That(userSession.FlashMessage!.Message,
                         Is.EqualTo("'that's cool' sent to 'bleh'"));
         }
 
         public class SessionStub : IUserSession
         {
-            public FlashMessage FlashMessage;
+            public FlashMessage? FlashMessage;
 
             public Employee GetCurrentUser()
             {
@@ -40,7 +40,7 @@ namespace UnitTests.Core.Services
                 throw new NotImplementedException();
             }
 
-            public void PushUserMessage(FlashMessage message)
+            public void PushUserMessage(FlashMessage? message)
             {
                 FlashMessage = message;
             }

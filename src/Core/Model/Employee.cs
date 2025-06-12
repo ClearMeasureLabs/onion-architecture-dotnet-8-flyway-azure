@@ -5,73 +5,46 @@ namespace Core.Model
 {
     public class Employee : IComparable<Employee>, IEquatable<Employee>
     {
-        private string _emailAddress;
-        private string _firstName;
-        private Guid _id;
-        private string _lastName;
-        private ISet<Role> _roles = new HashSet<Role>();
-        private string _userName;
-
         public Employee()
         {
+            UserName = null!;
+            EmailAddress = null!;
+            FirstName = null!;
+            LastName = null!;
         }
 
         public Employee(string userName, string firstName, string lastName, string emailAddress)
         {
-            _userName = userName;
-            _firstName = firstName;
-            _lastName = lastName;
-            _emailAddress = emailAddress;
+            UserName = userName;
+            FirstName = firstName;
+            LastName = lastName;
+            EmailAddress = emailAddress;
         }
 
-        public virtual Guid Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
+        public Guid Id { get; set; }
 
-        public virtual string UserName
-        {
-            get { return _userName; }
-            set { _userName = value; }
-        }
+        public string UserName { get; set; }
 
-        public virtual string FirstName
-        {
-            get { return _firstName; }
-            set { _firstName = value; }
-        }
+        public string FirstName { get; set; }
 
-        public virtual string LastName
-        {
-            get { return _lastName; }
-            set { _lastName = value; }
-        }
+        public string LastName { get; set; }
 
-        public virtual string EmailAddress
-        {
-            get { return _emailAddress; }
-            set { _emailAddress = value; }
-        }
+        public string EmailAddress { get; set; }
 
-        private ISet<Role> Roles
-        {
-            get { return _roles; }
-            set { _roles = value; }
-        }
+        private ISet<Role> Roles { get; set; } = new HashSet<Role>();
 
-        public virtual int CompareTo(Employee other)
+        public int CompareTo(Employee? other)
         {
-            int compareResult = LastName.CompareTo(other.LastName);
+            int compareResult = String.Compare(LastName, other!.LastName, StringComparison.Ordinal);
             if (compareResult == 0)
             {
-                compareResult = FirstName.CompareTo(other.FirstName);
+                compareResult = String.Compare(FirstName, other.FirstName, StringComparison.Ordinal);
             }
 
             return compareResult;
         }
 
-        public virtual string GetFullName()
+        public string GetFullName()
         {
             return string.Format("{0} {1}", FirstName, LastName);
         }
@@ -81,7 +54,7 @@ namespace Core.Model
             return GetFullName();
         }
 
-        public virtual bool CanCreateWorkOrder()
+        public bool CanCreateWorkOrder()
         {
             foreach (Role role in Roles)
             {
@@ -94,7 +67,7 @@ namespace Core.Model
             return false;
         }
 
-        public virtual bool CanFulfilWorkOrder()
+        public bool CanFulfilWorkOrder()
         {
             foreach (Role role in Roles)
             {
@@ -107,24 +80,24 @@ namespace Core.Model
             return false;
         }
 
-        public virtual void AddRole(Role role)
+        public void AddRole(Role role)
         {
             Roles.Add(role);
         }
 
-        public virtual Role[] GetRoles()
+        public Role[] GetRoles()
         {
             return new List<Role>(Roles).ToArray();
         }
 
-        public virtual string GetNotificationEmail(DayOfWeek day)
+        public string GetNotificationEmail(DayOfWeek day)
         {
             return EmailAddress;
         }
 
         #region Equality Members
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
@@ -132,7 +105,7 @@ namespace Core.Model
             return Equals((Employee)obj);
         }
 
-        public virtual bool Equals(Employee other)
+        public virtual bool Equals(Employee? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;

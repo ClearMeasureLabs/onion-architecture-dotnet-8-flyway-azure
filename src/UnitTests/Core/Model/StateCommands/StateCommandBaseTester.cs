@@ -13,8 +13,10 @@ namespace UnitTests.Core.Model.StateCommands
         [Test]
         public virtual void SendChangeStateNotificationShouldSendWhenStatusChanges()
         {
-            var order = new WorkOrder();
-            order.Status = WorkOrderStatus.Complete;
+            var order = new WorkOrder
+            {
+                Status = WorkOrderStatus.Complete
+            };
             var employee = new Employee();
             order.Creator = employee;
 
@@ -62,9 +64,9 @@ namespace UnitTests.Core.Model.StateCommands
 
         public class NotifierMock : INotifier
         {
-            public Employee SentEmployee;
-            public string SentMessage;
-            public string SentMessage1;
+            public Employee? SentEmployee;
+            public string? SentMessage;
+            public string? SentMessage1;
 
             public void SendAssignedNotification(string message, Employee employee)
             {

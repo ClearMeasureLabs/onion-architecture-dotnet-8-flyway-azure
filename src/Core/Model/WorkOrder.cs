@@ -1,99 +1,54 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using Core.Model;
-
 namespace Core.Model
 {
     public class WorkOrder
     {
-        private Guid _id;
-        private string _title = "";
         private string _description = "";
-        private string _roomNumber;
-        private WorkOrderStatus _status = WorkOrderStatus.Draft;
-        private Employee _creator;
-        private Employee _assignee;
-        private string _number;
-        private DateTime? _assignedDate;
-        private DateTime? _createdDate;
-        private DateTime? _completedDate;
-        private IList<AuditEntry> _auditEntries;
 
         public WorkOrder()
         {
-            _auditEntries = new List<AuditEntry>();
+            AuditEntries = new List<AuditEntry>();
         }
 
-        public IList<AuditEntry> AuditEntries
+        public IList<AuditEntry> AuditEntries { get; set; }
+
+        public Guid Id { get; set; }
+
+        public string Title { get; set; } = "";
+
+        public string Description
         {
-            get { return _auditEntries; }
-            set { _auditEntries = value; }
+            get => _description;
+            set => _description = getTruncatedString(value);
         }
 
-        public virtual Guid Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
+        public string RoomNumber { get; set; } = null!;
 
-        public virtual string Title
-    	{
-    		get { return _title; }
-    		set { _title = value; }
-    	}
+        public WorkOrderStatus Status { get; set; } = WorkOrderStatus.Draft;
 
-        public virtual string Description
-		{
-			get { return _description; }
-			set { _description = getTruncatedString(value); }
-		}
+        public Employee Creator { get; set; } = null!;
 
-        public string RoomNumber
-        {
-            get { return _roomNumber; }
-            set { _roomNumber = value; }
-        }
+        public Employee Assignee { get; set; } = null!; 
+
+        public string Number { get; set; } = null!;
+
+        public string FriendlyStatus => getTextForStatus();
+
+
+        public DateTime? AssignedDate { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? CompletedDate { get; set; }
 
         private string getTruncatedString(string value)
-		{
+        {
             if (value == null)
                 return string.Empty;
-			int maxLength = Math.Min(4000, value.Length);
-			return value.Substring(0, maxLength);
-		}
-
-        public virtual WorkOrderStatus Status
-		{
-			get { return _status; }
-			set { _status = value; }
-		}
-
-        public virtual Employee Creator
-        {
-            get { return _creator; }
-            set { _creator = value; }
+            var maxLength = Math.Min(4000, value.Length);
+            return value.Substring(0, maxLength);
         }
 
-        public virtual Employee Assignee
-        {
-            get { return _assignee; }
-            set { _assignee = value; }
-        }
-
-        public virtual string Number
-        {
-            get { return _number; }
-            set { _number = value; }
-        }
-
-        public virtual string FriendlyStatus
-        {
-            get { return getTextForStatus(); }
-        }
-
-        protected virtual string getTextForStatus()
+        protected string getTextForStatus()
         {
             return Status.ToString();
         }
@@ -103,41 +58,21 @@ namespace Core.Model
             return "Work Order " + Number;
         }
 
-        public virtual void ChangeStatus(WorkOrderStatus status)
+        public void ChangeStatus(WorkOrderStatus status)
         {
             Status = status;
         }
 
-        public virtual void ChangeStatus(Employee employee, DateTime date, WorkOrderStatus status)
+        public void ChangeStatus(Employee employee, DateTime date, WorkOrderStatus status)
         {
-            AuditEntry auditItem = new AuditEntry(employee, date, _status, status);
+            var auditItem = new AuditEntry(employee, date, Status, status);
             AuditEntries.Add(auditItem);
             Status = status;
         }
 
         public string GetTweetMessage()
         {
-            return "Work Order " + Number + " is now in Status "+ Status;
+            return "Work Order " + Number + " is now in Status " + Status;
         }
-
-       
-        public DateTime? AssignedDate
-          {
-            get { return _assignedDate; }
-            set { _assignedDate = value; }
-          }
-
-        public DateTime? CreatedDate
-        {
-            get { return _createdDate; }
-            set { _createdDate = value; }
-        }
-
-        public DateTime? CompletedDate
-        {
-            get { return _completedDate; }
-            set { _completedDate = value; }
-        }
-
     }
 }
