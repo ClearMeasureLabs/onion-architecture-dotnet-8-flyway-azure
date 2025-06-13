@@ -40,10 +40,44 @@ namespace DataAccess.Mappings
                       .HasConversion(statusConverter)
                       .HasMaxLength(3);
 
-                // Configure AuditEntries collection
+                // Configure AuditEntries collection with index-based ordering
                 entity.HasMany(e => e.AuditEntries)
                       .WithOne()
-                      .HasForeignKey("WorkOrderId");
+                      .HasForeignKey("WorkOrderId")
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<AuditEntry>(entity =>
+            {
+                entity.ToTable("AuditEntry", "dbo");
+
+                // Add shadow property for Sequence with explicit type
+                entity.Property<int>("Sequence")
+                    .ValueGeneratedOnAdd()
+                    .IsRequired();
+                
+                // Configure the composite key using the shadow property
+                entity.HasKey("WorkOrderId", "Sequence");
+
+                entity.Property(e => e.ArchivedEmployeeName).HasMaxLength(50);
+                entity.Property(e => e.Date).IsRequired();
+
+                // Configure Employee relationship
+                entity.HasOne(e => e.Employee)
+                    .WithMany()
+                    .HasForeignKey("EmployeeId")
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Configure conversion for the WorkOrderStatus properties
+                entity.Property(e => e.BeginStatus)
+                    .HasConversion(statusConverter)
+                    .HasMaxLength(3)
+                    .HasColumnType("char(3)");
+
+                entity.Property(e => e.EndStatus)
+                    .HasConversion(statusConverter)
+                    .HasMaxLength(3)
+                    .HasColumnType("char(3)");
             });
         }
     }

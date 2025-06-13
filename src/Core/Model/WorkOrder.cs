@@ -21,13 +21,13 @@ namespace Core.Model
             set => _description = getTruncatedString(value);
         }
 
-        public string RoomNumber { get; set; } = null!;
+        public string? RoomNumber { get; set; } = null;
 
         public WorkOrderStatus Status { get; set; } = WorkOrderStatus.Draft;
 
-        public Employee Creator { get; set; } = null!;
+        public Employee? Creator { get; set; } = null;
 
-        public Employee Assignee { get; set; } = null!; 
+        public Employee? Assignee { get; set; } = null; 
 
         public string Number { get; set; } = null!;
 

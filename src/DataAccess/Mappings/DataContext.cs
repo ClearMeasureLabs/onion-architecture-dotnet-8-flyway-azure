@@ -25,7 +25,6 @@ public class DataContext : DbContext
     {
         new ChurchBulletinMap().Map(modelBuilder);
         new WorkOrderMap().Map(modelBuilder);
-        new AuditEntryMap().Map(modelBuilder);
         new EmployeeMap().Map(modelBuilder);
         new RoleMap().Map(modelBuilder);
     }
