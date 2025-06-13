@@ -67,6 +67,7 @@ namespace UnitTests.Core.Model.StateCommands
             visitorStub.SentMessage.ShouldBe("You have assigned work order 123");
             visitorStub.SavedWorkOrder.ShouldBe(order);
             visitorStub.EditedWorkOrder.ShouldBe(order);
+
             Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Assigned));
             Assert.That(order.AssignedDate, Is.Not.Null);
         }

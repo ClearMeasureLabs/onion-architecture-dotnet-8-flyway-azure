@@ -1,4 +1,5 @@
-﻿using Core.Services;
+﻿using System.Diagnostics;
+using Core.Services;
 
 namespace Core.Model.StateCommands
 {
@@ -41,6 +42,7 @@ namespace Core.Model.StateCommands
 
         protected override void sendAssignedNotification(INotifier notifier)
         {
+            Debug.Assert(_workOrder.Assignee != null, "_workOrder.Assignee != null");
             notifier.SendAssignedNotification(string.Format("Work order {0} assigned to you.", _workOrder.Number), _workOrder.Assignee);
         }
     }
