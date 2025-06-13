@@ -17,7 +17,7 @@ namespace IntegrationTests.DataAccess
             using var context = ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.TestHost.GetRequiredService<DbContext>();
             var query = context.Set<WorkOrder>()
                 .Include(w => w.Creator)
-                .Where(w => w.Creator.FirstName == "P-Mo")
+                .Where(w => w.Creator!.FirstName == "P-Mo")
                 .OrderBy(w => w.Number);
 
             var list = query.ToList();
@@ -34,13 +34,13 @@ namespace IntegrationTests.DataAccess
             using var context = ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.TestHost.GetRequiredService<DbContext>();
             var list = context.Set<WorkOrder>()
                 .Include(w => w.Creator)
-                .Where(w => w.Creator.FirstName == "P-Mo")
+                .Where(w => w.Creator!.FirstName == "P-Mo")
                 .ToList();
 
             foreach (var order in list)
             {
                 Console.WriteLine(order);
-                Console.WriteLine(order.Creator.EmailAddress);
+                Console.WriteLine(order.Creator!.EmailAddress);
                 order.Creator.EmailAddress = "foo@bar.com";
                 Console.WriteLine(order.Creator.EmailAddress);
             }

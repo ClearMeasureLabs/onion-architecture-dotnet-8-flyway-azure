@@ -18,7 +18,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers
 
         public void Save(WorkOrder workOrder)
         {
-            _context.Set<WorkOrder>().Update(workOrder);
+            _context.Attach(workOrder);
             _context.SaveChanges();
         }
 

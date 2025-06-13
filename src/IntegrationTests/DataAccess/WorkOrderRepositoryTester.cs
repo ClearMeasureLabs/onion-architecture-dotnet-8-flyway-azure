@@ -84,8 +84,8 @@ namespace IntegrationTests.DataAccess
                     .Single(wo => wo.Id == order.Id);
                 
                 Assert.That(rehydratedWorkOrder.Id, Is.EqualTo(order.Id));
-                Assert.That(rehydratedWorkOrder.Creator.Id, Is.EqualTo(order.Creator.Id));
-                Assert.That(rehydratedWorkOrder.Assignee.Id, Is.EqualTo(order.Assignee.Id));
+                Assert.That(rehydratedWorkOrder.Creator!.Id, Is.EqualTo(order.Creator.Id));
+                Assert.That(rehydratedWorkOrder.Assignee!.Id, Is.EqualTo(order.Assignee.Id));
                 Assert.That(rehydratedWorkOrder.Title, Is.EqualTo(order.Title));
                 Assert.That(rehydratedWorkOrder.Description, Is.EqualTo(order.Description));
                 Assert.That(rehydratedWorkOrder.Status, Is.EqualTo(order.Status));
