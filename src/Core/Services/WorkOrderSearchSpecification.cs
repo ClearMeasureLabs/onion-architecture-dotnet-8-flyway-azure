@@ -19,10 +19,10 @@ namespace Core.Services
 			Creator = creator;
 		}
 
-		public WorkOrderStatus Status { get; private set; } = null!;
+		public WorkOrderStatus? Status { get; private set; } = null;
 
-        public Employee Assignee { get; private set; } = null!;
+        public Employee? Assignee { get; private set; } = null;
 
-        public Employee Creator { get; private set; } = null!;
+        public Employee? Creator { get; private set; } = null;
     }
 }

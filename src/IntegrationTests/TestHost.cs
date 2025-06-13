@@ -71,4 +71,9 @@ public static class TestHost
                 }
             }
     }
+
+    public static DataContext NewDbContext()
+    {
+        return TestHost.GetRequiredService<DataContext>();
+    }
 }

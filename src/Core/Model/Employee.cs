@@ -31,7 +31,7 @@ namespace Core.Model
 
         public string EmailAddress { get; set; }
 
-        private ISet<Role> Roles { get; set; } = new HashSet<Role>();
+        public ISet<Role> Roles { get; private set; } = new HashSet<Role>();
 
         public int CompareTo(Employee? other)
         {
@@ -85,11 +85,6 @@ namespace Core.Model
             Roles.Add(role);
         }
 
-        public Role[] GetRoles()
-        {
-            return new List<Role>(Roles).ToArray();
-        }
-
         public string GetNotificationEmail(DayOfWeek day)
         {
             return EmailAddress;
@@ -117,7 +112,7 @@ namespace Core.Model
             return Id.GetHashCode();
         }
 
-        public static bool operator ==(Employee left, Employee right)
+        public static bool operator ==(Employee? left, Employee? right)
         {
             if (ReferenceEquals(left, null))
                 return ReferenceEquals(right, null);
@@ -125,7 +120,7 @@ namespace Core.Model
             return left.Equals(right);
         }
 
-        public static bool operator !=(Employee left, Employee right)
+        public static bool operator !=(Employee? left, Employee? right)
         {
             return !(left == right);
         }

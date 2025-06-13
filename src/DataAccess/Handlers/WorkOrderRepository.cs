@@ -26,7 +26,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers
         {
             return _context.Set<WorkOrder>()
                 .Include(wo => wo.AuditEntries)
-                .SingleOrDefault(wo => wo.Number == number);
+                .Single(wo => wo.Number == number);
         }
 
         public WorkOrder[] GetWorkOrders(WorkOrderSearchSpecification specification)

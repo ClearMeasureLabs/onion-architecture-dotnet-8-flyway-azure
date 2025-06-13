@@ -127,8 +127,8 @@ namespace UnitTests.Core.Model
             var employee = new Employee();
             employee.AddRole(new Role("test role", true, false));
 
-            Role[] roles = employee.GetRoles();
-            Assert.That(roles.Length, Is.EqualTo(1));
+            var roles = employee.Roles;
+            Assert.That(roles.Count, Is.EqualTo(1));
         }
 
         public class EmployeeProxy : Employee

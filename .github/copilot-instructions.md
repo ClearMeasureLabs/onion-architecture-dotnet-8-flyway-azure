@@ -1,47 +1,75 @@
-# Testing Standards
+# Coding Standards and Practices
 
-This file provides testing standards for GitHub Copilot to follow when generating test code for this project.
+This file provides standards for GitHub Copilot to follow when generating code for this project.
 
-## Testing Frameworks
+## General Coding Standards
 
+- Use clean, readable code with proper indentation
+- Follow C# naming conventions (PascalCase for classes/methods, camelCase for variables)
+- Add XML documentation to public APIs
+- Keep methods small and focused on a single responsibility
+- Use nullable reference types appropriately
+
+## Architecture Guidelines
+
+- Follow Onion Architecture principles
+- Keep business logic in Core project
+- Data access should be isolated in DataAccess
+- UI logic should be thin and focused on presentation
+
+## Database Practices
+
+- Use Entity Framework for data access
+- Follow Commands and Queries and Handlers data access
+- Create mapping files for all entities
+- Include database schema changes in appropriate scripts
+
+## Testing Standards
+- Test-driven development (TDD) approach: write tests before implementing functionality
+- All tests use Shoudly framework for assertions
+
+### Testing Frameworks
 - **NUnit**: Primary testing framework
-- No mocking libraries
+- Avoid mocking libraries when possible
 
-## Test Structure
+### Test Structure
+- Follow AAA pattern (Arrange, Act, Assert), but don't add comments
+- Use descriptive test names
+- Prefix test methods with "Should" or "When"
 
-- Follow the AAA pattern (Arrange, Act, Assert)
-- Use descriptive test names that describe the scenario and expected outcome
-- Prefix test methods with "Should" or "When" to clearly indicate purpose
-
-## Test Categories
-
+### Test Categories
 1. **Unit Tests**
-   - Test a single unit of functionality in isolation
-   - Stub all external dependencies
+   - Test a single unit in isolation
    - Fast execution, no infrastructure dependencies
-	- When generating code, using Test-driven development. Write the test that should pass first. Then run the test to make sure that it fails because the needed production code doesn't exist yet. You can generate skeleton code just to enable the solution to compile, but leave a NotImplementedException("TDD") in the method as you run the test to ensure it fails. Check for the "TDD" in the test failture to make sure the failure is the right failure. Then generate the code to make the test pass. Do this iteratively with each needed change to each class. Write one test at a time and make one production code change at a time. Write tests to check for boundary conditions of parameters. 
+   - Follow TDD approach (test first, then implement)
 
 2. **Integration Tests**
-   - Test the integration between components
-   - May require infrastructure (database, API, etc.)
-   - Should be able to run in CI/CD pipeline
+   - Test component integration
+   - May use actual database
+   - Should run in CI/CD pipeline
 
 3. **UI Tests**
-   - Test the user interface
-   - Use bUnit for Blazor component testing (if added to the project)
+   - Test user interface components
+   - Use appropriate testing tools for Blazor components
 
-## Test Naming Convention
+### Test Naming Convention
+- `[MethodName]_[Scenario]_[ExpectedResult]`
+- Examples: 
+  - `GetWorkOrder_WithValidId_ReturnsWorkOrder`
+  - `SaveChurchBulletin_WithMissingTitle_ThrowsValidationException`
 
-Use the following naming convention for tests:
-```
-[MethodName]_[Scenario]_[ExpectedResult]
-```
+## Blazor Guidelines
 
-Examples:
-- `GetWorkOrder_WithValidId_ReturnsWorkOrder`
-- `SaveWorkOrder_WithInvalidData_ThrowsValidationException`
+- Use clean component structure
+- Keep component logic in code-behind files when complex
+- Follow proper state management practices
+- Minimize JavaScript interop when possible
 
-Do not use "I" in responses. Do not simulate personality. Be a robot. Short, terse responses.  No additional questions.
+## Performance Considerations
+
+## Response Guidelines
+
+Do not use "I" or "you" or "me" or "us" or "we" in responses. Do not simulate personality. Be a robot. Short, terse responses.  No additional questions.
 When generating any code assume that a test was requested to be generated as well and follow the TDD process.
 Before acting on a requested code change, generate a test for the change first.
 

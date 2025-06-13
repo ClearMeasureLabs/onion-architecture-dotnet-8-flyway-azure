@@ -2,13 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using Shouldly;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
+namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess.Mappings;
 
-public class ChurchBulletingMappingTester
+public class ChurchBulletinMappingTester
 {
     [Test]
     public void ShouldMapChurchBulletin()
     {
+        new DatabaseTester().Clean();
         var bulletin = new ChurchBulletinItem();
         bulletin.Name = "Worship service";
         bulletin.Place = "Sanctuary";
@@ -24,7 +25,7 @@ public class ChurchBulletingMappingTester
         using (var context = TestHost.GetRequiredService<DbContext>())
         {
             rehydratedEntity = context.Set<ChurchBulletinItem>()
-                .Single(b => b == bulletin);
+                .Single(b => b.Id == bulletin.Id);
         }
 
         rehydratedEntity.Id.ShouldBe(bulletin.Id);
