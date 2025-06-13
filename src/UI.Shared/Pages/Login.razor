@@ -44,7 +44,7 @@
 </div>
 
 @code {
-    private LoginModel loginModel = new();
+    private LoginModel loginModel = new(){Username = "hsimpson", Password = "password123"};
     private string? errorMessage;
 
     private void HandleLogin()

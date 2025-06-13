@@ -1,11 +1,13 @@
 ﻿using BlazorApplicationInsights.Interfaces;
 using BlazorApplicationInsights.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Palermo.BlazorMvc;
 
 namespace UI.Shared.Pages;
 
+[Authorize]
 [Route("/counter")]
 public class CounterController : ControllerComponentBase<CounterView>
 {

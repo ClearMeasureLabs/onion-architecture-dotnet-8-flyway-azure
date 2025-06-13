@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Palermo.BlazorMvc;
@@ -8,6 +9,7 @@ using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace UI.Shared.Pages;
 
+[Authorize]
 [Route("/fetchchurchbulletin")]
 public class FetchChurchBulletinController : ControllerComponentBase<FetchChurchBulletinView>
 {
