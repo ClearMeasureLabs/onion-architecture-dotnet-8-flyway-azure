@@ -9,6 +9,7 @@ using Palermo.BlazorMvc;
 using ProgrammingWithPalermo.ChurchBulletin.Core;
 using UI.Client;
 using UI.Shared.Authentication;
+using Core.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -33,5 +34,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
 
 builder.Services.AddScoped<IUiBus>(provider => new MvcBus(NullLogger<MvcBus>.Instance));
 builder.Services.AddScoped(sp => http);
+builder.Services.AddScoped<IEmployeeRepository, UI.Client.HttpEmployeeRepository>();
+builder.Services.AddScoped<IUserSession, UI.Services.UserSession>();
 
 await builder.Build().RunAsync();

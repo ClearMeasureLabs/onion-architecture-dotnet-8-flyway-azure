@@ -30,4 +30,8 @@
     <ProjectReference Include="..\..\UI.Shared\UI.Shared.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<Folder Include="wwwroot\" />
+	</ItemGroup>
+
 </Project>
