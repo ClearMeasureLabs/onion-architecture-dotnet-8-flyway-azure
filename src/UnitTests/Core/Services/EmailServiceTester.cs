@@ -45,7 +45,7 @@ namespace UnitTests.Core.Services
                 FlashMessage = message;
             }
 
-            public FlashMessage PopUserMessage()
+            public FlashMessage? PopUserMessage()
             {
                 throw new NotImplementedException();
             }

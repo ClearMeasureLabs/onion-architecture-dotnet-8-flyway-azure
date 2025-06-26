@@ -4,10 +4,10 @@ namespace Core.Services
 {
 	public interface IUserSession
 	{
-		Employee GetCurrentUser();
+		Employee? GetCurrentUser();
 		void LogIn(Employee employee);
 		void LogOut();
 		void PushUserMessage(FlashMessage? message);
-		FlashMessage PopUserMessage();
+		FlashMessage? PopUserMessage();
 	}
 }
