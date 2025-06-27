@@ -15,7 +15,12 @@ namespace UI.Client
 
         public Employee GetByUserName(string userName)
         {
-            var employee = _httpClient.GetFromJsonAsync<Employee>($"employee/by-username/{userName}").GetAwaiter().GetResult();
+            return GetByUserNameAsync(userName).GetAwaiter().GetResult();
+        }
+
+        public async Task<Employee> GetByUserNameAsync(string userName)
+        {
+            var employee = await _httpClient.GetFromJsonAsync<Employee>($"employee/by-username/{userName}");
             return employee!;
         }
 
