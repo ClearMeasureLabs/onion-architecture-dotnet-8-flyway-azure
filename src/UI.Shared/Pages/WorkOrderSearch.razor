@@ -1,0 +1,171 @@
+@page "/workorder/search"
+@using Core.Model
+@using Core.Services
+@using UIWasm.Models
+@inject IEmployeeRepository EmployeeRepository
+@inject IWorkOrderRepository WorkOrderRepository
+
+<h2>Search Results</h2>
+
+<EditForm Model="@Model" OnValidSubmit="HandleSearch">
+    <table class="search-filters">
+        <thead>
+            <tr>
+                <th>Creator</th>
+                <th>Assignee</th>
+                <th>Status</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <InputSelect @bind-Value="Model.Filters.Creator" class="form-control" style="width: 200px;">
+                        <option value="">All</option>
+                        @foreach (var user in UserOptions)
+                        {
+                            <option value="@user.Value">@user.Text</option>
+                        }
+                    </InputSelect>
+                </td>
+                <td>
+                    <InputSelect @bind-Value="Model.Filters.Assignee" class="form-control" style="width: 200px;">
+                        <option value="">All</option>
+                        @foreach (var user in UserOptions)
+                        {
+                            <option value="@user.Value">@user.Text</option>
+                        }
+                    </InputSelect>
+                </td>
+                <td>
+                    <InputSelect @bind-Value="Model.Filters.Status" class="form-control" style="width: 200px;">
+                        <option value="">All</option>
+                        @foreach (var status in StatusOptions)
+                        {
+                            <option value="@status.Value">@status.Text</option>
+                        }
+                    </InputSelect>
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</EditForm>
+
+<br/>
+<table class="grid-data">
+    <thead>
+        <tr>
+            <th style="width:10%;">WO #</th>
+            <th style="width:20%;">Creator</th>
+            <th style="width:20%;">Assignee</th>
+            <th style="width:15%;">Status</th>
+            <th>Title</th>
+        </tr>
+    </thead>
+    <tbody>
+    @{ int i=0;
+    foreach (var order in Model.Results)
+    {
+        var rowClass = (i++%2) == 0 ? "odd" : "even";
+        <tr class="@rowClass">
+            <td><a href="/workorder/manage/@order.Number?mode=Edit">@order.Number</a></td>
+            <td>@order.Creator</td>
+            <td>@order.Assignee</td>
+            <td style="white-space: nowrap;">@order.Status</td>
+            <td>@order.Title</td>
+        </tr>
+       }
+    }    
+    </tbody>
+</table>
+
+@code {
+    public WorkOrderSearchModel Model { get; set; } = new WorkOrderSearchModel();
+    public List<SelectListItem> UserOptions { get; set; } = new List<SelectListItem>();
+    public List<SelectListItem> StatusOptions { get; set; } = new List<SelectListItem>();
+
+    [SupplyParameterFromQuery]
+    public string Creator { get; set; }
+
+    [SupplyParameterFromQuery]
+    public string Assignee { get; set; }
+
+    [SupplyParameterFromQuery]
+    public string Status { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initialize dropdown options
+        await LoadUserOptions();
+        LoadStatusOptions();
+
+        // Apply any query parameters
+        if (!string.IsNullOrEmpty(Creator))
+            Model.Filters.Creator = Creator;
+
+        if (!string.IsNullOrEmpty(Assignee))
+            Model.Filters.Assignee = Assignee;
+
+        if (!string.IsNullOrEmpty(Status))
+            Model.Filters.Status = Status;
+
+        await SearchWorkOrders();
+    }
+
+    private async Task HandleSearch()
+    {
+        await SearchWorkOrders();
+    }
+
+    private async Task SearchWorkOrders()
+    {
+        var creator = !string.IsNullOrWhiteSpace(Model.Filters.Creator) 
+            ? await EmployeeRepository.GetByUserNameAsync(Model.Filters.Creator) 
+            : null;
+
+        var assignee = !string.IsNullOrWhiteSpace(Model.Filters.Assignee) 
+            ? await EmployeeRepository.GetByUserNameAsync(Model.Filters.Assignee) 
+            : null;
+
+        var status = !string.IsNullOrWhiteSpace(Model.Filters.Status) 
+            ? WorkOrderStatus.FromKey(Model.Filters.Status) 
+            : null;
+
+        var specification = new WorkOrderSearchSpecification();
+        specification.MatchCreator(creator);
+        specification.MatchAssignee(assignee);
+        specification.MatchStatus(status);
+
+        Model.Results = await WorkOrderRepository.GetWorkOrdersAsync(specification);
+    }
+
+    private async Task LoadUserOptions()
+    {
+        // In a real implementation, this would load all employees from the repository
+        var employees = await EmployeeRepository.GetEmployeesAsync(EmployeeSpecification.All);
+        UserOptions = employees.Select(e => new SelectListItem 
+        { 
+            Value = e.UserName, 
+            Text = e.GetFullName() 
+        }).ToList();
+    }
+
+    private void LoadStatusOptions()
+    {
+        // Get all work order statuses
+        StatusOptions = WorkOrderStatus.GetAllItems().Select(s => new SelectListItem
+        {
+            Value = s.Key,
+            Text = s.FriendlyName
+        }).ToList();
+    }
+
+    public class SelectListItem
+    {
+        public string Value { get; set; }
+        public string Text { get; set; }
+    }
+}

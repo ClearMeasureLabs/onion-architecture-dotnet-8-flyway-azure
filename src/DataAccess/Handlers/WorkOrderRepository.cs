@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Model;
 using Core.Services;
 using Microsoft.EntityFrameworkCore;
@@ -16,20 +17,20 @@ namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers
             _context = context;
         }
 
-        public void Save(WorkOrder workOrder)
+        public async Task SaveAsync(WorkOrder workOrder)
         {
             _context.Attach(workOrder);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public WorkOrder GetWorkOrder(string number)
+        public async Task<WorkOrder?> GetWorkOrderAsync(string number)
         {
-            return _context.Set<WorkOrder>()
+            return await _context.Set<WorkOrder>()
                 .Include(wo => wo.AuditEntries)
-                .Single(wo => wo.Number == number);
+                .SingleOrDefaultAsync(wo => wo.Number == number);
         }
 
-        public WorkOrder[] GetWorkOrders(WorkOrderSearchSpecification specification)
+        public async Task<WorkOrder[]> GetWorkOrdersAsync(WorkOrderSearchSpecification specification)
         {
             IQueryable<WorkOrder> query = _context.Set<WorkOrder>();
 
@@ -48,7 +49,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers
                 query = query.Where(wo => wo.Status == specification.Status);
             }
 
-            return query.ToArray();
+            return await query.ToArrayAsync();
         }
     }
 }
