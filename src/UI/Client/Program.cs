@@ -35,6 +35,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
 builder.Services.AddScoped<IUiBus>(provider => new MvcBus(NullLogger<MvcBus>.Instance));
 builder.Services.AddScoped(sp => http);
 builder.Services.AddScoped<IEmployeeRepository, UI.Client.HttpEmployeeRepository>();
+builder.Services.AddScoped<IWorkOrderRepository, UI.Client.HttpWorkOrderRepository>();
 builder.Services.AddScoped<IUserSession, UI.Services.UserSession>();
 
 await builder.Build().RunAsync();
