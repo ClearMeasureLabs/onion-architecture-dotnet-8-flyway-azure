@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Security.Authentication;
+using System.Threading.Tasks;
 using Core.Model;
 using Core.Services;
 using Microsoft.AspNetCore.Components;
@@ -23,12 +24,12 @@ namespace UI.Services
         }
 
         // IUserSession Members
-        public Employee? GetCurrentUser()
+        public async Task<Employee?> GetCurrentUserAsync()
         {
             var username = _authProvider.GetUsername();
             if (string.IsNullOrEmpty(username))
                 return null;
-            var currentUser = _employeeRepository.GetByUserName(username);
+            var currentUser = await _employeeRepository.GetByUserNameAsync(username);
             blowUpIfEmployeeCannotLogin(currentUser);
             return currentUser;
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Model;
 using Core.Services;
 using Microsoft.EntityFrameworkCore;
@@ -17,28 +18,22 @@ namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers
             _context = context;
         }
 
-        public Employee GetByUserName(string userName)
+        public async Task<Employee> GetByUserNameAsync(string userName)
         {
-            return _context.Set<Employee>()
+            return await _context.Set<Employee>()
                 .Include("Roles")
-                .Single(emp => emp.UserName == userName);
+                .SingleAsync(emp => emp.UserName == userName);
         }
 
-        public Employee[] GetEmployees(EmployeeSpecification spec)
+        public async Task<Employee[]> GetEmployeesAsync(EmployeeSpecification spec)
         {
             IQueryable<Employee> query = _context.Set<Employee>()
                 .Include("Roles");
-            
-            // Get employees with their roles
-            var employees = query.ToList();
-            
-            // If we need to filter by CanFulfill capability, do it in memory
+            var employees = await query.ToListAsync();
             if (spec.CanFulfill)
             {
                 employees = employees.Where(e => e.CanFulfilWorkOrder()).ToList();
             }
-            
-            // Sort the employees
             return employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName).ToArray();
         }
     }

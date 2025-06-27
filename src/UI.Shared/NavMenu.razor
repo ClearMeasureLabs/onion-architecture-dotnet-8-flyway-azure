@@ -80,10 +80,8 @@
 
     private Employee? CurrentUser { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        CurrentUser = UserSession.GetCurrentUser();
-
-        return Task.CompletedTask;
+        CurrentUser = await UserSession.GetCurrentUserAsync();
     }
 }

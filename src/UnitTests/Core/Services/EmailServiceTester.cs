@@ -3,6 +3,7 @@ using Core.Model;
 using Core.Services;
 using Core.Services.Impl;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace UnitTests.Core.Services
 {
@@ -25,7 +26,7 @@ namespace UnitTests.Core.Services
         {
             public FlashMessage? FlashMessage;
 
-            public Employee GetCurrentUser()
+            public Task<Employee?> GetCurrentUserAsync()
             {
                 throw new NotImplementedException();
             }

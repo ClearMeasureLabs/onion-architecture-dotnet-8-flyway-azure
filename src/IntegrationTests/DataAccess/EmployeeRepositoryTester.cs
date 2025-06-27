@@ -5,6 +5,7 @@ using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers;
 using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 using ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
 using ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess;
+using System.Threading.Tasks;
 
 namespace IntegrationTests.DataAccess
 {
@@ -12,7 +13,7 @@ namespace IntegrationTests.DataAccess
     public class EmployeeRepositoryTester
     {
         [Test]
-        public void ShouldFindEmployeeByUsername()
+        public async Task ShouldFindEmployeeByUsername()
         {
             new DatabaseTester().Clean();
 
@@ -29,12 +30,12 @@ namespace IntegrationTests.DataAccess
 
             var dataContext = TestHost.GetRequiredService<DataContext>();
             IEmployeeRepository repository = new EmployeeRepository(dataContext);
-            Employee employee = repository.GetByUserName("1");
+            Employee employee = await repository.GetByUserNameAsync("1");
             Assert.That(employee.Id, Is.EqualTo(one.Id));
         }
 
         [Test]
-        public void ShouldGetAllEmployees()
+        public async Task ShouldGetAllEmployees()
         {
             new DatabaseTester().Clean();
 
@@ -51,7 +52,7 @@ namespace IntegrationTests.DataAccess
 
             var dataContext = TestHost.GetRequiredService<DataContext>();
             IEmployeeRepository repository = new EmployeeRepository(dataContext);
-            Employee[] employees = repository.GetEmployees(EmployeeSpecification.All);
+            Employee[] employees = await repository.GetEmployeesAsync(EmployeeSpecification.All);
 
             Assert.That(employees.Length, Is.EqualTo(3));
             Assert.That(employees[0].UserName, Is.EqualTo("1"));
@@ -61,7 +62,7 @@ namespace IntegrationTests.DataAccess
         }
 
         [Test]
-        public void ShouldGetAllEmployeesForFulfillment()
+        public async Task ShouldGetAllEmployeesForFulfillment()
         {
             new DatabaseTester().Clean();
 
@@ -83,7 +84,7 @@ namespace IntegrationTests.DataAccess
 
             var dataContext = TestHost.GetRequiredService<DataContext>();
             IEmployeeRepository repository = new EmployeeRepository(dataContext);
-            Employee[] employees = repository.GetEmployees(new EmployeeSpecification(true));
+            Employee[] employees = await repository.GetEmployeesAsync(new EmployeeSpecification(true));
 
             Assert.That(employees.Length, Is.EqualTo(2));
         }

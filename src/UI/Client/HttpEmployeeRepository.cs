@@ -13,15 +13,15 @@ namespace UI.Client
             _httpClient = httpClient;
         }
 
-        public Employee GetByUserName(string userName)
+        public async Task<Employee> GetByUserNameAsync(string userName)
         {
-            var employee = _httpClient.GetFromJsonAsync<Employee>($"employee/by-username/{userName}").GetAwaiter().GetResult();
+            var employee = await _httpClient.GetFromJsonAsync<Employee>($"employee/by-username/{userName}");
             return employee!;
         }
 
-        public Employee[] GetEmployees(EmployeeSpecification spec)
+        public async Task<Employee[]> GetEmployeesAsync(EmployeeSpecification spec)
         {
-            var employees = _httpClient.GetFromJsonAsync<Employee[]>($"employee").GetAwaiter().GetResult();
+            var employees = await _httpClient.GetFromJsonAsync<Employee[]>($"employee");
             return employees!;
         }
     }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Core.Model;
 using Core.Services;
+using System.Threading.Tasks;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.UI.Api.Controllers;
 
@@ -15,17 +16,17 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("by-username/{userName}")]
-    public ActionResult<Employee> GetByUserName(string userName)
+    public async Task<ActionResult<Employee>> GetByUserName(string userName)
     {
-        var employee = _employeeRepository.GetByUserName(userName);
+        var employee = await _employeeRepository.GetByUserNameAsync(userName);
         if (employee == null) return NotFound();
         return employee;
     }
 
     [HttpGet]
-    public ActionResult<Employee[]> GetEmployees()
+    public async Task<ActionResult<Employee[]>> GetEmployees()
     {
-        var employees = _employeeRepository.GetEmployees(EmployeeSpecification.All);
+        var employees = await _employeeRepository.GetEmployeesAsync(EmployeeSpecification.All);
         return employees;
     }
 }
