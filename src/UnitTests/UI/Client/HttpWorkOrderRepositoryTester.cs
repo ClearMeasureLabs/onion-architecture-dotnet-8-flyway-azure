@@ -13,7 +13,7 @@ namespace UnitTests.UI.Client
     [TestFixture]
     public class HttpWorkOrderRepositoryTester
     {
-        [Test, Ignore()]
+        [Test,  Ignore("not ready")]
         public async Task GetWorkOrderAsync_WithValidNumber_ReturnsWorkOrder()
         {
             var handler = new FakeHttpMessageHandler((request) =>
