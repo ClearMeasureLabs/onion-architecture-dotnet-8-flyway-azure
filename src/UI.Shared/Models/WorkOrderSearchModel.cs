@@ -16,9 +16,9 @@ namespace UIWasm.Models
 
         public class SearchFilters
         {
-            public string Creator { get; set; }
-            public string Assignee { get; set; }
-            public string Status { get; set; }
+            public string? Creator { get; set; }
+            public string? Assignee { get; set; }
+            public string? Status { get; set; }
         }
     }
 }

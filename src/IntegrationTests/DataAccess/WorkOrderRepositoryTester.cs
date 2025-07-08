@@ -39,8 +39,8 @@ namespace IntegrationTests.DataAccess
 
             var dataContext = TestHost.GetRequiredService<DataContext>();
             var repository = new WorkOrderRepository(dataContext);
-            WorkOrder? order123 = await repository.GetWorkOrderAsync("123");
-            WorkOrder? order456 = await repository.GetWorkOrderAsync("456");
+            WorkOrder order123 = (await repository.GetWorkOrderAsync("123"))!;
+            WorkOrder order456 = (await repository.GetWorkOrderAsync("456"))!;
 
             Assert.That(order123.Id, Is.EqualTo(order1.Id));
             Assert.That(order456.Id, Is.EqualTo(order2.Id));

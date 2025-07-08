@@ -16,7 +16,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("by-username/{userName}")]
-    public async Task<ActionResult<Employee>> GetByUserName(string userName)
+    public async Task<ActionResult<Employee>> GetByUserName(string? userName)
     {
         var employee = await _employeeRepository.GetByUserNameAsync(userName);
         if (employee == null) return NotFound();

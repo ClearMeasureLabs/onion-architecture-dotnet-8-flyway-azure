@@ -93,7 +93,7 @@ namespace Core.Model
             return match;
 		}
 
-		public static WorkOrderStatus FromKey(string key) 
+		public static WorkOrderStatus FromKey(string? key) 
 		{
 			if (key == null)
 			{
@@ -113,7 +113,7 @@ namespace Core.Model
 			return match;
 		}
 
-		public static WorkOrderStatus Parse(string name)
+		public static WorkOrderStatus Parse(string? name)
 		{
 			return FromKey(name);
 		}

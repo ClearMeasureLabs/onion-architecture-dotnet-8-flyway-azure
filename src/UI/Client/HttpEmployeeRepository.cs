@@ -13,7 +13,7 @@ namespace UI.Client
             _httpClient = httpClient;
         }
 
-        public async Task<Employee> GetByUserNameAsync(string userName)
+        public async Task<Employee> GetByUserNameAsync(string? userName)
         {
             var employee = await _httpClient.GetFromJsonAsync<Employee>($"employee/by-username/{userName}");
             return employee!;

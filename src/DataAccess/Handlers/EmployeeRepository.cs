@@ -18,7 +18,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers
             _context = context;
         }
 
-        public async Task<Employee> GetByUserNameAsync(string userName)
+        public async Task<Employee> GetByUserNameAsync(string? userName)
         {
             return await _context.Set<Employee>()
                 .Include("Roles")
