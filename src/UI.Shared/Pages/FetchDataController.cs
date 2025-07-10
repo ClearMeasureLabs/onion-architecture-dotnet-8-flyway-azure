@@ -9,7 +9,6 @@ using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace UI.Shared.Pages;
 
-[Authorize]
 [Route("/fetchdata")]
 public class FetchDataController : ControllerComponentBase<FetchDataView>
 {

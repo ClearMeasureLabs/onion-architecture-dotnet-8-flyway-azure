@@ -56,7 +56,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Counter
         {
             return new BrowserNewContextOptions
             {
-                BaseURL = $"http://{Environment.GetEnvironmentVariable("containerAppURL", EnvironmentVariableTarget.User)}"
+                BaseURL = ServerFixture.ApplicationLocalBaseURL
             };
         }
     }

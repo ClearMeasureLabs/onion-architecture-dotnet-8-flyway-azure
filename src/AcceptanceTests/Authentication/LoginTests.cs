@@ -69,7 +69,7 @@ public class LoginTests : PageTest
     {
         return new BrowserNewContextOptions
         {
-            BaseURL = $"http://{Environment.GetEnvironmentVariable("containerAppURL", EnvironmentVariableTarget.User)}"
+            BaseURL = ServerFixture.ApplicationLocalBaseURL
         };
     }
 }

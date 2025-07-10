@@ -11,8 +11,8 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests
     {
         private Process? _serverProcess;
         private const string ProjectPath = "../../../../UI/Server";
-        private const string UrlEnvVar = "containerAppURL";
         private const int WaitTimeoutSeconds = 60;
+        public const string ApplicationLocalBaseURL = "https://localhost:7174";
 
         [OneTimeSetUp]
         public async Task OneTimeSetUp()
@@ -22,7 +22,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "dotnet",
-                    Arguments = "run --no-build --urls=http://localhost:7174",
+                    Arguments = $"run --no-build --urls={ApplicationLocalBaseURL}",
                     WorkingDirectory = ProjectPath,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -34,8 +34,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests
 
             // Wait for server to be ready
             using var client = new HttpClient();
-            var baseUrl = "http://localhost:7174/";
-            Environment.SetEnvironmentVariable(UrlEnvVar, "localhost:7174", EnvironmentVariableTarget.User);
+            var baseUrl = ApplicationLocalBaseURL;
             var timeout = TimeSpan.FromSeconds(WaitTimeoutSeconds);
             var start = DateTime.UtcNow;
             Exception? lastException = null;

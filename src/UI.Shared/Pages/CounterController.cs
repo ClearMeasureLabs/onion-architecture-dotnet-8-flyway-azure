@@ -7,7 +7,6 @@ using Palermo.BlazorMvc;
 
 namespace UI.Shared.Pages;
 
-[Authorize]
 [Route("/counter")]
 public class CounterController : ControllerComponentBase<CounterView>
 {

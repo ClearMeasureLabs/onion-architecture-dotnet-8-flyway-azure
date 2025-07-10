@@ -12,8 +12,6 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.ChurchBulletin
         [SetUp]
         public async Task SetUpAsync()
         {
-            // Seed the database with known bulletin items
-            new ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.ZDataLoader().LoadData();
             await Context.Tracing.StartAsync(new()
             {
                 Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",
@@ -21,6 +19,9 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.ChurchBulletin
                 Snapshots = true,
                 Sources = true
             });
+            // Seed the database with known bulletin items
+
+            new ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.ZDataLoader().LoadData();
         }
 
         [TearDown]
@@ -47,7 +48,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.ChurchBulletin
         {
             return new BrowserNewContextOptions
             {
-                BaseURL = $"http://{Environment.GetEnvironmentVariable("containerAppURL", EnvironmentVariableTarget.User)}"
+                BaseURL = ServerFixture.ApplicationLocalBaseURL
             };
         }
     }
