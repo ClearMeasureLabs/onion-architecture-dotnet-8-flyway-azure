@@ -5,7 +5,7 @@ namespace UI.Shared.Authentication
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private ClaimsPrincipal _currentUser = hardcodeHSimpson();// new ClaimsPrincipal(new ClaimsIdentity());
+        private ClaimsPrincipal _currentUser = new ClaimsPrincipal(new ClaimsIdentity());
 
         private static ClaimsPrincipal hardcodeHSimpson()
         {

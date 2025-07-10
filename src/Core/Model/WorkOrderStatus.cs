@@ -18,7 +18,7 @@ namespace Core.Model
 	    private string _code;
 		private string _key;
 
-	    protected WorkOrderStatus()
+	    public WorkOrderStatus()
         {
             _code = null!;
 			_key = null!;

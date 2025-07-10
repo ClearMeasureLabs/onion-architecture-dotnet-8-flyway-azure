@@ -1,5 +1,8 @@
+@inherits Palermo.BlazorMvc.MvcComponentBase
+@implements Palermo.BlazorMvc.IListener<UI.Shared.Models.UserLoggedInEvent>
 @using Core.Model
 @using Core.Services
+@using UI.Shared.Models
 @inject IUserSession UserSession
 @inject NavigationManager NavigationManager
 
@@ -82,6 +85,20 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await SetCurrentUser();
+    }
+
+    private async Task SetCurrentUser()
+    {
         CurrentUser = await UserSession.GetCurrentUserAsync();
+    }
+
+    public void Handle(UserLoggedInEvent theEvent)
+    {
+        InvokeAsync(async () =>
+        {
+            await SetCurrentUser();
+            StateHasChanged();  
+        });
     }
 }
