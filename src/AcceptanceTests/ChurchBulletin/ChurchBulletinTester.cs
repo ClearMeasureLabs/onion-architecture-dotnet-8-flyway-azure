@@ -59,7 +59,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.ChurchBulletin
         {
             return new BrowserNewContextOptions()
             {
-                BaseURL = $"https://{Environment.GetEnvironmentVariable("containerAppURL", EnvironmentVariableTarget.User)}"
+                BaseURL = $"http://{Environment.GetEnvironmentVariable("containerAppURL", EnvironmentVariableTarget.User)}"
             };
         }
 

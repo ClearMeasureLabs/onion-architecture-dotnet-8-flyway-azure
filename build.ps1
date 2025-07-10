@@ -109,6 +109,22 @@ Function IntegrationTest{
 	}
 }
 
+Function AcceptanceTests{
+	Push-Location -Path $acceptanceTestProjectPath
+
+	try {
+		exec {
+			& dotnet test /p:CollectCoverage=true -nologo -v $verbosity --logger:trx `
+			--results-directory $test_dir\AcceptanceTests --no-build `
+			--no-restore --configuration $projectConfig `
+			--collect:"XPlat Code Coverage"
+		}
+	}
+	finally {
+		Pop-Location
+	}
+}
+
 Function MigrateDatabaseLocal {
 	param (
 	    [Parameter(Mandatory=$true)]
@@ -207,6 +223,7 @@ Function PrivateBuild{
 		MigrateDatabaseLocal -databaseServerFunc $shadowDatabaseServer -databaseNameFunc $shadowDatabaseName
 	}
 	IntegrationTest
+	#AcceptanceTests
 	
 	$sw.Stop()
 	write-host "BUILD SUCCEEDED - Build time: " $sw.Elapsed.ToString() -ForegroundColor Green

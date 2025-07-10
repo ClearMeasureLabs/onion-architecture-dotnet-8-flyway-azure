@@ -3,15 +3,17 @@ using Microsoft.Playwright.NUnit;
 using NUnit.Framework;
 using System.Threading.Tasks;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Counter
+namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.ChurchBulletin
 {
     [Parallelizable(ParallelScope.Self)]
     [TestFixture]
-    public class CounterIncrementsTester : PageTest
+    public class ChurchBulletinItemTester : PageTest
     {
         [SetUp]
         public async Task SetUpAsync()
         {
+            // Seed the database with known bulletin items
+            new ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.ZDataLoader().LoadData();
             await Context.Tracing.StartAsync(new()
             {
                 Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",
@@ -30,26 +32,15 @@ namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Counter
             });
         }
 
-        [TestCase(1, 1)]
-        [TestCase(2, 2)]
-        [TestCase(5, 5)]
-        [TestCase(9, 9)]
-        public async Task ShouldIncrementOnPress(int numberOfButtonPresses, int expectedFinalCount)
+        [Test]
+        public async Task ShouldDisplayFriendlyPlaceInBulletinTable()
         {
-            await Page.GotoAsync("/counter");
+            await Page.GotoAsync("/fetchchurchbulletin");
             await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-            var button = Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Click me" });
-            var status = Page.GetByRole(AriaRole.Status);
-
-            await Expect(status).ToContainTextAsync("0");
-
-            for (int i = 0; i < numberOfButtonPresses; i++)
-            {
-                await button.ClickAsync();
-            }
-
-            await Expect(status).ToContainTextAsync($"{expectedFinalCount}");
+            // Assert: Table contains @ Sanctuary in the Place column
+            var placeCell = Page.Locator("#bulletinTable td", new PageLocatorOptions { HasText = "@ Sanctuary" });
+            await Expect(placeCell).ToBeVisibleAsync();
         }
 
         public override BrowserNewContextOptions ContextOptions()
