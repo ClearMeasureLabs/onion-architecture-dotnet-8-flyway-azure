@@ -1,9 +1,6 @@
-﻿using Microsoft.Playwright;
+﻿using Core.Model;
+using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
-using NUnit.Framework;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Core.Model;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Authentication;
 
@@ -15,7 +12,7 @@ public class LoginTests : PageTest
     public async Task SetUpAsync()
     {
         new ZDataLoader().PopulateDatabase();
-        await Context.Tracing.StartAsync(new()
+        await Context.Tracing.StartAsync(new TracingStartOptions
         {
             Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",
             Screenshots = true,
@@ -24,10 +21,20 @@ public class LoginTests : PageTest
         });
     }
 
+    [TearDown]
+    public async Task TearDownAsync()
+    {
+        await Context.Tracing.StopAsync(new TracingStopOptions
+        {
+            Path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "playwright-traces",
+                $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip")
+        });
+    }
+
     [Test]
     public void VerifySetup()
     {
-        Employee homer = TestHost.NewDbContext().Set<Employee>().Single(employee =>
+        var homer = TestHost.NewDbContext().Set<Employee>().Single(employee =>
             employee.UserName == "hsimpson");
 
         homer.ShouldNotBeNull();
@@ -41,7 +48,7 @@ public class LoginTests : PageTest
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         // Click Login link in top bar
-        var loginLink = Page.GetByRole(AriaRole.Link, new() { Name = "Login" });
+        var loginLink = Page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { Name = "Login" });
         await loginLink.ClickAsync();
         await Page.WaitForURLAsync("**/login");
 
@@ -50,7 +57,7 @@ public class LoginTests : PageTest
         await Page.FillAsync("#password", "password123");
 
         // Submit form
-        var loginButton = Page.GetByRole(AriaRole.Button, new() { Name = "Login" });
+        var loginButton = Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Login" });
         await loginButton.ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
@@ -58,20 +65,11 @@ public class LoginTests : PageTest
         await Expect(Page.Locator("text=Welcome hsimpson!")).ToBeVisibleAsync();
     }
 
-    [TearDown]
-    public async Task TearDownAsync()
-    {
-        await Context.Tracing.StopAsync(new()
-        {
-            Path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "playwright-traces", $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip")
-        });
-    }
-
     public override BrowserNewContextOptions ContextOptions()
     {
-        return new BrowserNewContextOptions()
+        return new BrowserNewContextOptions
         {
-            BaseURL = $"https://{Environment.GetEnvironmentVariable("containerAppURL", EnvironmentVariableTarget.User)}"
+            BaseURL = $"http://{Environment.GetEnvironmentVariable("containerAppURL", EnvironmentVariableTarget.User)}"
         };
     }
 }
