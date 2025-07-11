@@ -1,78 +1,75 @@
-﻿using Microsoft.Playwright;
-using Microsoft.Playwright.NUnit;
+﻿namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.ChurchBulletin;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.ChurchBulletin
+[Parallelizable(ParallelScope.Self)]
+[TestFixture]
+public class ChurchBulletinTester : PageTest
 {
-    [Parallelizable(ParallelScope.Self)]
-    [TestFixture]
-    public class ChurchBulletinTester : PageTest
+    [SetUp]
+    public async Task SetUpAsync()
     {
-
-        [SetUp]
-        public async Task SetUpAsync()
+        await Context.Tracing.StartAsync(new TracingStartOptions
         {
-            await Context.Tracing.StartAsync(new()
-            {
-                Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",
-                Screenshots = true,
-                Snapshots = true,
-                Sources = true
-            });
-        }
+            Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",
+            Screenshots = true,
+            Snapshots = true,
+            Sources = true
+        });
+    }
 
-        [Test]
-        public async Task ShouldLoadChurchBulletin()
+    [TearDown]
+    public async Task TearDownAsync()
+    {
+        await Context.Tracing.StopAsync(new TracingStopOptions
         {
-            // Arrange
-            await Page.GotoAsync($"/fetchchurchbulletin");
+            Path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "playwright-traces",
+                $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip")
+        });
+    }
 
-            await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+    [Test]
+    public async Task ShouldLoadChurchBulletin()
+    {
+        // Arrange
+        await Page.GotoAsync("/fetchchurchbulletin");
 
-            await TakeScreenshotAsync(10, TestContext.CurrentContext.Test.Name, "Arrange");
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-            // Act
+        await TakeScreenshotAsync(10, TestContext.CurrentContext.Test.Name, "Arrange");
+
+        // Act
 
 
-            await TakeScreenshotAsync(20, TestContext.CurrentContext.Test.Name, "Act");
+        await TakeScreenshotAsync(20, TestContext.CurrentContext.Test.Name, "Act");
 
-            await Page.WaitForTimeoutAsync(10000);
+        await Page.WaitForTimeoutAsync(10000);
 
-            // Assert
+        // Assert
 
-            await TakeScreenshotAsync(30, TestContext.CurrentContext.Test.Name, "Assert");
+        await TakeScreenshotAsync(30, TestContext.CurrentContext.Test.Name, "Assert");
 
-            await Expect(Page.Locator("h1")).ToContainTextAsync("Church Bulletin", new() { Timeout = 10000 });
+        await Expect(Page.Locator("h1")).ToContainTextAsync("Church Bulletin",
+            new LocatorAssertionsToContainTextOptions { Timeout = 10000 });
 
-            //await Expect(totalCount).ToContainTextAsync($"{expectedCount}");
-        }
+        //await Expect(totalCount).ToContainTextAsync($"{expectedCount}");
+    }
 
-        [TearDown]
-        public async Task TearDownAsync()
+    public override BrowserNewContextOptions ContextOptions()
+    {
+        return new BrowserNewContextOptions
         {
-            await Context.Tracing.StopAsync(new()
-            {
-                Path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "playwright-traces", $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip")
-            });
-        }
+            BaseURL = ServerFixture.ApplicationLocalBaseURL
+        };
+    }
 
-        public override BrowserNewContextOptions ContextOptions()
+    private async Task TakeScreenshotAsync(int stepNumber, string testName, string stepName)
+    {
+        var fileName = $"{testName}-{stepNumber}-{stepName}.png";
+
+        await Page.ScreenshotAsync(new PageScreenshotOptions
         {
-            return new BrowserNewContextOptions()
-            {
-                BaseURL = ServerFixture.ApplicationLocalBaseURL
-            };
-        }
+            Path = fileName
+        });
 
-        private async Task TakeScreenshotAsync(int stepNumber, string testName, string stepName)
-        {
-            var fileName = $"{testName}-{stepNumber}-{stepName}.png";
-
-            await Page.ScreenshotAsync(new()
-            {
-                Path = fileName
-            });
-
-            TestContext.AddTestAttachment(Path.GetFullPath(fileName));
-        }
+        TestContext.AddTestAttachment(Path.GetFullPath(fileName));
     }
 }

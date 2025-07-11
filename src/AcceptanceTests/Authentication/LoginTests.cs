@@ -1,8 +1,4 @@
-﻿using Core.Model;
-using Microsoft.Playwright;
-using Microsoft.Playwright.NUnit;
-
-namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Authentication;
+﻿namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Authentication;
 
 [Parallelizable(ParallelScope.Self)]
 [TestFixture]

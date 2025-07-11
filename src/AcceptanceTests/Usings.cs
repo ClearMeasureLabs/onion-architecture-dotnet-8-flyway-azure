@@ -1,7 +1,7 @@
 global using NUnit.Framework;
-global using OpenQA.Selenium;
-global using OpenQA.Selenium.Chrome;
-global using OpenQA.Selenium.Support.UI;
 global using Microsoft.Extensions.Configuration;
 global using ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
 global using Shouldly;
+global using Core.Model;
+global using Microsoft.Playwright;
+global using Microsoft.Playwright.NUnit;
