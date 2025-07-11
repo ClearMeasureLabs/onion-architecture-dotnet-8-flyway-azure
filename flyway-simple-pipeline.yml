@@ -103,8 +103,6 @@ stages:
 
 - stage: 'TDD'
   displayName: 'TDD (via Octopus Deploy)'
-  dependsOn: Integration_Build
-  condition: eq(dependencies.Integration_Build.result, 'Succeeded')
   jobs: 
     - deployment: 'DeployToTDD'
       pool:
