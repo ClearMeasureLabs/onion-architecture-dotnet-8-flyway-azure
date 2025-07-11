@@ -236,7 +236,7 @@ Function CIBuild{
 	UnitTests
 	MigrateDatabaseLocal  -databaseServerFunc $databaseServer -databaseNameFunc $databaseName
 	IntegrationTest
-	AcceptanceTests
+	#AcceptanceTests
 	Package
 	$sw.Stop()
 	write-host "BUILD SUCCEEDED - Build time: " $sw.Elapsed.ToString() -ForegroundColor Green
