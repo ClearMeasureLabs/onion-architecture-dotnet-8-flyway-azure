@@ -1,7 +1,7 @@
 trigger:
-    #Commenting out branch trigger during testing
-    #- "second-azdo-pipeline"
-    - none
+  branches:
+    include:
+      - "*"
     
 variables:
     major: 2
@@ -71,6 +71,7 @@ stages:
           packagesToPush: '.\build\*.nupkg'
           publishVstsFeed: '$(AzureFeedName)'
 
+
     - job: 'DockerBuildandPush'
       pool:
         vmImage: 'ubuntu-latest'
@@ -102,6 +103,8 @@ stages:
 
 - stage: 'TDD'
   displayName: 'TDD (via Octopus Deploy)'
+  dependsOn: Integration_Build
+  condition: eq(dependencies.Integration_Build.result, 'Succeeded')
   jobs: 
     - deployment: 'DeployToTDD'
       pool:
@@ -116,7 +119,12 @@ stages:
         value: onion-architecture-dotnet-8-flyway-azure-$(Build.BuildNumber)
       - name: TDD-App-Name
         value: tdd-ui 
-      environment: 'TDD'  
+      environment: 
+        name: 'TDD'
+        resourceType: 'VirtualMachine'
+        approval:
+          approvals:
+            - type: Manual
       strategy:
         runOnce:
           deploy:
@@ -170,8 +178,6 @@ stages:
                   az group delete -n $(TDD-Resource-Group) --yes
 
 
-
-
 - stage: 'UAT'
   displayName: 'UAT'
   jobs: 
@@ -190,6 +196,8 @@ stages:
               displayName: 'Install octo cli tools on Windows agent'
               inputs:
                 version: '*'
+
+
 
             - task: OctopusDeployRelease@5
               name: deploytoUAT
@@ -223,6 +231,8 @@ stages:
               displayName: 'Install octo cli tools on Windows agent'
               inputs:
                 version: '*'
+
+
 
             - task: OctopusDeployRelease@5
               name: deploytoProd
