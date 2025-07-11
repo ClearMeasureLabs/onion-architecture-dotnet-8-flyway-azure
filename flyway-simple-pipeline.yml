@@ -122,9 +122,6 @@ stages:
       environment: 
         name: 'TDD'
         resourceType: 'VirtualMachine'
-        approval:
-          approvals:
-            - type: Manual
       strategy:
         runOnce:
           deploy:
