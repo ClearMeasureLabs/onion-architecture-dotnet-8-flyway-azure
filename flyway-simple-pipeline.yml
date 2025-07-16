@@ -1,7 +1,7 @@
 trigger:
     #Commenting out branch trigger during testing
-    #- "second-azdo-pipeline"
-    - none
+    - "august-2025-workshop"
+    #- none
     
 variables:
     major: 2
@@ -23,18 +23,14 @@ stages:
       # Dependencies
       
       - task: UseDotNet@2
-        displayName: 'Install SDK 9.0.100'
+        displayName: 'Install SDK 9.0.302'
         inputs:
           packageType: 'sdk'
-          version: '9.0.100'
+          version: '9.0.302'
       - task: UseDotNet@2
         inputs:
           packageType: 'runtime'
-          version: '6.0.0'
-      - task: UseDotNet@2
-        inputs:
-          packageType: 'runtime'
-          version: '9.0.0'
+          version: '9.0.7'
       # Set environment variables
       - task: PowerShell@2
         inputs:
