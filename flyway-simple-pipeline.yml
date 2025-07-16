@@ -18,15 +18,15 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: onion8-from-scratch-flyway-tdd
+      - group: onion8-flyway-tdd-workshop
       steps:
       # Dependencies
       
       - task: UseDotNet@2
-        displayName: 'Install SDK 8.0.100'
+        displayName: 'Install SDK 9.0.100'
         inputs:
           packageType: 'sdk'
-          version: '8.0.100'
+          version: '9.0.100'
       - task: UseDotNet@2
         inputs:
           packageType: 'runtime'
@@ -34,7 +34,7 @@ stages:
       - task: UseDotNet@2
         inputs:
           packageType: 'runtime'
-          version: '8.0.0'
+          version: '9.0.0'
       # Set environment variables
       - task: PowerShell@2
         inputs:
@@ -75,7 +75,7 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       variables:
-        - group: onion8-from-scratch-flyway-tdd
+        - group: onion8-flyway-tdd-workshop
       dependsOn: Build
  
       steps:
@@ -107,16 +107,10 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-      - group: Integration-Build    
-
+      - group: Integration-Build-Workshop
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
-      
-      - name: TDD-Resource-Group
-        value: onion-architecture-dotnet-8-flyway-azure-$(Build.BuildNumber)
-      - name: TDD-App-Name
-        value: tdd-ui 
-      environment: 'TDD'  
+      environment: 'Workshop-TDD'
       strategy:
         runOnce:
           deploy:
@@ -139,7 +133,7 @@ stages:
                 GitRef: '$(branch)'
                 DeployToEnvironment: 'TDD'
                 DeploymentProgress: true
-                AdditionalArguments: '--deploymenttimeout=00:30:00 --variable=ResourceGroupName:$(TDD-Resource-Group) --variable=container_app_name:$(TDD-App-Name)' 
+                AdditionalArguments: '--deploymenttimeout=00:30:00 --variable=ResourceGroupName:$(TDDResourceGroup) --variable=container_app_name:$(TDDAppName)' 
             - task: AzureCLI@2
               inputs:
                 azureSubscription: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC-ARM-MVP'
@@ -147,7 +141,7 @@ stages:
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   az config set extension.use_dynamic_install=yes_without_prompt
-                  $containerAppURL = az containerapp show --resource-group $(TDD-Resource-Group) --name $(TDD-App-Name) --query properties.configuration.ingress.fqdn
+                  $containerAppURL = az containerapp show --resource-group $(TDDResourceGroup) --name $(TDDAppName) --query properties.configuration.ingress.fqdn
                   $containerAppURL = $containerAppURL -replace '"', ''
                   [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "User")
             - task: DownloadPackage@1
@@ -160,17 +154,6 @@ stages:
                 version: '$(Build.BuildNumber)'
                 downloadPath: '$(System.DefaultWorkingDirectory)/tests'
                 extract: true
-            - task: AzureCLI@2
-              displayName: 'Delete TDD Resources'
-              inputs:
-                azureSubscription: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC-ARM-MVP'
-                scriptType: 'ps'
-                scriptLocation: 'inlineScript'
-                inlineScript: |
-                  az group delete -n $(TDD-Resource-Group) --yes
-
-
-
 
 - stage: 'UAT'
   displayName: 'UAT'
@@ -179,8 +162,8 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-        - group: Integration-Build    
-      environment: 'UAT'  
+        - group: Integration-Build-Workshop
+      environment: 'Workshop-UAT'  
       strategy:
         runOnce:
           deploy:
@@ -212,8 +195,8 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-        - group: Integration-Build    
-      environment: 'Prod'
+        - group: Integration-Build-Workshop
+      environment: 'Workshop-Prod'
       strategy:
         runOnce:
           deploy:
