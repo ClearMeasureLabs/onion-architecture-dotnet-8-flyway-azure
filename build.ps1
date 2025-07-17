@@ -182,7 +182,6 @@ Function PackageScript {
 
 Function Package{
 	Write-Output "Packaging nuget packages"
-	winget install OctopusDeploy.Cli
     PackageUI
     PackageDatabase
     PackageDatabaseFlyway

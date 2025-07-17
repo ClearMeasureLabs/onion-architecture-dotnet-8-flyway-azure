@@ -39,6 +39,12 @@ stages:
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             echo $env:Version
             echo $(Build.BuildNumber)
+      - task: PowerShell@2
+        displayName: 'Install Octopus CLI using winget'
+        inputs:
+          targetType: 'inline'
+          script: |
+            winget install OctopusDeploy.Cli --silent --accept-package-agreements --accept-source-agreements
          
       - task: PowerShell@2
         displayName: Build.ps1
