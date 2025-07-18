@@ -38,36 +38,43 @@
             </NavLink>
         </div>
         
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="workorder/manage?mode=New">
-                <span class="oi oi-plus" aria-hidden="true"></span> New
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="workorder/search">
-                <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Search
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@($"workorder/search?Creator={CurrentUser?.UserName}")">
-                <span class="oi oi-list" aria-hidden="true"></span> My Work Orders
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@($"workorder/search?Assignee={CurrentUser?.UserName}")">
-                <span class="oi oi-task" aria-hidden="true"></span> Work Orders Assigned To Me
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@($"workorder/search?Status={WorkOrderStatus.Assigned.Key}")">
-                <span class="oi oi-clock" aria-hidden="true"></span> All Assigned Work Orders
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@($"workorder/search?Status={WorkOrderStatus.InProgress.Key}")">
-                <span class="oi oi-clock" aria-hidden="true"></span> All Work Orders In Progress
-            </NavLink>
-        </div>
+        @if (CurrentUser != null && CurrentUser.CanCreateWorkOrder())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="workorder/manage?mode=New">
+                    <span class="oi oi-plus" aria-hidden="true"></span> New
+                </NavLink>
+            </div>
+        }
+        
+        @if (CurrentUser != null)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="workorder/search">
+                    <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Search
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@($"workorder/search?Creator={CurrentUser?.UserName}")">
+                    <span class="oi oi-list" aria-hidden="true"></span> My Work Orders
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@($"workorder/search?Assignee={CurrentUser?.UserName}")">
+                    <span class="oi oi-task" aria-hidden="true"></span> Work Orders Assigned To Me
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@($"workorder/search?Status={WorkOrderStatus.Assigned.Key}")">
+                    <span class="oi oi-clock" aria-hidden="true"></span> All Assigned Work Orders
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@($"workorder/search?Status={WorkOrderStatus.InProgress.Key}")">
+                    <span class="oi oi-clock" aria-hidden="true"></span> All Work Orders In Progress
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
 

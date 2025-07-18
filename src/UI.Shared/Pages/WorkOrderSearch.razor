@@ -72,8 +72,8 @@
         var rowClass = (i++%2) == 0 ? "odd" : "even";
         <tr class="@rowClass">
             <td><a href="/workorder/manage/@order.Number?mode=Edit">@order.Number</a></td>
-            <td>@order.Creator</td>
-            <td>@order.Assignee</td>
+            <td>@order.Creator?.GetFullName()</td>
+            <td>@order.Assignee?.GetFullName()</td>
             <td style="white-space: nowrap;">@order.Status</td>
             <td>@order.Title</td>
         </tr>

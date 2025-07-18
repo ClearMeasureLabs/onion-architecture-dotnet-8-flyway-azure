@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
 using Core.Model;
 using Core.Services;
+using Microsoft.AspNetCore.Mvc;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UI.Server.Controllers
+namespace ProgrammingWithPalermo.ChurchBulletin.UI.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

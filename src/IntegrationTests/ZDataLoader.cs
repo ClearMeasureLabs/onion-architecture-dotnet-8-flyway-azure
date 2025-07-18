@@ -80,7 +80,7 @@ public class ZDataLoader
             var order = new WorkOrder();
             order.Number = Guid.NewGuid().ToString().Substring(0, 5).ToUpper();
             order.Creator = jpalermo;
-            order.Assignee = jpalermo;
+            order.Assignee = hsimpson;
             order.Status = status;
             order.Title = "Work Order starting in status " + status;
             order.Description = "Foo, foo, foo, foo " + status;
@@ -96,7 +96,7 @@ public class ZDataLoader
 
         var order2 = new WorkOrder();
         order2.Number = Guid.NewGuid().ToString().Substring(0, 5).ToUpper();
-        order2.Creator = jpalermo;
+        order2.Creator = hsimpson;
         order2.Assignee = jpalermo;
         order2.Status = WorkOrderStatus.Complete;
         order2.Title = "Work Order starting in status ";

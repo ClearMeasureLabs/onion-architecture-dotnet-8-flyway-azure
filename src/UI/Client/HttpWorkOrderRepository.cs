@@ -26,10 +26,37 @@ namespace UI.Client
 
         public async Task<WorkOrder[]> GetWorkOrdersAsync(WorkOrderSearchSpecification specification)
         {
-            // Call the correct API endpoint for search
-            var url = "api/workorder/search";
+            var url = BuildSearchUrl(specification);
             var result = await _httpClient.GetFromJsonAsync<WorkOrder[]>(url);
             return result ?? Array.Empty<WorkOrder>();
+        }
+
+        private string BuildSearchUrl(WorkOrderSearchSpecification specification)
+        {
+            var url = "api/workorder/search";
+            var queryParams = new List<string>();
+
+            if (specification.Status != null)
+            {
+                queryParams.Add($"status={specification.Status.Key}");
+            }
+
+            if (specification.Creator != null)
+            {
+                queryParams.Add($"creator={specification.Creator.UserName}");
+            }
+
+            if (specification.Assignee != null)
+            {
+                queryParams.Add($"assignee={specification.Assignee.UserName}");
+            }
+
+            if (queryParams.Count > 0)
+            {
+                url += "?" + string.Join("&", queryParams);
+            }
+
+            return url;
         }
     }
 }
