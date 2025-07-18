@@ -3,8 +3,11 @@
 @using System.ComponentModel.DataAnnotations
 @using UI.Shared.Authentication
 @using UI.Shared.Models
+@using Core.Model
+@using Core.Services
 @inject CustomAuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
+@inject IEmployeeRepository EmployeeRepository
 
 <PageTitle>Login</PageTitle>
 
@@ -20,8 +23,14 @@
                     <ValidationSummary />
 
                     <div class="form-group mb-3">
-                        <label for="username">Username</label>
-                        <InputText id="username" @bind-Value="loginModel.Username" class="form-control" />
+                        <label for="employee">Select Employee</label>
+                        <InputSelect id="employee" @bind-Value="loginModel.Username" class="form-control">
+                            <option value="">-- Select an employee --</option>
+                            @foreach (var employee in employees)
+                            {
+                                <option value="@employee.UserName">@employee.GetFullName()</option>
+                            }
+                        </InputSelect>
                         <ValidationMessage For="@(() => loginModel.Username)" />
                     </div>
 
@@ -40,13 +49,38 @@
 </div>
 
 @code {
-    private LoginModel loginModel = new(){Username = "hsimpson"};
+    private LoginModel loginModel = new();
     private string? errorMessage;
+    private Employee[] employees = Array.Empty<Employee>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEmployees();
+    }
+
+    private async Task LoadEmployees()
+    {
+        try
+        {
+            employees = await EmployeeRepository.GetEmployeesAsync(EmployeeSpecification.All);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error loading employees: " + ex.Message;
+        }
+    }
 
     private void HandleLogin()
     {
-        // Hardcoded credentials check
-        if (loginModel.Username == "hsimpson")
+        if (string.IsNullOrEmpty(loginModel.Username))
+        {
+            errorMessage = "Please select an employee";
+            return;
+        }
+
+        // Find the selected employee
+        var selectedEmployee = employees.FirstOrDefault(e => e.UserName == loginModel.Username);
+        if (selectedEmployee != null)
         {
             // Successful login
             AuthStateProvider.Login(loginModel.Username);
@@ -56,13 +90,13 @@
         else
         {
             // Failed login
-            errorMessage = "Invalid username";
+            errorMessage = "Invalid employee selection";
         }
     }
 
     public class LoginModel
     {
-        [Required(ErrorMessage = "Username is required")]
+        [Required(ErrorMessage = "Employee selection is required")]
         public string Username { get; set; } = string.Empty;
     }
 }

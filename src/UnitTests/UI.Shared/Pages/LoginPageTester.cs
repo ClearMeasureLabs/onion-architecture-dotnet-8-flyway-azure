@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using AngleSharp.Html.Dom;
 using Bunit;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -8,6 +9,9 @@ using NUnit.Framework;
 using Shouldly;
 using UI.Shared.Authentication;
 using UI.Shared.Pages;
+using Core.Model;
+using Core.Services;
+using Palermo.BlazorMvc;
 
 namespace UnitTests.UI.Shared.Pages
 {
@@ -43,28 +47,66 @@ namespace UnitTests.UI.Shared.Pages
         }
 
         [Test]
-        public void ShouldSuccessfullyLogInWithHsimpson()
+        public void ShouldDisplayDropdownWithEmployees()
         {
             using var ctx = new Bunit.TestContext();
             
-            var authStateProvider = new CustomAuthenticationStateProvider();
-            ctx.Services.AddSingleton(authStateProvider);
-            ctx.Services.AddSingleton<Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider>(authStateProvider);
-            
-            // Mock the IUiBus dependency
-            var mockUiBus = new StubUiBus();
-            ctx.Services.AddSingleton<Palermo.BlazorMvc.IUiBus>(mockUiBus);
+            var provider = new CustomAuthenticationStateProvider();
+            ctx.Services.AddSingleton(provider);
+            ctx.Services.AddSingleton<AuthenticationStateProvider>(provider);
+            ctx.Services.AddSingleton<IEmployeeRepository>(new MockEmployeeRepository());
+            ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
             
             var component = ctx.RenderComponent<Login>();
             
-            var usernameInput = component.Find("#username");
+            var employeeSelect = component.Find("#employee");
+            employeeSelect.ShouldNotBeNull();
+            
+            var options = component.FindAll("option");
+            options.Count.ShouldBe(4);
+        }
+
+        [Test]
+        public void ShouldLoginWithSelectedEmployee()
+        {
+            using var ctx = new Bunit.TestContext();
+
+            var provider = new CustomAuthenticationStateProvider();
+            ctx.Services.AddSingleton(provider);
+            ctx.Services.AddSingleton<AuthenticationStateProvider>(provider);
+            ctx.Services.AddSingleton<IEmployeeRepository>(new MockEmployeeRepository());
+            ctx.Services.AddSingleton<Palermo.BlazorMvc.IUiBus>(new StubUiBus());
+            
+            var component = ctx.RenderComponent<Login>();
+            
+            var employeeSelect = component.Find("#employee");
             var submitButton = component.Find("button[type='submit']");
             
-            usernameInput.Change("hsimpson");
+            employeeSelect.Change("hsimpson");
             submitButton.Click();
             
-            authStateProvider.IsAuthenticated().ShouldBeTrue();
-            authStateProvider.GetUsername().ShouldBe("hsimpson");
+            provider.IsAuthenticated().ShouldBeTrue();
+            provider.GetUsername().ShouldBe("hsimpson");
+        }
+
+        private class MockEmployeeRepository : IEmployeeRepository
+        {
+            public Task<Employee> GetByUserNameAsync(string? userName)
+            {
+                var employee = new Employee(userName!, "Homer", "Simpson", "homer@springfield.com");
+                return Task.FromResult(employee);
+            }
+
+            public Task<Employee[]> GetEmployeesAsync(EmployeeSpecification spec)
+            {
+                var employees = new[]
+                {
+                    new Employee("hsimpson", "Homer", "Simpson", "homer@springfield.com"),
+                    new Employee("mburns", "Montgomery", "Burns", "burns@plant.com"),
+                    new Employee("nflanders", "Ned", "Flanders", "ned@flanders.com")
+                };
+                return Task.FromResult(employees);
+            }
         }
         
         private class StubUiBus : Palermo.BlazorMvc.IUiBus
