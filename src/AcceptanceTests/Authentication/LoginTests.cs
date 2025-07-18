@@ -37,7 +37,7 @@ public class LoginTests : PageTest
     }
 
     [Test]
-    public async Task LoginWithCorrectCredentialsForwardsToHomePage()
+    public async Task LoginWithUsernameOnlyForwardsToHomePage()
     {
         // Act: Go to home page
         await Page.GotoAsync("/");
@@ -48,9 +48,8 @@ public class LoginTests : PageTest
         await loginLink.ClickAsync();
         await Page.WaitForURLAsync("**/login");
 
-        // Fill in credentials
+        // Fill in username only
         await Page.FillAsync("#username", "hsimpson");
-        await Page.FillAsync("#password", "password123");
 
         // Submit form
         var loginButton = Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Login" });
