@@ -37,8 +37,8 @@ namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess
             WorkOrder order123 = (await repository.GetWorkOrderAsync("123"))!;
             WorkOrder order456 = (await repository.GetWorkOrderAsync("456"))!;
 
-            Assert.That(order123.Id, Is.EqualTo(order1.Id));
-            Assert.That(order456.Id, Is.EqualTo(order2.Id));
+            order123.Id.ShouldBe(order1.Id);
+            order456.Id.ShouldBe(order2.Id);
         }
 
         [Test]
@@ -77,13 +77,13 @@ namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess
                     .Include(wo => wo.Creator)
                     .Include(wo => wo.Assignee)
                     .Single(wo => wo.Id == order.Id);
-                Assert.That(rehydratedWorkOrder.Id, Is.EqualTo(order.Id));
-                Assert.That(rehydratedWorkOrder.Creator!.Id, Is.EqualTo(order.Creator.Id));
-                Assert.That(rehydratedWorkOrder.Assignee!.Id, Is.EqualTo(order.Assignee.Id));
-                Assert.That(rehydratedWorkOrder.Title, Is.EqualTo(order.Title));
-                Assert.That(rehydratedWorkOrder.Description, Is.EqualTo(order.Description));
-                Assert.That(rehydratedWorkOrder.Status, Is.EqualTo(order.Status));
-                Assert.That(rehydratedWorkOrder.RoomNumber, Is.EqualTo(order.RoomNumber));
+                rehydratedWorkOrder.Id.ShouldBe(order.Id);
+                rehydratedWorkOrder.Creator!.Id.ShouldBe(order.Creator.Id);
+                rehydratedWorkOrder.Assignee!.Id.ShouldBe(order.Assignee.Id);
+                rehydratedWorkOrder.Title.ShouldBe(order.Title);
+                rehydratedWorkOrder.Description.ShouldBe(order.Description);
+                rehydratedWorkOrder.Status.ShouldBe(order.Status);
+                rehydratedWorkOrder.RoomNumber.ShouldBe(order.RoomNumber);
                 rehydratedWorkOrder.Number.ShouldBe(order.Number);
             }
         }
@@ -119,8 +119,8 @@ namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess
             specification.MatchAssignee(employee1);
             WorkOrder[] orders = await repository.GetWorkOrdersAsync(specification);
 
-            Assert.That(orders.Length, Is.EqualTo(1));
-            Assert.That(orders[0].Id, Is.EqualTo(order1.Id));
+            orders.Length.ShouldBe(1);
+            orders[0].Id.ShouldBe(order1.Id);
         }
 
         [Test]
@@ -152,8 +152,8 @@ namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess
             specification.MatchCreator(creator1);
             WorkOrder[] orders = await repository.GetWorkOrdersAsync(specification);
 
-            Assert.That(orders.Length, Is.EqualTo(1));
-            Assert.That(orders[0].Id, Is.EqualTo(order1.Id));
+            orders.Length.ShouldBe(1);
+            orders[0].Id.ShouldBe(order1.Id);
         }
 
         [Test]
@@ -191,8 +191,8 @@ namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess
             specification.MatchAssignee(employee1);
             WorkOrder[] orders = await repository.GetWorkOrdersAsync(specification);
 
-            Assert.That(orders.Length, Is.EqualTo(1));
-            Assert.That(orders[0].Id, Is.EqualTo(order1.Id));
+            orders.Length.ShouldBe(1);
+            orders[0].Id.ShouldBe(order1.Id);
         }
 
         [Test]
@@ -228,9 +228,36 @@ namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess
             specification.MatchStatus(WorkOrderStatus.Assigned);
             WorkOrder[] orders = await repository.GetWorkOrdersAsync(specification);
 
-            Assert.That(orders.Length, Is.EqualTo(1));
-            Assert.That(orders[0].Id, Is.EqualTo(order1.Id));
+            orders.Length.ShouldBe(1);
+            orders[0].Id.ShouldBe(order1.Id);
         }
+
+        [Test]
+        public async Task ShouldSearchWithEmptySpecificationAndReturnAll()
+        {
+            new DatabaseTester().Clean();
+
+            var employee = new Employee("1", "1", "1", "1");
+            var order1 = new WorkOrder { Creator = employee, Assignee = employee, Number = "123" };
+            var order2 = new WorkOrder { Creator = employee, Assignee = employee, Number = "456" };
+
+            using (var context = TestHost.GetRequiredService<DbContext>())
+            {
+                context.Add(order1);
+                context.Add(order2);
+                await context.SaveChangesAsync();
+            }
+
+            var dataContext = TestHost.GetRequiredService<DataContext>();
+            var repository = new WorkOrderRepository(dataContext);
+            WorkOrder[] orders = await repository.GetWorkOrdersAsync(new WorkOrderSearchSpecification());
+
+            orders.Length.ShouldBe(2);
+            orders.Any(o => o.Id == order1.Id).ShouldBeTrue();
+            orders.Any(o => o.Id == order2.Id).ShouldBeTrue();
+        }
+        
+        
 
         [Test]
         public async Task ShouldSaveAuditEntries()
@@ -268,8 +295,60 @@ namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess
                     .Single(wo => wo.Id == order.Id);
                 var x = (AuditEntry)order.AuditEntries[0];
                 var y = (AuditEntry)rehydratedWorkOrder.AuditEntries[0];
-                Assert.That(x.BeginStatus, Is.EqualTo(y.BeginStatus));
+                x.BeginStatus.ShouldBe(y.BeginStatus);
             }
+        }
+
+        [Test]
+        public void SearchShouldReturnHydratedEmployeesWithWorkOrders()
+        {
+            new DatabaseTester().Clean();
+
+            var creator = new Employee("1", "John", "Doe", "john.doe@example.com");
+            var assignee = new Employee("2", "Jane", "Smith", "jane.smith@example.com");
+
+            var order1 = new WorkOrder
+            {
+                Creator = creator,
+                Assignee = assignee,
+                Number = "123",
+                Title = "Fix plumbing",
+                Description = "Fix the plumbing in room 101",
+                RoomNumber = "101",
+                Status = WorkOrderStatus.InProgress
+            };
+
+            using (var context = TestHost.GetRequiredService<DbContext>())
+            {
+                context.Add(creator);
+                context.Add(assignee);
+                context.Add(order1);
+                context.SaveChanges();
+            }
+
+            var dataContext = TestHost.GetRequiredService<DataContext>();
+            var repository = new WorkOrderRepository(dataContext);
+
+            var specification = new WorkOrderSearchSpecification();
+            specification.MatchCreator(creator);
+
+            var orders = repository.GetWorkOrdersAsync(specification).Result;
+
+            orders.Length.ShouldBe(1);
+
+            var rehydratedOrder = orders.First(o => o.Number == "123");
+
+            rehydratedOrder.Creator.ShouldNotBeNull();
+            rehydratedOrder.Assignee.ShouldNotBeNull();
+            rehydratedOrder.Creator.Id.ShouldBe(creator.Id);
+            rehydratedOrder.Creator.FirstName.ShouldBe(creator.FirstName);
+            rehydratedOrder.Creator.LastName.ShouldBe(creator.LastName);
+            rehydratedOrder.Creator.EmailAddress.ShouldBe(creator.EmailAddress);
+            rehydratedOrder.Assignee.Id.ShouldBe(assignee.Id);
+            rehydratedOrder.Assignee.FirstName.ShouldBe(assignee.FirstName);
+            rehydratedOrder.Assignee.LastName.ShouldBe(assignee.LastName);
+            rehydratedOrder.Assignee.EmailAddress.ShouldBe(assignee.EmailAddress);
+
         }
     }
 }

@@ -1,6 +1,8 @@
 using Core.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 
 namespace DataAccess.Mappings
@@ -19,9 +21,9 @@ namespace DataAccess.Mappings
                     .ValueGeneratedOnAdd()
                     .HasDefaultValue(Guid.Empty);
 
-                entity.Property(e => e.Number).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Number).IsRequired().HasMaxLength(5);
                 entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
-                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.Description).HasMaxLength(4000);
                 entity.Property(e => e.RoomNumber).HasMaxLength(50);
 
                 // Configure relationships
@@ -35,51 +37,109 @@ namespace DataAccess.Mappings
                       .HasForeignKey("AssigneeId")
                       .OnDelete(DeleteBehavior.Restrict);
 
+                // Configure navigation properties for eager loading
+                entity.Navigation(e => e.Creator).AutoInclude();
+                entity.Navigation(e => e.Assignee).AutoInclude();
+
                 // Configure Status with converter
                 entity.Property(e => e.Status)
                       .HasConversion(statusConverter)
                       .HasMaxLength(3);
 
-                // Configure AuditEntries collection with index-based ordering
+                // Configure AuditEntries collection with ordered mapping
                 entity.HasMany(e => e.AuditEntries)
                       .WithOne()
                       .HasForeignKey("WorkOrderId")
                       .OnDelete(DeleteBehavior.Cascade);
-                entity.Navigation(e => e.AuditEntries).AutoInclude();
+                entity.Navigation(e => e.AuditEntries)
+                      .AutoInclude()
+                      .EnableLazyLoading(false);
+                
+                // Configure ordering for AuditEntries collection
+                entity.Metadata.FindNavigation(nameof(WorkOrder.AuditEntries))!
+                      .SetPropertyAccessMode(PropertyAccessMode.Field);
             });
 
             modelBuilder.Entity<AuditEntry>(entity =>
             {
                 entity.ToTable("AuditEntry", "dbo");
 
-                // Configure the sequence property for list order
+                // Configure the sequence property as an ordered index column
                 entity.Property<int>("Sequence")
-                    .IsRequired();
+                    .IsRequired()
+                    .ValueGeneratedOnAdd()
+                    .HasValueGenerator<ListIndexSequenceValueGenerator>();
                 
                 // Configure the composite key (WorkOrderId, Sequence)
                 entity.HasKey("WorkOrderId", "Sequence");
 
-                // Configure properties
-                entity.Property(e => e.ArchivedEmployeeName).HasMaxLength(50);
-                entity.Property(e => e.Date).IsRequired();
+                // Add index for ordered queries and performance
+                entity.HasIndex("WorkOrderId", "Sequence")
+                      .HasDatabaseName("IX_AuditEntry_WorkOrderId_Sequence")
+                      .IsUnique();
 
-                // Configure Employee relationship
+                // Configure properties to match database schema
+                entity.Property(e => e.ArchivedEmployeeName)
+                      .HasMaxLength(50)
+                      .IsRequired(false); // nullable in database
+
+                entity.Property(e => e.Date)
+                      .HasColumnType("datetime")
+                      .IsRequired(true); // nullable in database
+
+                // Configure Employee relationship - nullable in database
                 entity.HasOne(e => e.Employee)
                       .WithMany()
                       .HasForeignKey("EmployeeId")
-                      .OnDelete(DeleteBehavior.Restrict);
+                      .OnDelete(DeleteBehavior.Restrict)
+                      .IsRequired(true);
 
-                // Configure conversion for the WorkOrderStatus properties
+                // Configure conversion for the WorkOrderStatus properties - nullable in database
                 entity.Property(e => e.BeginStatus)
                       .HasConversion(statusConverter)
                       .HasMaxLength(3)
-                      .HasColumnType("char(3)");
+                      .HasColumnType("char(3)")
+                      .IsRequired(true);
 
                 entity.Property(e => e.EndStatus)
                       .HasConversion(statusConverter)
                       .HasMaxLength(3)
-                      .HasColumnType("char(3)");
+                      .HasColumnType("char(3)")
+                      .IsRequired(true);
             });
+        }
+    }
+
+    public class ListIndexSequenceValueGenerator : ValueGenerator<int>
+    {
+        public override bool GeneratesTemporaryValues => false;
+
+        public override int Next(EntityEntry entry)
+        {
+            // Get the WorkOrder entity that owns this AuditEntry
+            var workOrderEntry = entry.Context.ChangeTracker.Entries<WorkOrder>()
+                .FirstOrDefault(e => e.Entity.Id == (Guid)entry.Property("WorkOrderId").CurrentValue!);
+            
+            if (workOrderEntry != null)
+            {
+                // Find the position of this AuditEntry in the WorkOrder's AuditEntries list
+                var auditEntry = (AuditEntry)entry.Entity;
+                var auditEntries = workOrderEntry.Entity.AuditEntries;
+                var index = auditEntries.ToList().IndexOf(auditEntry);
+                return index;
+            }
+            
+            // Fallback to database query if WorkOrder not in change tracker
+            var workOrderId = entry.Property("WorkOrderId").CurrentValue;
+            var context = (Microsoft.EntityFrameworkCore.DbContext)entry.Context;
+            
+            var maxSequence = context.Set<AuditEntry>()
+                .Where(ae => EF.Property<Guid>(ae, "WorkOrderId") == (Guid)workOrderId!)
+                .Select(ae => EF.Property<int>(ae, "Sequence"))
+                .DefaultIfEmpty(-1)
+                .Max();
+            
+            return maxSequence + 1;
         }
     }
 }
