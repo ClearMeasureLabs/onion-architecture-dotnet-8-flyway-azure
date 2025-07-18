@@ -17,7 +17,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.UI.Api.Controllers
         [HttpGet("search")]
         public async Task<ActionResult<WorkOrder[]>> Search()
         {
-            // For demo, return all work orders. Adjust to accept filters as needed.
+            //TODO: Implement single webapi for commands and queries    
             var spec = new WorkOrderSearchSpecification();
             var result = await _repository.GetWorkOrdersAsync(spec);
             return Ok(result);
