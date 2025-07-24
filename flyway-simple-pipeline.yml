@@ -39,13 +39,7 @@ stages:
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             echo $env:Version
             echo $(Build.BuildNumber)
-      - task: PowerShell@2
-        displayName: 'Install Octopus CLI using winget'
-        inputs:
-          targetType: 'inline'
-          script: |
-            winget install OctopusDeploy.Cli --silent --accept-package-agreements --accept-source-agreements
-         
+
       - task: PowerShell@2
         displayName: Build.ps1
         inputs:
@@ -117,12 +111,6 @@ stages:
         runOnce:
           deploy:
             steps:
-
-            - task: OctoInstaller@5
-              displayName: 'Install octo cli tools on Windows agent'
-              inputs:
-                version: '*'
-
             - task: OctopusCreateRelease@5
               name: 'CreateRelease'
               inputs:
@@ -170,12 +158,6 @@ stages:
         runOnce:
           deploy:
             steps:
-
-            - task: OctoInstaller@5
-              displayName: 'Install octo cli tools on Windows agent'
-              inputs:
-                version: '*'
-
             - task: OctopusDeployRelease@5
               name: deploytoUAT
               inputs:
@@ -203,12 +185,6 @@ stages:
         runOnce:
           deploy:
             steps:
-      
-            - task: OctoInstaller@5
-              displayName: 'Install octo cli tools on Windows agent'
-              inputs:
-                version: '*'
-
             - task: OctopusDeployRelease@5
               name: deploytoProd
               inputs:
