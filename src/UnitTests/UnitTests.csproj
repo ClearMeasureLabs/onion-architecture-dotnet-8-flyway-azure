@@ -49,7 +49,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Core\Core.csproj" />
 		<ProjectReference Include="..\UI\Client\UI.Client.csproj" />
+		<ProjectReference Include="..\UI\Api\UI.Api.csproj" />
 		<ProjectReference Include="..\UI.Shared\UI.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="UI.Api\" />
 	</ItemGroup>
 
 </Project>
