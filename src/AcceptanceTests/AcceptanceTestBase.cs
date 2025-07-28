@@ -1,6 +1,6 @@
 ﻿namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests;
 
-public class AcceptanceTestBase : PageTest
+public abstract class AcceptanceTestBase : PageTest
 {
     protected virtual bool? Headless { get; set; } = true;
     protected new IPage Page { get; private set; }

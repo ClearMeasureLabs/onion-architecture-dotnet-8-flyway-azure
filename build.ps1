@@ -16,7 +16,7 @@ $databaseProjectPath = "$source_dir\Database"
 $databaseFlywayProjectPath = "$source_dir\DatabaseFlyway"
 $mauiProjectPath = "$source_dir\UI\Maui"
 $projectConfig = $env:BuildConfiguration
-$framework = "net8.0"
+$framework = "net9.0"
 $version = $env:BUILD_BUILDNUMBER
 
 $verbosity = "minimal"
@@ -52,6 +52,15 @@ if ([string]::IsNullOrEmpty($version)) { $version = "1.0.0"}
 if ([string]::IsNullOrEmpty($projectConfig)) {$projectConfig = "Release"}
  
 Function Init {
+	# Check for PowerShell 7
+	$pwshPath = (Get-Command pwsh -ErrorAction SilentlyContinue).Source
+
+	if (-not $pwshPath) {
+		Write-Warning "PowerShell 7 is not installed. Please install it from https://aka.ms/powershell"
+	} else {
+		Write-Host "PowerShell 7 found at: $pwshPath"
+	}
+
 	& cmd.exe /c rd /S /Q build
 	
 	mkdir $build_dir > $null
@@ -111,6 +120,8 @@ Function IntegrationTest{
 
 Function AcceptanceTests{
 	Push-Location -Path $acceptanceTestProjectPath
+
+	pwsh bin/Debug/$framework/playwright.ps1 install 
 
 	try {
 		exec {
