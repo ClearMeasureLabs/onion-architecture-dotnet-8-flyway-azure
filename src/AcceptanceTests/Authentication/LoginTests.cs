@@ -49,7 +49,7 @@ public class LoginTests : PageTest
         await Page.WaitForURLAsync("**/login");
 
         // Fill in username only
-        await Page.FillAsync("#username", "hsimpson");
+        await Page.SelectOptionAsync("#employee", "hsimpson");
 
         // Submit form
         var loginButton = Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Login" });
