@@ -1,8 +1,6 @@
 using Core.Model;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.ValueGeneration;
 using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 
 namespace DataAccess.Mappings
@@ -66,9 +64,7 @@ namespace DataAccess.Mappings
 
                 // Configure the sequence property as an ordered index column
                 entity.Property<int>("Sequence")
-                    .IsRequired()
-                    .ValueGeneratedOnAdd()
-                    .HasValueGenerator<ListIndexSequenceValueGenerator>();
+                    .HasValueGenerator<AuditEntrySequenceGenerator>();
                 
                 // Configure the composite key (WorkOrderId, Sequence)
                 entity.HasKey("WorkOrderId", "Sequence");
@@ -107,39 +103,6 @@ namespace DataAccess.Mappings
                       .HasColumnType("char(3)")
                       .IsRequired(true);
             });
-        }
-    }
-
-    public class ListIndexSequenceValueGenerator : ValueGenerator<int>
-    {
-        public override bool GeneratesTemporaryValues => false;
-
-        public override int Next(EntityEntry entry)
-        {
-            // Get the WorkOrder entity that owns this AuditEntry
-            var workOrderEntry = entry.Context.ChangeTracker.Entries<WorkOrder>()
-                .FirstOrDefault(e => e.Entity.Id == (Guid)entry.Property("WorkOrderId").CurrentValue!);
-            
-            if (workOrderEntry != null)
-            {
-                // Find the position of this AuditEntry in the WorkOrder's AuditEntries list
-                var auditEntry = (AuditEntry)entry.Entity;
-                var auditEntries = workOrderEntry.Entity.AuditEntries;
-                var index = auditEntries.ToList().IndexOf(auditEntry);
-                return index;
-            }
-            
-            // Fallback to database query if WorkOrder not in change tracker
-            var workOrderId = entry.Property("WorkOrderId").CurrentValue;
-            var context = (Microsoft.EntityFrameworkCore.DbContext)entry.Context;
-            
-            var maxSequence = context.Set<AuditEntry>()
-                .Where(ae => EF.Property<Guid>(ae, "WorkOrderId") == (Guid)workOrderId!)
-                .Select(ae => EF.Property<int>(ae, "Sequence"))
-                .DefaultIfEmpty(-1)
-                .Max();
-            
-            return maxSequence + 1;
         }
     }
 }

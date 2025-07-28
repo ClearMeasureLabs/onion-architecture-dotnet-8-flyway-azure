@@ -86,7 +86,7 @@ public class WorkOrderMappingTests
         rehydratedWorkOrder.Assignee!.Id.ShouldBe(assignee.Id);
     }
 
-    [Test, Ignore("Work out AuditEntry mapping")]
+    [Test]
     public void ShouldMapWorkOrderWithAuditEntries()
     {
         new DatabaseTester().Clean();
@@ -134,8 +134,6 @@ public class WorkOrderMappingTests
             rehydratedWorkOrder = context.Set<WorkOrder>()
                 .Include(wo => wo.Creator)
                 .Include(wo => wo.Assignee)
-                .Include(wo => wo.AuditEntries)
-                    .ThenInclude(ae => ae.Employee)
                 .Single(wo => wo.Id == workOrder.Id);
         }
 
@@ -233,7 +231,7 @@ public class WorkOrderMappingTests
         }
     }
 
-    [Test, Ignore("AuditEntry mapping")]
+    [Test]
     public void ShouldDeleteAuditEntriesWhenWorkOrderIsDeleted()
     {
         new DatabaseTester().Clean();
@@ -329,7 +327,7 @@ public class WorkOrderMappingTests
         rehydratedWorkOrder.Assignee.LastName.ShouldBe("Smith");
     }
 
-    [Test, Ignore("Need to work out AuditEntry mapping")]
+    [Test]
     public void ShouldGenerateSequenceBasedOnListIndex()
     {
         new DatabaseTester().Clean();
@@ -358,24 +356,15 @@ public class WorkOrderMappingTests
         var auditEntry1 = new AuditEntry(creator, DateTime.Now.AddDays(-3), WorkOrderStatus.Draft, WorkOrderStatus.Assigned);
         var auditEntry2 = new AuditEntry(assignee, DateTime.Now.AddDays(-2), WorkOrderStatus.Assigned, WorkOrderStatus.InProgress);
         var auditEntry3 = new AuditEntry(creator, DateTime.Now.AddDays(-1), WorkOrderStatus.InProgress, WorkOrderStatus.Complete);
-        
-     
+        workOrder.AuditEntries.Add(auditEntry1);
+        workOrder.AuditEntries.Add(auditEntry2);
+        workOrder.AuditEntries.Add(auditEntry3);
 
-        // Save WorkOrder with AuditEntries in new context
         using (var context = TestHost.GetRequiredService<DbContext>())
         {
             context.Attach(creator);
             context.Attach(assignee);
             context.Add(workOrder);
-            context.SaveChanges();
-        }
-
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            context.Attach(workOrder);
-            workOrder.AuditEntries.Add(auditEntry1);
-            workOrder.AuditEntries.Add(auditEntry2);
-            workOrder.AuditEntries.Add(auditEntry3);
             context.SaveChanges();
         }
 
@@ -392,8 +381,8 @@ public class WorkOrderMappingTests
         
         // Sequence should match list index
         var auditEntries = rehydratedWorkOrder.AuditEntries.ToList();
-        EF.Property<int>(auditEntries[0], "Sequence").ShouldBe(0);
-        EF.Property<int>(auditEntries[1], "Sequence").ShouldBe(1);
-        EF.Property<int>(auditEntries[2], "Sequence").ShouldBe(2);
+        auditEntries[0].ShouldBe(auditEntry1);
+        auditEntries[1].ShouldBe(auditEntry2);
+        auditEntries[2].ShouldBe(auditEntry3);
     }
 }

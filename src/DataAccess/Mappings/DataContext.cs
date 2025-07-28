@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
+﻿using Core.Model;
 using DataAccess.Mappings;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using ProgrammingWithPalermo.ChurchBulletin.Core;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 
@@ -17,6 +20,8 @@ public class DataContext : DbContext
     {
         optionsBuilder.EnableSensitiveDataLogging();
         optionsBuilder.UseSqlServer(_config.GetConnectionString());
+        optionsBuilder.AddInterceptors(new AuditEntrySequenceInterceptor());
+
 
         base.OnConfiguring(optionsBuilder);
     }
