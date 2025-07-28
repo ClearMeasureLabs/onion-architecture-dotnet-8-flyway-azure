@@ -3,7 +3,7 @@ using ProgrammingWithPalermo.ChurchBulletin.Core;
 
 namespace UI.Client;
 
-public class RemoteableBus(IBus bus, PublisherGateway gateway) : IBus
+public class RemotableBus(IMediator mediatr, PublisherGateway gateway) : IBus
 {
     public async Task<TResponse> Send<TResponse>(IRequest<TResponse> request)
     {
@@ -14,16 +14,16 @@ public class RemoteableBus(IBus bus, PublisherGateway gateway) : IBus
             return returnEvent;
         }
 
-        return await bus.Send(request);
+        return await mediatr.Send(request);
     }
 
     public Task<object?> Send(object request)
     {
-        return bus.Send(request);
+        return mediatr.Send(request);
     }
 
     public void Publish<TNotification>(TNotification notification) where TNotification : INotification
     {
-        bus.Publish(notification);
+        mediatr.Publish(notification);
     }
 }

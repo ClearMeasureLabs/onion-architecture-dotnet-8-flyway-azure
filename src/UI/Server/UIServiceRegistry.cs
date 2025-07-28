@@ -1,10 +1,12 @@
 ﻿using Lamar;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProgrammingWithPalermo.ChurchBulletin.Core;
 using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using ProgrammingWithPalermo.ChurchBulletin.DataAccess;
 using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 using UI.Client;
+using UI.Shared;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.UI.Server;
 
@@ -27,6 +29,8 @@ public class UiServiceRegistry : ServiceRegistry
             scanner.AssemblyContainingType<Api.HealthCheck>();
             scanner.AssemblyContainingType<Is64BitProcessHealthCheck>();
             scanner.AssemblyContainingType<CanConnectToLlmServerHealthCheck>();
+            scanner.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
+            scanner.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
         });
 
         this.AddHealthChecks()

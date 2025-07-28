@@ -10,6 +10,8 @@ using ProgrammingWithPalermo.ChurchBulletin.Core;
 using UI.Client;
 using UI.Shared.Authentication;
 using Core.Services;
+using Lamar;
+using Lamar.Microsoft.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -17,6 +19,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 var http = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
 var ConfigurationModel = await http.GetFromJsonAsync<ConfigurationModel>("Configuration");
+builder.Services.AddScoped(sp => http);
 
 if (ConfigurationModel != null)
 {
@@ -28,19 +31,11 @@ if (ConfigurationModel != null)
 
 // Add authentication services
 builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<CustomAuthenticationStateProvider>();
-builder.Services.AddScoped<AuthenticationStateProvider>(provider => 
-    provider.GetRequiredService<CustomAuthenticationStateProvider>());
+builder.ConfigureContainer<ServiceRegistry>(
+    new LamarServiceProviderFactory(), registry => 
+        registry.IncludeRegistry<UIClientServiceRegistry>());
 
-builder.Services.AddScoped<IUiBus>(provider => new MvcBus(NullLogger<MvcBus>.Instance));
-builder.Services.AddScoped(sp => http);
-builder.Services.AddScoped<IEmployeeRepository, UI.Client.HttpEmployeeRepository>();
-builder.Services.AddScoped<IWorkOrderRepository, UI.Client.HttpWorkOrderRepository>();
-builder.Services.AddScoped<IUserSession, UI.Services.UserSession>();
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<RemoteableBus>());
-builder.Services.AddTransient<IBus, RemoteableBus>();
-builder.Services.AddTransient<PublisherGateway>();
 string url = builder.Configuration.GetValue<string>("RemoteBusUrl") ?? throw new InvalidOperationException("Must have config value 'RemoteBusUrl'");
 builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(url) });
 

@@ -1,19 +1,17 @@
-namespace UI.Shared.Models
+﻿using MediatR;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
+
+namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers;
+
+public class ForecastQueryHandler : IRequestHandler<ForecastQuery, WeatherForecast[]>
 {
-    public class WeatherForecast
+    public Task<WeatherForecast[]> Handle(ForecastQuery request, CancellationToken cancellationToken)
     {
-        public DateTime Date { get; set; }
-
-        public int TemperatureC { get; set; }
-
-        public string? Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-
-        public int Id { get; set; }
+        return Task.FromResult(new WeatherForecastData().GetAll());
     }
 
-    public class WeatherForecastData
+    private class WeatherForecastData
     {
         private static readonly string[] Summaries = new[]
         {
@@ -21,7 +19,7 @@ namespace UI.Shared.Models
         };
 
 
-        private readonly WeatherForecast[]  AllForecasts;
+        private readonly WeatherForecast[] AllForecasts;
         public WeatherForecastData()
         {
             List<WeatherForecast> forecasts = new List<WeatherForecast>();
