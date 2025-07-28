@@ -13,7 +13,7 @@ namespace UnitTests.UI.Client
     [TestFixture]
     public class HttpWorkOrderRepositoryTester
     {
-        [Test,  Ignore("not ready")]
+        [Test]
         public async Task GetWorkOrderAsync_WithValidNumber_ReturnsWorkOrder()
         {
             var handler = new FakeHttpMessageHandler((request) =>
@@ -28,7 +28,10 @@ namespace UnitTests.UI.Client
                 }
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
             });
-            var httpClient = new HttpClient(handler);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://localhost:5001/")
+            };
             var repo = new HttpWorkOrderRepository(httpClient);
             var result = await repo.GetWorkOrderAsync("123");
             result.ShouldNotBeNull();

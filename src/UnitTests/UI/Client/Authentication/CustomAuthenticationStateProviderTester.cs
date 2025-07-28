@@ -10,7 +10,7 @@ namespace UnitTests.UI.Client.Authentication
     [TestFixture]
     public class CustomAuthenticationStateProviderTester
     {
-        [Test, Ignore("Temporarily hardcoded identity")]
+        [Test]
         public async Task ShouldReturnUnauthenticatedUserWhenNotLoggedIn()
         {
             var authProvider = new CustomAuthenticationStateProvider();
