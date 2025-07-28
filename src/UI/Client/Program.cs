@@ -38,4 +38,10 @@ builder.Services.AddScoped<IEmployeeRepository, UI.Client.HttpEmployeeRepository
 builder.Services.AddScoped<IWorkOrderRepository, UI.Client.HttpWorkOrderRepository>();
 builder.Services.AddScoped<IUserSession, UI.Services.UserSession>();
 
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<RemoteableBus>());
+builder.Services.AddTransient<IBus, RemoteableBus>();
+builder.Services.AddTransient<PublisherGateway>();
+string url = builder.Configuration.GetValue<string>("RemoteBusUrl") ?? throw new InvalidOperationException("Must have config value 'RemoteBusUrl'");
+builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(url) });
+
 await builder.Build().RunAsync();

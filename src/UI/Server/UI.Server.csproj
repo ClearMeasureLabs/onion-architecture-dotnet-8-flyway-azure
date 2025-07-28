@@ -12,6 +12,7 @@
 	<ItemGroup>
 		<PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.3.0" />
 		<PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="15.0.1" />
+		<PackageReference Include="MediatR" Version="13.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.7" />
 		<PackageReference Include="OpenTelemetry" Version="1.12.0" />
 		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
@@ -25,10 +26,6 @@
 		<ProjectReference Include="..\..\LlmGateway\LlmGateway.csproj" />
 		<ProjectReference Include="..\Client\UI.Client.csproj" />
 		<ProjectReference Include="..\Api\UI.Api.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Controllers\" />
 	</ItemGroup>
 
 
