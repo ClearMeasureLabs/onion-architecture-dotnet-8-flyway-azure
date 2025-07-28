@@ -32,6 +32,7 @@ This file provides standards for GitHub Copilot to follow when generating code f
 ### Testing Frameworks
 - **NUnit**: Primary testing framework
 - Avoid mocking libraries when possible
+- When creating a test double, mock or stub in a test, use the naming of "StubClass". Don't put "Mock" in the name.
 
 ### Test Structure
 - Follow AAA pattern (Arrange, Act, Assert), but don't add comments

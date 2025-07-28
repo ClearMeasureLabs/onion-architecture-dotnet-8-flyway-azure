@@ -20,7 +20,7 @@
         <tbody>
             <tr>
                 <td>
-                    <InputSelect @bind-Value="Model.Filters.Creator" class="form-control" style="width: 200px;">
+                    <InputSelect id="@Elements.CreatorSelect"  @bind-Value="Model.Filters.Creator" class="form-control" style="width: 200px;">
                         <option value="">All</option>
                         @foreach (var user in UserOptions)
                         {
@@ -29,7 +29,7 @@
                     </InputSelect>
                 </td>
                 <td>
-                    <InputSelect @bind-Value="Model.Filters.Assignee" class="form-control" style="width: 200px;">
+                    <InputSelect id="@Elements.AssigneeSelect" @bind-Value="Model.Filters.Assignee" class="form-control" style="width: 200px;">
                         <option value="">All</option>
                         @foreach (var user in UserOptions)
                         {
@@ -38,7 +38,7 @@
                     </InputSelect>
                 </td>
                 <td>
-                    <InputSelect @bind-Value="Model.Filters.Status" class="form-control" style="width: 200px;">
+                    <InputSelect id="@Elements.StatusSelect" @bind-Value="Model.Filters.Status" class="form-control" style="width: 200px;">
                         <option value="">All</option>
                         @foreach (var status in StatusOptions)
                         {
@@ -83,6 +83,13 @@
 </table>
 
 @code {
+
+    public enum Elements
+    {
+        CreatorSelect,
+        AssigneeSelect,
+        StatusSelect
+    };
     public WorkOrderSearchModel Model { get; set; } = new WorkOrderSearchModel();
     public List<SelectListItem> UserOptions { get; set; } = new List<SelectListItem>();
     public List<SelectListItem> StatusOptions { get; set; } = new List<SelectListItem>();

@@ -10,7 +10,7 @@ using UI.Shared.Authentication;
 using UI.Shared.Pages;
 using TestContext = Bunit.TestContext;
 
-namespace UnitTests.UI.Shared.Pages;
+namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests.UI.Shared.Pages;
 
 [TestFixture]
 public class LoginPageTester
