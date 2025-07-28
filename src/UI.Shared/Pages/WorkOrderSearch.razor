@@ -47,7 +47,7 @@
                     </InputSelect>
                 </td>
                 <td>
-                    <button type="submit" class="btn btn-primary">Search</button>
+                    <button id="@Elements.SearchButton" type="submit" class="btn btn-primary">Search</button>
                 </td>
             </tr>
         </tbody>
@@ -57,7 +57,7 @@
 <br/>
 <table class="grid-data">
     <thead>
-        <tr>
+        <tr>    
             <th style="width:10%;">WO #</th>
             <th style="width:20%;">Creator</th>
             <th style="width:20%;">Assignee</th>
@@ -88,7 +88,8 @@
     {
         CreatorSelect,
         AssigneeSelect,
-        StatusSelect
+        StatusSelect,
+        SearchButton
     };
     public WorkOrderSearchModel Model { get; set; } = new WorkOrderSearchModel();
     public List<SelectListItem> UserOptions { get; set; } = new List<SelectListItem>();
