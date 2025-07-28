@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using NUnit.Framework;
 using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using Shouldly;
 
@@ -14,8 +13,8 @@ public class UpperCaseStringTester
         UpperCaseString? s = "abc";
         string? s2 = s;
 
-        string? result = s2;
-        string? result2 = s.ToString();
+        var result = s2;
+        var result2 = s.ToString();
 
         result2.ShouldBe(result);
     }
@@ -24,9 +23,9 @@ public class UpperCaseStringTester
     public void CanSerialize()
     {
         UpperCaseString s = "abc";
-        string serialized = JsonConvert.SerializeObject(s);
+        var serialized = JsonConvert.SerializeObject(s);
         Console.WriteLine(serialized);
-        UpperCaseString deserializeObject = JsonConvert.DeserializeObject<UpperCaseString>(serialized)!;
+        var deserializeObject = JsonConvert.DeserializeObject<UpperCaseString>(serialized)!;
         deserializeObject.ToString().ShouldBe("ABC");
     }
 }

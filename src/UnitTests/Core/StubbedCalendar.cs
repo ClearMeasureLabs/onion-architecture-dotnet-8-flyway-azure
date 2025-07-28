@@ -1,20 +1,18 @@
-using System;
 using Core.Services;
 
-namespace UnitTests.Core
+namespace UnitTests.Core;
+
+public class StubbedCalendar : ICalendar
 {
-	public class StubbedCalendar : ICalendar
-	{
-		private DateTime _currentTime;
+    private readonly DateTime _currentTime;
 
-		public StubbedCalendar(DateTime currentTime)
-		{
-			_currentTime = currentTime;
-		}
+    public StubbedCalendar(DateTime currentTime)
+    {
+        _currentTime = currentTime;
+    }
 
-		public DateTime GetCurrentTime()
-		{
-			return _currentTime;	
-		}
-	}
+    public DateTime GetCurrentTime()
+    {
+        return _currentTime;
+    }
 }

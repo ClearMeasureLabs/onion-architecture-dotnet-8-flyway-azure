@@ -1,93 +1,90 @@
-using System;
 using Core.Model;
-using NUnit.Framework;
 
-namespace UnitTests.Core.Model
+namespace UnitTests.Core.Model;
+
+[TestFixture]
+public class WorkOrderTester
 {
-    [TestFixture]
-    public class WorkOrderTester
+    [Test]
+    public void PropertiesShouldInitializeToProperDefaults()
     {
-        [Test]
-        public void PropertiesShouldInitializeToProperDefaults()
-        {
-            var workOrder = new WorkOrder();
-            Assert.That(workOrder.Id, Is.EqualTo(Guid.Empty));
-            Assert.That(workOrder.Title, Is.EqualTo(string.Empty));
-            Assert.That(workOrder.Description, Is.EqualTo(string.Empty));
-            Assert.That(workOrder.Status, Is.EqualTo(WorkOrderStatus.Draft));
-            Assert.That(workOrder.Number, Is.EqualTo(null));
-            Assert.That(workOrder.Creator, Is.EqualTo(null));
-            Assert.That(workOrder.Assignee, Is.EqualTo(null));
-            Assert.That(workOrder.AuditEntries.Count, Is.EqualTo(0));
-        }
+        var workOrder = new WorkOrder();
+        Assert.That(workOrder.Id, Is.EqualTo(Guid.Empty));
+        Assert.That(workOrder.Title, Is.EqualTo(string.Empty));
+        Assert.That(workOrder.Description, Is.EqualTo(string.Empty));
+        Assert.That(workOrder.Status, Is.EqualTo(WorkOrderStatus.Draft));
+        Assert.That(workOrder.Number, Is.EqualTo(null));
+        Assert.That(workOrder.Creator, Is.EqualTo(null));
+        Assert.That(workOrder.Assignee, Is.EqualTo(null));
+        Assert.That(workOrder.AuditEntries.Count, Is.EqualTo(0));
+    }
 
-        [Test]
-        public void ToStringShouldReturnWoNumber()
-        {
-            var order = new WorkOrder();
-            order.Number = "456";
-            Assert.That(order.ToString(), Is.EqualTo("Work Order 456"));
-        }
+    [Test]
+    public void ToStringShouldReturnWoNumber()
+    {
+        var order = new WorkOrder();
+        order.Number = "456";
+        Assert.That(order.ToString(), Is.EqualTo("Work Order 456"));
+    }
 
-        [Test]
-        public void PropertiesShouldGetAndSetValuesProperly()
-        {
-            var workOrder = new WorkOrder();
-            Guid guid = Guid.NewGuid();
-            var creator = new Employee();
-            var assignee = new Employee();
-            var createdDate = new DateTime(2000, 1, 1);
-            var completedDate = new DateTime(2000, 10, 1);
-            DateTime auditDate = new DateTime(2000, 1, 1, 8, 0, 0);
-            AuditEntry testAudit = new AuditEntry(creator, auditDate, WorkOrderStatus.Assigned, WorkOrderStatus.InProgress);
+    [Test]
+    public void PropertiesShouldGetAndSetValuesProperly()
+    {
+        var workOrder = new WorkOrder();
+        var guid = Guid.NewGuid();
+        var creator = new Employee();
+        var assignee = new Employee();
+        var createdDate = new DateTime(2000, 1, 1);
+        var completedDate = new DateTime(2000, 10, 1);
+        var auditDate = new DateTime(2000, 1, 1, 8, 0, 0);
+        var testAudit = new AuditEntry(creator, auditDate, WorkOrderStatus.Assigned, WorkOrderStatus.InProgress);
 
-            workOrder.Id = guid;
-            workOrder.Title = "Title";
-            workOrder.Description = "Description";
-            workOrder.Status = WorkOrderStatus.Complete;
-            workOrder.Number = "Number";
-            workOrder.Creator = creator;
-            workOrder.Assignee = assignee;
-            workOrder.AuditEntries.Add(testAudit);
+        workOrder.Id = guid;
+        workOrder.Title = "Title";
+        workOrder.Description = "Description";
+        workOrder.Status = WorkOrderStatus.Complete;
+        workOrder.Number = "Number";
+        workOrder.Creator = creator;
+        workOrder.Assignee = assignee;
+        workOrder.AuditEntries.Add(testAudit);
 
-            Assert.That(workOrder.Id, Is.EqualTo(guid));
-            Assert.That(workOrder.Title, Is.EqualTo("Title"));
-            Assert.That(workOrder.Description, Is.EqualTo("Description"));
-            Assert.That(workOrder.Status, Is.EqualTo(WorkOrderStatus.Complete));
-            Assert.That(workOrder.Number, Is.EqualTo("Number"));
-            Assert.That(workOrder.Creator, Is.EqualTo(creator));
-            Assert.That(workOrder.Assignee, Is.EqualTo(assignee));
-            Assert.That(workOrder.AuditEntries[0].BeginStatus, Is.EqualTo(WorkOrderStatus.Assigned));
-            Assert.That(workOrder.AuditEntries[0].EndStatus, Is.EqualTo(WorkOrderStatus.InProgress));
-            Assert.That(workOrder.AuditEntries[0].Date, Is.EqualTo(auditDate));
-            Assert.That(workOrder.AuditEntries[0].ArchivedEmployeeName, Is.EqualTo(" "));
-        }
+        Assert.That(workOrder.Id, Is.EqualTo(guid));
+        Assert.That(workOrder.Title, Is.EqualTo("Title"));
+        Assert.That(workOrder.Description, Is.EqualTo("Description"));
+        Assert.That(workOrder.Status, Is.EqualTo(WorkOrderStatus.Complete));
+        Assert.That(workOrder.Number, Is.EqualTo("Number"));
+        Assert.That(workOrder.Creator, Is.EqualTo(creator));
+        Assert.That(workOrder.Assignee, Is.EqualTo(assignee));
+        Assert.That(workOrder.AuditEntries[0].BeginStatus, Is.EqualTo(WorkOrderStatus.Assigned));
+        Assert.That(workOrder.AuditEntries[0].EndStatus, Is.EqualTo(WorkOrderStatus.InProgress));
+        Assert.That(workOrder.AuditEntries[0].Date, Is.EqualTo(auditDate));
+        Assert.That(workOrder.AuditEntries[0].ArchivedEmployeeName, Is.EqualTo(" "));
+    }
 
-        [Test]
-        public void ShouldShowFriendlyStatusValuesAsStrings()
-        {
-            var workOrder = new WorkOrder();
-            workOrder.Status = WorkOrderStatus.Assigned;
+    [Test]
+    public void ShouldShowFriendlyStatusValuesAsStrings()
+    {
+        var workOrder = new WorkOrder();
+        workOrder.Status = WorkOrderStatus.Assigned;
 
-            Assert.That(workOrder.FriendlyStatus, Is.EqualTo("Assigned"));
-        }
+        Assert.That(workOrder.FriendlyStatus, Is.EqualTo("Assigned"));
+    }
 
-        [Test]
-        public void ShouldTruncateTo4000CharactersOnDescription()
-        {
-            var longText = new string('x', 4001);
-            var order = new WorkOrder();
-            order.Description = longText;
-            Assert.That(order.Description.Length, Is.EqualTo(4000));
-        }
+    [Test]
+    public void ShouldTruncateTo4000CharactersOnDescription()
+    {
+        var longText = new string('x', 4001);
+        var order = new WorkOrder();
+        order.Description = longText;
+        Assert.That(order.Description.Length, Is.EqualTo(4000));
+    }
 
-        [Test]
-        public void ShouldChangeStatus()
-        {
-            var order = new WorkOrder();
-            order.Status = WorkOrderStatus.Draft;
-            order.ChangeStatus(WorkOrderStatus.Assigned);
-            Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Assigned));
-        }
+    [Test]
+    public void ShouldChangeStatus()
+    {
+        var order = new WorkOrder();
+        order.Status = WorkOrderStatus.Draft;
+        order.ChangeStatus(WorkOrderStatus.Assigned);
+        Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Assigned));
     }
 }

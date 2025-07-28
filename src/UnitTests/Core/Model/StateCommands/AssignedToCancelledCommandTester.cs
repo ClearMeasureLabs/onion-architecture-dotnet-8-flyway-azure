@@ -1,126 +1,120 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using Core.Model;
+﻿using Core.Model;
 using Core.Model.StateCommands;
 using Core.Services;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
 using Shouldly;
 
-namespace UnitTests.Core.Model.StateCommands
+namespace UnitTests.Core.Model.StateCommands;
+
+public class AssignedToCancelledCommandTester : StateCommandBaseTester
 {
-    public class AssignedToCancelledCommandTester : StateCommandBaseTester
+    [Test]
+    public void ShouldBeValid()
     {
-
-        [Test]
-        public void ShouldBeValid()
+        var order = new WorkOrder
         {
-            var order = new WorkOrder
-            {
-                Status = WorkOrderStatus.Assigned
-            };
-            var employee = new Employee();
-            order.Creator = employee;
+            Status = WorkOrderStatus.Assigned
+        };
+        var employee = new Employee();
+        order.Creator = employee;
 
-            var command = new AssignedToCancelledCommand(order, employee);
-            Assert.That(command.IsValid(), Is.True);
-        }
-
-        [Test]
-        public void ShouldNotBeValidInWrongStatus()
-        {
-            var order = new WorkOrder
-            {
-                Status = WorkOrderStatus.Draft
-            };
-            var employee = new Employee();
-            order.Creator = employee;
-
-            var command = new AssignedToCancelledCommand(order, employee);
-            Assert.That(command.IsValid(), Is.False);
-        }
-
-        [Test]
-        public void ShouldNotBeValidWithWrongEmployee()
-        {
-            var order = new WorkOrder
-            {
-                Status = WorkOrderStatus.Assigned
-            };
-            var employee = new Employee();
-            var differentEmployee = new Employee();
-            order.Creator = employee;
-
-            var command = new AssignedToCancelledCommand(order, differentEmployee);
-            Assert.That(command.IsValid(), Is.False);
-        }
-
-        [Test]
-        public void ShouldTransitionStateProperly()
-        {
-            var order = new WorkOrder
-            {
-                Number = "123",
-                Status = WorkOrderStatus.Assigned
-            };
-            var employee = new Employee();
-            order.Creator = employee;
-
-            var command = new AssignedToCancelledCommand(order, employee);
-            VisitorStub visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
-            command.Execute(visitorStub, new LoggingNotifier());
-
-            visitorStub.SentMessage.ShouldBe("You have cancelled work order 123");
-            visitorStub.SavedWorkOrder.ShouldBe(order);
-            visitorStub.EditedWorkOrder.ShouldBe(order);
-            Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Cancelled));
-        }
-
-        protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)
-        {
-            return new AssignedToCancelledCommand(order, employee);
-        }
+        var command = new AssignedToCancelledCommand(order, employee);
+        Assert.That(command.IsValid(), Is.True);
     }
 
-    public class VisitorStub(params object[] services) : IStateCommandVisitor
+    [Test]
+    public void ShouldNotBeValidInWrongStatus()
     {
-        public WorkOrder SavedWorkOrder { get; set; } = null!;
-        public WorkOrder EditedWorkOrder { get; set; } = null!;
-        public string SentMessage { get; set; } = null!;
-
-        public void SaveWorkOrder(WorkOrder workOrder)
+        var order = new WorkOrder
         {
-            SavedWorkOrder = workOrder;
-        }
+            Status = WorkOrderStatus.Draft
+        };
+        var employee = new Employee();
+        order.Creator = employee;
 
-        public void EditWorkOrder(WorkOrder workOrder)
-        {
-            EditedWorkOrder = workOrder;
-        }
+        var command = new AssignedToCancelledCommand(order, employee);
+        Assert.That(command.IsValid(), Is.False);
+    }
 
-        public void GoToWorkOrderSearch(Employee creator, Employee assignee, WorkOrderStatus status)
+    [Test]
+    public void ShouldNotBeValidWithWrongEmployee()
+    {
+        var order = new WorkOrder
         {
-            throw new NotImplementedException();
-        }
+            Status = WorkOrderStatus.Assigned
+        };
+        var employee = new Employee();
+        var differentEmployee = new Employee();
+        order.Creator = employee;
 
-        public void SendMessage(string message)
-        {
-            SentMessage = message;
-        }
+        var command = new AssignedToCancelledCommand(order, differentEmployee);
+        Assert.That(command.IsValid(), Is.False);
+    }
 
-        public void SendError(string message)
+    [Test]
+    public void ShouldTransitionStateProperly()
+    {
+        var order = new WorkOrder
         {
-            throw new NotImplementedException();
-        }
+            Number = "123",
+            Status = WorkOrderStatus.Assigned
+        };
+        var employee = new Employee();
+        order.Creator = employee;
 
-        public T GetService<T>()
-        {
-            return (T)services.Single(o => o is T);
-        }
+        var command = new AssignedToCancelledCommand(order, employee);
+        var visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
+        command.Execute(visitorStub, new LoggingNotifier());
 
-        public void GoToDashboard()
-        {
-            throw new NotImplementedException();
-        }
+        visitorStub.SentMessage.ShouldBe("You have cancelled work order 123");
+        visitorStub.SavedWorkOrder.ShouldBe(order);
+        visitorStub.EditedWorkOrder.ShouldBe(order);
+        Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Cancelled));
+    }
+
+    protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)
+    {
+        return new AssignedToCancelledCommand(order, employee);
+    }
+}
+
+public class VisitorStub(params object[] services) : IStateCommandVisitor
+{
+    public WorkOrder SavedWorkOrder { get; set; } = null!;
+    public WorkOrder EditedWorkOrder { get; set; } = null!;
+    public string SentMessage { get; set; } = null!;
+
+    public void SaveWorkOrder(WorkOrder workOrder)
+    {
+        SavedWorkOrder = workOrder;
+    }
+
+    public void EditWorkOrder(WorkOrder workOrder)
+    {
+        EditedWorkOrder = workOrder;
+    }
+
+    public void GoToWorkOrderSearch(Employee creator, Employee assignee, WorkOrderStatus status)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SendMessage(string message)
+    {
+        SentMessage = message;
+    }
+
+    public void SendError(string message)
+    {
+        throw new NotImplementedException();
+    }
+
+    public T GetService<T>()
+    {
+        return (T)services.Single(o => o is T);
+    }
+
+    public void GoToDashboard()
+    {
+        throw new NotImplementedException();
     }
 }

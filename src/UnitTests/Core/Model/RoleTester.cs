@@ -1,27 +1,24 @@
-using System;
 using Core.Model;
-using NUnit.Framework;
 
-namespace UnitTests.Core.Model
+namespace UnitTests.Core.Model;
+
+[TestFixture]
+public class RoleTester
 {
-    [TestFixture]
-    public class RoleTester
+    [Test]
+    public void Role_defaults_properly()
     {
-        [Test]
-        public void Role_defaults_properly()
-        {
-            var role = new Role();
+        var role = new Role();
 
-            Assert.That(role.Name, Is.Null);
-            Assert.That(role.Id, Is.EqualTo(Guid.Empty));
-            Assert.That(role.CanCreateWorkOrder, Is.False);
-            Assert.That(role.CanFulfillWorkOrder, Is.False);
+        Assert.That(role.Name, Is.Null);
+        Assert.That(role.Id, Is.EqualTo(Guid.Empty));
+        Assert.That(role.CanCreateWorkOrder, Is.False);
+        Assert.That(role.CanFulfillWorkOrder, Is.False);
 
-            var role2 = new Role("roleName", true, true);
+        var role2 = new Role("roleName", true, true);
 
-            Assert.That(role2.Name, Is.EqualTo("roleName"));
-            Assert.That(role2.CanCreateWorkOrder, Is.True);
-            Assert.That(role2.CanFulfillWorkOrder, Is.True);
-        }
+        Assert.That(role2.Name, Is.EqualTo("roleName"));
+        Assert.That(role2.CanCreateWorkOrder, Is.True);
+        Assert.That(role2.CanFulfillWorkOrder, Is.True);
     }
 }

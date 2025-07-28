@@ -1,78 +1,74 @@
-using System;
 using Core.Model;
 using Core.Model.StateCommands;
 using Core.Services;
-using Core.Services.Impl;
-using NUnit.Framework;
 using Shouldly;
 
-namespace UnitTests.Core.Model.StateCommands
+namespace UnitTests.Core.Model.StateCommands;
+
+[TestFixture]
+public class SaveDraftCommandTester : StateCommandBaseTester
 {
-    [TestFixture]
-    public class SaveDraftCommandTester : StateCommandBaseTester
+    private readonly ICalendar _calendar = new StubbedCalendar(new DateTime(2008, 3, 14));
+
+    [Test]
+    public void ShouldNotBeValidInWrongStatus()
     {
-        private ICalendar _calendar = new StubbedCalendar(new DateTime(2008, 3, 14));
-        
-        [Test]
-        public void ShouldNotBeValidInWrongStatus()
-        {
-            var order = new WorkOrder();
-            order.Status = WorkOrderStatus.Complete;
-            var employee = new Employee();
-            order.Creator = employee;
+        var order = new WorkOrder();
+        order.Status = WorkOrderStatus.Complete;
+        var employee = new Employee();
+        order.Creator = employee;
 
-            var command = new SaveDraftCommand(order, employee, _calendar);
-            Assert.That(command.IsValid(), Is.False);
-        }
+        var command = new SaveDraftCommand(order, employee, _calendar);
+        Assert.That(command.IsValid(), Is.False);
+    }
 
-        [Test]
-        public void ShouldNotBeValidWithWrongEmployee()
-        {
-            var order = new WorkOrder();
-            order.Status = WorkOrderStatus.Draft;
-            var employee = new Employee();
-            order.Creator = employee;
+    [Test]
+    public void ShouldNotBeValidWithWrongEmployee()
+    {
+        var order = new WorkOrder();
+        order.Status = WorkOrderStatus.Draft;
+        var employee = new Employee();
+        order.Creator = employee;
 
-            var command = new SaveDraftCommand(order, new Employee(), _calendar);
-            Assert.That(command.IsValid(), Is.False);
-        }
+        var command = new SaveDraftCommand(order, new Employee(), _calendar);
+        Assert.That(command.IsValid(), Is.False);
+    }
 
-        [Test]
-        public void ShouldBeValid()
-        {
-            var order = new WorkOrder();
-            order.Status = WorkOrderStatus.Draft;
-            var employee = new Employee();
-            order.Creator = employee;
+    [Test]
+    public void ShouldBeValid()
+    {
+        var order = new WorkOrder();
+        order.Status = WorkOrderStatus.Draft;
+        var employee = new Employee();
+        order.Creator = employee;
 
-            var command = new SaveDraftCommand(order, employee, _calendar);
-            Assert.That(command.IsValid(), Is.True);
-        }
+        var command = new SaveDraftCommand(order, employee, _calendar);
+        Assert.That(command.IsValid(), Is.True);
+    }
 
-        [Test]
-        public void ShouldTransitionStateProperly()
-        {
-            var order = new WorkOrder();
-            order.Number = "123";
-            order.Status = WorkOrderStatus.Draft;
-            var employee = new Employee();
-            order.Creator = employee;
+    [Test]
+    public void ShouldTransitionStateProperly()
+    {
+        var order = new WorkOrder();
+        order.Number = "123";
+        order.Status = WorkOrderStatus.Draft;
+        var employee = new Employee();
+        order.Creator = employee;
 
-            var visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
-            
-            var command = new SaveDraftCommand(order, employee, _calendar);
-            command.Execute(visitorStub, new LoggingNotifier());
+        var visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
 
-            visitorStub.SentMessage.ShouldBe("You have saved work order 123");
-            visitorStub.SavedWorkOrder.ShouldBe(order);
-            visitorStub.EditedWorkOrder.ShouldBe(order);
-            Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Draft));
-            Assert.That(order.CreatedDate, Is.Not.Null);
-        }
+        var command = new SaveDraftCommand(order, employee, _calendar);
+        command.Execute(visitorStub, new LoggingNotifier());
 
-        protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)
-        {
-            return new SaveDraftCommand(order, employee, _calendar);
-        }
+        visitorStub.SentMessage.ShouldBe("You have saved work order 123");
+        visitorStub.SavedWorkOrder.ShouldBe(order);
+        visitorStub.EditedWorkOrder.ShouldBe(order);
+        Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Draft));
+        Assert.That(order.CreatedDate, Is.Not.Null);
+    }
+
+    protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)
+    {
+        return new SaveDraftCommand(order, employee, _calendar);
     }
 }
