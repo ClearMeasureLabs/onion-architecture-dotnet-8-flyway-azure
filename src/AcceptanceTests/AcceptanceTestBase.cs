@@ -1,0 +1,65 @@
+﻿namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests;
+
+public class AcceptanceTestBase : PageTest
+{
+    protected virtual bool? Headless { get; set; } = true;
+    protected new IPage Page { get; private set; }
+
+
+    [SetUp]
+    public async Task SetUpAsync()
+    {
+        new ZDataLoader().LoadData();
+        await Context.Tracing.StartAsync(new TracingStartOptions
+        {
+            Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",
+            Screenshots = true,
+            Snapshots = true,
+            Sources = true
+        });
+
+        var playwright = Playwright;
+        var browser = await GetBrowserTypeInstance(playwright).LaunchAsync(new BrowserTypeLaunchOptions
+        {
+            Headless = Headless
+        });
+
+        var context = await browser.NewContextAsync(ContextOptions());
+        Page = await context.NewPageAsync().ConfigureAwait(false);
+    }
+
+    protected virtual IBrowserType GetBrowserTypeInstance(IPlaywright playwright)
+    {
+        return playwright.Chromium;
+    }
+
+    [TearDown]
+    public async Task TearDownAsync()
+    {
+        await Context.Tracing.StopAsync(new TracingStopOptions
+        {
+            Path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "playwright-traces",
+                $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip")
+        });
+    }
+
+    public override BrowserNewContextOptions ContextOptions()
+    {
+        return new BrowserNewContextOptions
+        {
+            BaseURL = ServerFixture.ApplicationLocalBaseURL,
+        };
+    }
+
+    protected async Task TakeScreenshotAsync(int stepNumber, string? stepName = null)
+    {
+        var test = TestContext.CurrentContext.Test;
+        var testName = test.ClassName + "-" + test.Name;
+        var fileName = $"{testName}-{stepNumber}{stepName}.png";
+        await Page.ScreenshotAsync(new PageScreenshotOptions
+        {
+            Path = fileName
+        });
+        TestContext.AddTestAttachment(Path.GetFullPath(fileName));
+    }
+}

@@ -23,7 +23,7 @@ public class ServerFixture
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = false
             }
         };
         _serverProcess.Start();

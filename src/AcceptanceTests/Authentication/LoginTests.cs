@@ -1,32 +1,8 @@
 ﻿namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Authentication;
 
-[Parallelizable(ParallelScope.Self)]
 [TestFixture]
-public class LoginTests : PageTest
+public class LoginTests : AcceptanceTestBase
 {
-    [SetUp]
-    public async Task SetUpAsync()
-    {
-        new ZDataLoader().PopulateDatabase();
-        await Context.Tracing.StartAsync(new TracingStartOptions
-        {
-            Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",
-            Screenshots = true,
-            Snapshots = true,
-            Sources = true
-        });
-    }
-
-    [TearDown]
-    public async Task TearDownAsync()
-    {
-        await Context.Tracing.StopAsync(new TracingStopOptions
-        {
-            Path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "playwright-traces",
-                $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip")
-        });
-    }
-
     [Test]
     public void VerifySetup()
     {
@@ -35,36 +11,39 @@ public class LoginTests : PageTest
 
         homer.ShouldNotBeNull();
     }
-
-    [Test]
+    
+    [Test, Repeat(2)]
     public async Task LoginWithUsernameOnlyForwardsToHomePage()
     {
         // Act: Go to home page
         await Page.GotoAsync("/");
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await TakeScreenshotAsync(1);
+
+        var logoutLink = Page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { Name = "Logout" });
+        if (await logoutLink.CountAsync() > 0)
+        {
+            await logoutLink.ClickAsync();
+            await Page.WaitForURLAsync("**/");
+        }
 
         // Click Login link in top bar
         var loginLink = Page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { Name = "Login" });
         await loginLink.ClickAsync();
         await Page.WaitForURLAsync("**/login");
+        await TakeScreenshotAsync(2);
 
         // Fill in username only
         await Page.SelectOptionAsync("#employee", "hsimpson");
+        await TakeScreenshotAsync(3);
 
         // Submit form
         var loginButton = Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Login" });
         await loginButton.ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await TakeScreenshotAsync(4);
 
         // Assert: Should be redirected to home and see welcome message
         await Expect(Page.Locator("text=Welcome hsimpson!")).ToBeVisibleAsync();
-    }
-
-    public override BrowserNewContextOptions ContextOptions()
-    {
-        return new BrowserNewContextOptions
-        {
-            BaseURL = ServerFixture.ApplicationLocalBaseURL
-        };
     }
 }
