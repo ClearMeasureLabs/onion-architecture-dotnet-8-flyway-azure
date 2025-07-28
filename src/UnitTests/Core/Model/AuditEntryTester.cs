@@ -124,8 +124,10 @@ namespace UnitTests.Core.Model
 
             entry.ShouldBe(entry);
             entry.Equals(entry).ShouldBeTrue();
+#pragma warning disable CS1718 // Comparison made to same variable; intentional for testing equality operators
             (entry == entry).ShouldBeTrue();
             (entry != entry).ShouldBeFalse();
+#pragma warning restore CS1718
         }
 
         [Test]
