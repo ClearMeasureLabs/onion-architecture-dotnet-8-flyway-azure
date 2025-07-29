@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ProgrammingWithPalermo.ChurchBulletin.Core;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UI.Server
+namespace UI.Shared
 {
     public class Bus : IBus
     {

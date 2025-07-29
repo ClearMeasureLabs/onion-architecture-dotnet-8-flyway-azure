@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Palermo.BlazorMvc;
 using ProgrammingWithPalermo.ChurchBulletin.Core;
+using UI.Shared;
 using UI.Shared.Authentication;
 
 namespace UI.Client;
@@ -24,7 +25,6 @@ public class UIClientServiceRegistry : ServiceRegistry
         this.AddScoped<IUserSession, UI.Services.UserSession>();
         this.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<RemotableBus>());
         this.AddTransient<IBus, RemotableBus>();
-        this.AddTransient<PublisherGateway>();
 
         this.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<UIClientServiceRegistry>());
 

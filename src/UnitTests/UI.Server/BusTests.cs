@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using ProgrammingWithPalermo.ChurchBulletin.UI.Server;
 using Shouldly;
+using UI.Shared;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests.UI.Server;
 

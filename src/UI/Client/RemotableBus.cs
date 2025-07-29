@@ -1,11 +1,14 @@
 ﻿using MediatR;
 using ProgrammingWithPalermo.ChurchBulletin.Core;
+using UI.Shared;
 
 namespace UI.Client;
 
-public class RemotableBus(IMediator mediatr, PublisherGateway gateway) : IBus
+public class RemotableBus(IMediator mediator, IPublisherGateway gateway) : Bus(mediator)
 {
-    public async Task<TResponse> Send<TResponse>(IRequest<TResponse> request)
+    private readonly IMediator _mediator = mediator;
+
+    public override async Task<TResponse> Send<TResponse>(IRequest<TResponse> request)
     {
         if (request is IRemotableRequest remotableRequest)
         {
@@ -14,16 +17,6 @@ public class RemotableBus(IMediator mediatr, PublisherGateway gateway) : IBus
             return returnEvent;
         }
 
-        return await mediatr.Send(request);
-    }
-
-    public Task<object?> Send(object request)
-    {
-        return mediatr.Send(request);
-    }
-
-    public void Publish<TNotification>(TNotification notification) where TNotification : INotification
-    {
-        mediatr.Publish(notification);
+        return await _mediator.Send(request);
     }
 }
