@@ -7,6 +7,6 @@ namespace Core.Services
 	{
 		Task SaveAsync(WorkOrder workOrder);
 		Task<WorkOrder?> GetWorkOrderAsync(string number);
-		Task<WorkOrder[]> GetWorkOrdersAsync(WorkOrderSearchSpecification specification);
+		// Task<WorkOrder[]> GetWorkOrdersAsync(WorkOrderSearchSpecification specification);
 	}
 }

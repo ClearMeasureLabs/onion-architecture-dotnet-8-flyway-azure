@@ -6,6 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using UI.Shared.Pages;
 using UIWasm.Models;
+using ProgrammingWithPalermo.ChurchBulletin.Core;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
+using MediatR;
 using TestContext = Bunit.TestContext;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests.UI.Shared.Pages;
@@ -19,7 +22,7 @@ public class WorkOrderSearchTests
 
         // Arrange
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
-        ctx.Services.AddSingleton<IWorkOrderRepository>(new StubWorkOrderRepository());
+        ctx.Services.AddSingleton<IBus>(new StubBus());
 
         // Act
         var component = ctx.RenderComponent<WorkOrderSearch>();
@@ -54,18 +57,18 @@ public class WorkOrderSearchTests
         using var ctx = new TestContext();
 
         // Arrange
-        var stubWorkOrderRepo = new StubWorkOrderRepository();
+        var stubBus = new StubBus();
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
-        ctx.Services.AddSingleton<IWorkOrderRepository>(stubWorkOrderRepo);
+        ctx.Services.AddSingleton<IBus>(stubBus);
 
         // Act
         var component = ctx.RenderComponent<WorkOrderSearch>();
 
         // Assert
-        stubWorkOrderRepo.SearchWasCalled.ShouldBeTrue();
-        stubWorkOrderRepo.LastSpecification!.Creator.ShouldBeNull();
-        stubWorkOrderRepo.LastSpecification.Assignee.ShouldBeNull();
-        stubWorkOrderRepo.LastSpecification.Status.ShouldBeNull();
+        stubBus.QueryWasCalled.ShouldBeTrue();
+        stubBus.LastQuery!.Creator.ShouldBeNull();
+        stubBus.LastQuery.Assignee.ShouldBeNull();
+        stubBus.LastQuery.Status.ShouldBeNull();
 
         var workOrderTable = component.Find(".grid-data");
         workOrderTable.ShouldNotBeNull();
@@ -80,9 +83,9 @@ public class WorkOrderSearchTests
         using var ctx = new TestContext();
 
         // Arrange
-        var stubWorkOrderRepo = new StubWorkOrderRepository();
+        var stubBus = new StubBus();
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
-        ctx.Services.AddSingleton<IWorkOrderRepository>(stubWorkOrderRepo);
+        ctx.Services.AddSingleton<IBus>(stubBus);
 
         var navigationManager = ctx.Services.GetRequiredService<NavigationManager>();
         var uri = navigationManager.GetUriWithQueryParameter("Creator", "somename");
@@ -92,11 +95,11 @@ public class WorkOrderSearchTests
         var component = ctx.RenderComponent<WorkOrderSearch>();
 
         // Assert
-        stubWorkOrderRepo.SearchWasCalled.ShouldBeTrue();
-        stubWorkOrderRepo.LastSpecification.ShouldNotBeNull();
-        stubWorkOrderRepo.LastSpecification.Creator!.UserName.ShouldBe("somename");
-        stubWorkOrderRepo.LastSpecification.Assignee.ShouldBeNull();
-        stubWorkOrderRepo.LastSpecification.Status.ShouldBeNull();
+        stubBus.QueryWasCalled.ShouldBeTrue();
+        stubBus.LastQuery.ShouldNotBeNull();
+        stubBus.LastQuery.Creator!.UserName.ShouldBe("somename");
+        stubBus.LastQuery.Assignee.ShouldBeNull();
+        stubBus.LastQuery.Status.ShouldBeNull();
 
         var workOrderTable = component.Find(".grid-data");
         var workOrderRows = workOrderTable.QuerySelectorAll("tbody tr");
@@ -109,9 +112,9 @@ public class WorkOrderSearchTests
         using var ctx = new TestContext();
 
         // Arrange
-        var stubWorkOrderRepo = new StubWorkOrderRepository();
+        var stubBus = new StubBus();
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
-        ctx.Services.AddSingleton<IWorkOrderRepository>(stubWorkOrderRepo);
+        ctx.Services.AddSingleton<IBus>(stubBus);
 
         var navigationManager = ctx.Services.GetRequiredService<NavigationManager>();
         var uri = navigationManager.GetUriWithQueryParameter("Assignee", "somename");
@@ -121,11 +124,11 @@ public class WorkOrderSearchTests
         var component = ctx.RenderComponent<WorkOrderSearch>();
 
         // Assert
-        stubWorkOrderRepo.SearchWasCalled.ShouldBeTrue();
-        stubWorkOrderRepo.LastSpecification!.Creator.ShouldBeNull();
-        stubWorkOrderRepo.LastSpecification.Assignee.ShouldNotBeNull();
-        stubWorkOrderRepo.LastSpecification.Assignee.UserName.ShouldBe("somename");
-        stubWorkOrderRepo.LastSpecification.Status.ShouldBeNull();
+        stubBus.QueryWasCalled.ShouldBeTrue();
+        stubBus.LastQuery!.Creator.ShouldBeNull();
+        stubBus.LastQuery.Assignee.ShouldNotBeNull();
+        stubBus.LastQuery.Assignee.UserName.ShouldBe("somename");
+        stubBus.LastQuery.Status.ShouldBeNull();
 
         var workOrderTable = component.Find(".grid-data");
         var workOrderRows = workOrderTable.QuerySelectorAll("tbody tr");
@@ -138,9 +141,9 @@ public class WorkOrderSearchTests
         using var ctx = new TestContext();
 
         // Arrange
-        var stubWorkOrderRepo = new StubWorkOrderRepository();
+        var stubBus = new StubBus();
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
-        ctx.Services.AddSingleton<IWorkOrderRepository>(stubWorkOrderRepo);
+        ctx.Services.AddSingleton<IBus>(stubBus);
 
         var navigationManager = ctx.Services.GetRequiredService<NavigationManager>();
         var uri = navigationManager.GetUriWithQueryParameter("Status", WorkOrderStatus.Assigned.Key);
@@ -150,11 +153,11 @@ public class WorkOrderSearchTests
         var component = ctx.RenderComponent<WorkOrderSearch>();
 
         // Assert
-        stubWorkOrderRepo.SearchWasCalled.ShouldBeTrue();
-        stubWorkOrderRepo.LastSpecification!.Creator.ShouldBeNull();
-        stubWorkOrderRepo.LastSpecification.Assignee.ShouldBeNull();
-        stubWorkOrderRepo.LastSpecification.Status.ShouldNotBeNull();
-        stubWorkOrderRepo.LastSpecification.Status?.ShouldBe(WorkOrderStatus.Assigned);
+        stubBus.QueryWasCalled.ShouldBeTrue();
+        stubBus.LastQuery!.Creator.ShouldBeNull();
+        stubBus.LastQuery.Assignee.ShouldBeNull();
+        stubBus.LastQuery.Status.ShouldNotBeNull();
+        stubBus.LastQuery.Status?.ShouldBe(WorkOrderStatus.Assigned);
 
         var workOrderTable = component.Find(".grid-data");
         var workOrderRows = workOrderTable.QuerySelectorAll("tbody tr");
@@ -167,9 +170,9 @@ public class WorkOrderSearchTests
         using var ctx = new TestContext();
 
         // Arrange
-        var stubWorkOrderRepo = new StubWorkOrderRepository();
+        var stubBus = new StubBus();
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
-        ctx.Services.AddSingleton<IWorkOrderRepository>(stubWorkOrderRepo);
+        ctx.Services.AddSingleton<IBus>(stubBus);
 
         var component = ctx.RenderComponent<WorkOrderSearch>();
 
@@ -186,11 +189,11 @@ public class WorkOrderSearchTests
         searchButton.Click();
 
         // Assert
-        stubWorkOrderRepo.SearchWasCalled.ShouldBeTrue();
-        stubWorkOrderRepo.LastSpecification.ShouldNotBeNull();
-        stubWorkOrderRepo.LastSpecification.Creator!.UserName.ShouldBe("jpalermo");
-        stubWorkOrderRepo.LastSpecification.Assignee!.UserName.ShouldBe("hsimpson");
-        stubWorkOrderRepo.LastSpecification.Status.ShouldBe(WorkOrderStatus.InProgress);
+        stubBus.QueryWasCalled.ShouldBeTrue();
+        stubBus.LastQuery.ShouldNotBeNull();
+        stubBus.LastQuery.Creator!.UserName.ShouldBe("jpalermo");
+        stubBus.LastQuery.Assignee!.UserName.ShouldBe("hsimpson");
+        stubBus.LastQuery.Status.ShouldBe(WorkOrderStatus.InProgress);
 
         var workOrderTable = component.Find(".grid-data");
         workOrderTable.ShouldNotBeNull();
@@ -219,47 +222,57 @@ public class WorkOrderSearchTests
         }
     }
 
-    private class StubWorkOrderRepository : IWorkOrderRepository
+    private class StubBus : IBus
     {
-        public bool SearchWasCalled { get; private set; }
-        public WorkOrderSearchSpecification? LastSpecification { get; private set; }
+        public bool QueryWasCalled { get; private set; }
+        public WorkOrderSpecificationQuery? LastQuery { get; private set; }
 
-        public Task SaveAsync(WorkOrder workOrder)
+        public Task<TResponse> Send<TResponse>(IRequest<TResponse> request)
         {
-            return Task.CompletedTask;
-        }
-
-        public Task<WorkOrder?> GetWorkOrderAsync(string number)
-        {
-            return Task.FromResult<WorkOrder?>(null);
-        }
-
-        public Task<WorkOrder[]> GetWorkOrdersAsync(WorkOrderSearchSpecification specification)
-        {
-            SearchWasCalled = true;
-            LastSpecification = specification;
-
-            var workOrders = new[]
+            if (request is WorkOrderSpecificationQuery query)
             {
-                new WorkOrder
+                QueryWasCalled = true;
+                LastQuery = query;
+
+                var workOrders = new[]
                 {
-                    Number = "WO-001",
-                    Title = "Fix broken door",
-                    Status = WorkOrderStatus.Draft,
-                    Creator = new Employee("jpalermo", "Jeffrey", "Palermo", "jeffrey@example.com"),
-                    Assignee = new Employee("hsimpson", "Homer", "Simpson", "homer@example.com")
-                },
-                new WorkOrder
-                {
-                    Number = "WO-002", 
-                    Title = "Replace light bulb",
-                    Status = WorkOrderStatus.Assigned,
-                    Creator = new Employee("mburns", "Montgomery", "Burns", "burns@example.com"),
-                    Assignee = new Employee("jpalermo", "Jeffrey", "Palermo", "jeffrey@example.com")
-                }
-            };
-            
-            return Task.FromResult(workOrders);
+                    new WorkOrder
+                    {
+                        Number = "WO-001",
+                        Title = "Fix broken door",
+                        Status = WorkOrderStatus.Draft,
+                        Creator = new Employee("jpalermo", "Jeffrey", "Palermo", "jeffrey@example.com"),
+                        Assignee = new Employee("hsimpson", "Homer", "Simpson", "homer@example.com")
+                    },
+                    new WorkOrder
+                    {
+                        Number = "WO-002", 
+                        Title = "Replace light bulb",
+                        Status = WorkOrderStatus.Assigned,
+                        Creator = new Employee("mburns", "Montgomery", "Burns", "burns@example.com"),
+                        Assignee = new Employee("jpalermo", "Jeffrey", "Palermo", "jeffrey@example.com")
+                    }
+                };
+
+                return Task.FromResult((TResponse)(object)workOrders);
+            }
+
+            throw new NotImplementedException($"Request type {typeof(TResponse)} not supported in stub");
+        }
+
+        public Task<object?> Send(object request)
+        {
+            if (request is WorkOrderSpecificationQuery query)
+            {
+                return Task.FromResult<object?>(Send<WorkOrder[]>(query).Result);
+            }
+
+            throw new NotImplementedException($"Request type {request.GetType()} not supported in stub");
+        }
+
+        public void Publish<TNotification>(TNotification notification) where TNotification : INotification
+        {
+            // Not used in tests
         }
     }
 }

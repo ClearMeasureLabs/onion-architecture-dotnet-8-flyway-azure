@@ -1,9 +1,11 @@
 @page "/workorder/search"
 @using Core.Model
 @using Core.Services
+@using ProgrammingWithPalermo.ChurchBulletin.Core
+@using ProgrammingWithPalermo.ChurchBulletin.Core.Queries
 @using UIWasm.Models
 @inject IEmployeeRepository EmployeeRepository
-@inject IWorkOrderRepository WorkOrderRepository
+@inject IBus Bus
 
 <h2>Search Results</h2>
 
@@ -142,12 +144,12 @@
             ? WorkOrderStatus.FromKey(Model.Filters.Status) 
             : null;
 
-        var specification = new WorkOrderSearchSpecification();
+        var specification = new WorkOrderSpecificationQuery();
         specification.MatchCreator(creator);
         specification.MatchAssignee(assignee);
         specification.MatchStatus(status);
 
-        Model.Results = await WorkOrderRepository.GetWorkOrdersAsync(specification);
+        Model.Results = await Bus.Send(specification);
     }
 
     private async Task LoadUserOptions()
