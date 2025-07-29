@@ -35,5 +35,9 @@ public class UIClientServiceRegistry : ServiceRegistry
             scanner.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
             scanner.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
         });
+
+        this.AddHealthChecks().AddCheck<HealthCheckTracer>("UI.Client");
+        this.AddHealthChecks().AddCheck<RemotableBusHealthCheck>("Remotable Bus");
+        this.AddHealthChecks().AddCheck<ServerHealthCheck>("Server health check");
     }
 }

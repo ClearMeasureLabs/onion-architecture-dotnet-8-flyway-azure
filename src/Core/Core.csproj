@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" />
   </ItemGroup>
 

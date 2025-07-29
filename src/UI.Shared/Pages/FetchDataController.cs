@@ -12,13 +12,11 @@ namespace UI.Shared.Pages;
 public class FetchDataController : ControllerComponentBase<FetchDataView>
 {
     private WeatherForecast[]? _forecasts;
-    [Inject] public HttpClient? Http { get; set; }
     [Inject] public IBus? ApplicationBus { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Logger.LogInformation("FetchDataController");
-        Debug.Assert(Http != null, nameof(Http) + " != null");
         _forecasts = await ApplicationBus!.Send(new ForecastQuery());
         View.Model = _forecasts;
     }

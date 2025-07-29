@@ -7,7 +7,7 @@ public class RemotableBus(IMediator mediatr, PublisherGateway gateway) : IBus
 {
     public async Task<TResponse> Send<TResponse>(IRequest<TResponse> request)
     {
-        if (request is IRemoteableRequest remotableRequest)
+        if (request is IRemotableRequest remotableRequest)
         {
             WebServiceMessage result = await gateway.Publish(remotableRequest) ?? throw new InvalidOperationException();
             TResponse returnEvent = result.GetBodyObject<TResponse>();

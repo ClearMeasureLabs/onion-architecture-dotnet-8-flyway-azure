@@ -1,12 +1,14 @@
 @inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
 @using UI.Shared.Authentication
+@using UI.Shared.Components
 @inject CustomAuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 
 <div class="page">
     <div class="sidebar">
         <NavMenu />
+        <HealthCheckLink />
     </div>
 
     <main>

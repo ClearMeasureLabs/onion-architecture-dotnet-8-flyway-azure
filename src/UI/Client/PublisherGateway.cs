@@ -8,7 +8,7 @@ namespace UI.Client
     {
         public const string ApiRelativeUrl = "api/blazor-wasm-single-api";
 
-        public async Task<WebServiceMessage?> Publish(IRemoteableRequest request)
+        public async Task<WebServiceMessage?> Publish(IRemotableRequest request)
         {
             var message = new WebServiceMessage(request);
             return await SendToTopic(message);

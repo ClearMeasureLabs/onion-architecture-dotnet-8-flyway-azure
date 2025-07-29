@@ -12,6 +12,7 @@ using UI.Shared.Authentication;
 using Core.Services;
 using Lamar;
 using Lamar.Microsoft.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -38,5 +39,6 @@ builder.ConfigureContainer<ServiceRegistry>(
 
 string url = builder.Configuration.GetValue<string>("RemoteBusUrl") ?? throw new InvalidOperationException("Must have config value 'RemoteBusUrl'");
 builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(url) });
-
-await builder.Build().RunAsync();
+WebAssemblyHost app = builder.Build();
+await app.Services.GetRequiredService<HealthCheckService>().CheckHealthAsync();
+await app.RunAsync();

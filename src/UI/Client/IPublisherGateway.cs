@@ -4,6 +4,6 @@ namespace UI.Client
 {
     public interface IPublisherGateway
     {
-        Task<WebServiceMessage?> Publish(IRemoteableRequest request);
+        Task<WebServiceMessage?> Publish(IRemotableRequest request);
     }
 }

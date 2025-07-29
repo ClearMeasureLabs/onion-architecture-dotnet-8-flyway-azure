@@ -44,17 +44,20 @@
 		</PackageReference>
 		<PackageReference Include="Shouldly" Version="4.3.0" />
 		<PackageReference Include="bunit" Version="1.40.0" />
+		<PackageReference Include="MediatR" Version="12.4.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Core\Core.csproj" />
 		<ProjectReference Include="..\UI\Client\UI.Client.csproj" />
 		<ProjectReference Include="..\UI\Api\UI.Api.csproj" />
+		<ProjectReference Include="..\UI\Server\UI.Server.csproj" />
 		<ProjectReference Include="..\UI.Shared\UI.Shared.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="UI.Api\" />
+	  <Folder Include="UI.Shared\Components\" />
 	</ItemGroup>
 
 </Project>
