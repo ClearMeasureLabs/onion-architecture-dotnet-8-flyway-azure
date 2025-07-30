@@ -1,4 +1,5 @@
 ﻿using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,15 +8,10 @@ namespace ClearMeasure.Bootcamp.IntegrationTests;
 [TestFixture]
 public class ZDataLoader
 {
-    public ZDataLoader()
-    {
-        new DatabaseTester().Clean();
-    }
-    
     [Test]
     public void LoadData()
     {
-
+        new DatabaseTester().Clean();
         var item1 = new ChurchBulletinItem {Date = new DateTime(2000, 1, 1), Name = "one", Place = "Sanctuary"};
         var item2 = new ChurchBulletinItem {Date = new DateTime(2000, 1, 1), Name = "two", Place = "Room 205"};
         var item3 = new ChurchBulletinItem {Date = new DateTime(2000, 1, 1), Name = "three", Place = "Nursery"};
@@ -110,4 +106,13 @@ public class ZDataLoader
         db.Dispose();
     }
 
+    public Employee CreateUser()
+    {
+        using var context = TestHost.GetRequiredService<DbContext>();
+        var employee = TestHost.Faker<Employee>();
+        employee.UserName = "current" + employee.UserName;
+        context.Add(employee);
+        context.SaveChanges();
+        return employee;
+    }
 }

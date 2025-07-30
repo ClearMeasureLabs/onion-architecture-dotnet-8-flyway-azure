@@ -4,6 +4,7 @@ namespace ClearMeasure.Bootcamp.AcceptanceTests;
 
 public abstract class AcceptanceTestBase : PageTest
 {
+    public Employee CurrentUser { get; set; }
     protected virtual bool? Headless { get; set; } = true;
     protected new IPage Page { get; private set; }
 
@@ -12,6 +13,7 @@ public abstract class AcceptanceTestBase : PageTest
     public async Task SetUpAsync()
     {
         new ZDataLoader().LoadData();
+        CurrentUser = new ZDataLoader().CreateUser();
         await Context.Tracing.StartAsync(new TracingStartOptions
         {
             Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",

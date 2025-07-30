@@ -4,11 +4,13 @@ using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Queries;
 using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.UI.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Palermo.BlazorMvc;
 
 namespace ClearMeasure.Bootcamp.UI.Shared.Pages;
 
 [Route("/workorder/search")]
+[Authorize]
 public class WorkOrderSearchController : ControllerComponentBase<WorkOrderSearch>
 {
     [Inject] public IEmployeeRepository EmployeeRepository { get; set; } = null!;
@@ -20,22 +22,26 @@ public class WorkOrderSearchController : ControllerComponentBase<WorkOrderSearch
 
     protected override void OnViewInitialized()
     {
-        // Initialize the view model
-        View.Model = new WorkOrderSearchModel();
-        
-        // Set up event handlers
-        View.OnSearch = HandleSearch;
-
-        // Initialize data asynchronously
         _ = InitializeAsync();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (View != null)
+        {
+            _ = InitializeAsync();
+        }
     }
 
     private async Task InitializeAsync()
     {
-        // Initialize dropdown options
-        await LoadUserOptions();
-        LoadStatusOptions();
+        View.OnSearch = HandleSearch;
 
+        var employees = await EmployeeRepository.GetEmployeesAsync(EmployeeSpecification.All);
+        View.UserOptions = employees.Select(e => new WorkOrderSearch.SelectListItem(e.UserName, e.GetFullName())).ToList();
+        View.StatusOptions = WorkOrderStatus.GetAllItems().Select(s => new WorkOrderSearch.SelectListItem(s.Key, s.FriendlyName)).ToList();
+        View.Model = new WorkOrderSearchModel();
+        
         // Apply any query parameters
         if (!string.IsNullOrEmpty(Creator))
             View.Model.Filters.Creator = Creator;
@@ -47,11 +53,6 @@ public class WorkOrderSearchController : ControllerComponentBase<WorkOrderSearch
             View.Model.Filters.Status = Status;
 
         // Perform initial search
-        await SearchWorkOrders();
-    }
-
-    private async Task HandleSearch()
-    {
         await SearchWorkOrders();
     }
 
@@ -78,14 +79,8 @@ public class WorkOrderSearchController : ControllerComponentBase<WorkOrderSearch
         StateHasChanged();
     }
 
-    private async Task LoadUserOptions()
+    private async Task HandleSearch()
     {
-        var employees = await EmployeeRepository.GetEmployeesAsync(EmployeeSpecification.All);
-        View.UserOptions = employees.Select(e => new WorkOrderSearch.SelectListItem(e.UserName, e.GetFullName())).ToList();
-    }
-
-    private void LoadStatusOptions()
-    {
-        View.StatusOptions = WorkOrderStatus.GetAllItems().Select(s => new WorkOrderSearch.SelectListItem(s.Key, s.FriendlyName)).ToList();
+        await SearchWorkOrders();
     }
 }

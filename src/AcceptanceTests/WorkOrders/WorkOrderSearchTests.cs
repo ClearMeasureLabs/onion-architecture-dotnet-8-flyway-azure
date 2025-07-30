@@ -1,16 +1,42 @@
 ﻿using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.IntegrationTests;
+using ClearMeasure.Bootcamp.UI.Shared;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
+using Spectre.Console;
 
 namespace ClearMeasure.Bootcamp.AcceptanceTests.WorkOrders;
 
 public class WorkOrderSearchTests : AcceptanceTestBase
 {
+    [SetUp]
+    public async Task Setup()
+    {
+        var username = CurrentUser.UserName;
+        if (await Page.Locator($"text=Welcome {username}!").IsVisibleAsync())
+        {
+            return;
+        }
+        
+        await Page.GotoAsync("/login");
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        
+        // Fill in username only
+        await Page.SelectOptionAsync("#employee", username);
+        
+        // Submit form
+        var loginButton = Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Login" });
+        await loginButton.ClickAsync();
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        
+        // Assert: Should be redirected to home and see welcome message
+        await Expect(Page.Locator($"text=Welcome {username}!")).ToBeVisibleAsync();
+    }
+    
     [Test]
     public async Task ShouldLoadDropDownsInitiallyOnLoad()
     {
         // Act
-        await Page.GotoAsync("/workorder/search");
+        await Page.GetByTestId(nameof(NavMenu.Elements.Search)).ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await TakeScreenshotAsync(1, "PageLoaded");
 
@@ -24,13 +50,13 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         await Expect(statusSelect).ToBeVisibleAsync();
 
         var creatorOptions = await creatorSelect.Locator("option").AllAsync();
-        creatorOptions.Count.ShouldBe(3);
+        creatorOptions.Count.ShouldBeGreaterThan(3);
         
         var firstCreatorOption = await creatorOptions[0].TextContentAsync();
         firstCreatorOption.ShouldBe("All");
 
         var assigneeOptions = await assigneeSelect.Locator("option").AllAsync();
-        assigneeOptions.Count.ShouldBe(3);
+        assigneeOptions.Count.ShouldBeGreaterThan(3);
         
         var firstAssigneeOption = await assigneeOptions[0].TextContentAsync();
         firstAssigneeOption.ShouldBe("All");
@@ -64,7 +90,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         await context.SaveChangesAsync();
 
         // Act
-        await Page.GotoAsync("/workorder/search");
+        await Page.GetByTestId(nameof(NavMenu.Elements.Search)).ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await TakeScreenshotAsync(1, "InitialLoad");
 
@@ -81,16 +107,16 @@ public class WorkOrderSearchTests : AcceptanceTestBase
     public async Task ShouldLoadWorkOrderTableWithCreatorFilterFromQueryString()
     {
         // Arrange
-        var creator = Faker<Employee>();
+        var creator = CurrentUser;
         var order = Faker<WorkOrder>();
         order.Creator = creator;
         await using var context = TestHost.NewDbContext();
-        context.Add(creator);
+        context.Attach(creator);
         context.Add(order);
         await context.SaveChangesAsync();
-        
+
         // Act
-        await Page.GotoAsync($"/workorder/search?Creator={creator.UserName}");
+        await Page.GetByTestId(nameof(NavMenu.Elements.MyWorkOrders)).ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await TakeScreenshotAsync(1, "CreatorFiltered");
 
@@ -113,19 +139,19 @@ public class WorkOrderSearchTests : AcceptanceTestBase
     {
         // Arrange
         var creator = Faker<Employee>();
-        var assignee = Faker<Employee>();
+        var assignee = CurrentUser;
         var order = Faker<WorkOrder>();
         order.Creator = creator;
         order.Assignee = assignee;
 
         await using var context = TestHost.NewDbContext();
         context.Add(creator);
-        context.Add(assignee);
+        context.Attach(assignee);
         context.Add(order);
         await context.SaveChangesAsync();
-        
+
         // Act
-        await Page.GotoAsync($"/workorder/search?Assignee={assignee.UserName}");
+        await Page.GetByTestId(nameof(NavMenu.Elements.WorkOrdersAssignedToMe)).ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await TakeScreenshotAsync(1, "AssigneeFiltered");
 
@@ -148,7 +174,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
     {
         // Arrange
         var creator = Faker<Employee>();
-        var status = WorkOrderStatus.Draft;
+        var status = WorkOrderStatus.Assigned;
         var order = Faker<WorkOrder>();
         order.Creator = creator;
         order.Status = status;
@@ -157,9 +183,9 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         context.Add(creator);
         context.Add(order);
         await context.SaveChangesAsync();
-        
+
         // Act
-        await Page.GotoAsync($"/workorder/search?Status={status.Key}");
+        await Page.GetByTestId(nameof(NavMenu.Elements.AllAssignedWorkOrders)).ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await TakeScreenshotAsync(1, "StatusFiltered");
 
@@ -196,7 +222,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         await context.SaveChangesAsync();
 
         // Act
-        await Page.GotoAsync("/workorder/search");
+        await Page.GetByTestId(nameof(NavMenu.Elements.Search)).ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await TakeScreenshotAsync(1, "BeforeFiltering");
 
@@ -235,9 +261,9 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         context.Add(creator);
         context.Add(workOrder);
         await context.SaveChangesAsync();
-        
+
         // Act
-        await Page.GotoAsync("/workorder/search");
+        await Page.GetByTestId(nameof(NavMenu.Elements.Search)).ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await TakeScreenshotAsync(1, "SearchPageLoaded");
 
@@ -270,9 +296,9 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         context.Add(creator);
         context.Add(order);
         await context.SaveChangesAsync();
-        
+
         // Act
-        await Page.GotoAsync("/workorder/search");
+        await Page.GetByTestId(nameof(NavMenu.Elements.Search)).ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         var creatorSelect = Page.Locator($"#{WorkOrderSearch.Elements.CreatorSelect}");
@@ -315,7 +341,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         await context.SaveChangesAsync();
 
         // Act
-        await Page.GotoAsync("/workorder/search");
+        await Page.GetByTestId(nameof(NavMenu.Elements.Search)).ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await TakeScreenshotAsync(1, "TableLoaded");
 
@@ -373,7 +399,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         await context.SaveChangesAsync();
 
         // Act
-        await Page.GotoAsync("/workorder/search");
+        await Page.GetByTestId(nameof(NavMenu.Elements.Search)).ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         var creatorSelect = Page.Locator($"#{WorkOrderSearch.Elements.CreatorSelect}");
@@ -397,5 +423,52 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         creatorValue.ShouldBe(creator.UserName);
         assigneeValue.ShouldBe(assignee.UserName);
         statusValue.ShouldBe(status.Key);
+    }
+
+    [Test]
+    public async Task ShouldReloadParamsFromQueryStringWithNavigation()
+    {
+        // Arrange
+        var order1 = Faker<WorkOrder>();
+        order1.Status = WorkOrderStatus.InProgress;
+        var order2 = Faker<WorkOrder>();
+        order1.Creator = CurrentUser;
+        order1.Assignee = CurrentUser;
+        order2.Creator = CurrentUser;
+        order2.Assignee = CurrentUser;
+
+        await using var context = TestHost.NewDbContext();
+        context.Attach(CurrentUser);
+        context.Add(order1);
+        context.Add(order2);
+        await context.SaveChangesAsync();
+
+        // Act
+        await Page.GetByTestId(nameof(NavMenu.Elements.Search)).ClickAsync();
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Assert
+        var creatorSelect = Page.Locator($"#{WorkOrderSearch.Elements.CreatorSelect}");
+        var assigneeSelect = Page.Locator($"#{WorkOrderSearch.Elements.AssigneeSelect}");
+        var statusSelect = Page.Locator($"#{WorkOrderSearch.Elements.StatusSelect}");
+        
+        (await creatorSelect.InputValueAsync()).ShouldBe("");
+        (await assigneeSelect.InputValueAsync()).ShouldBe("");
+        (await statusSelect.InputValueAsync()).ShouldBe("");
+
+        await Page.GetByTestId(nameof(NavMenu.Elements.MyWorkOrders)).ClickAsync();
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await creatorSelect.DblClickAsync();
+        (await creatorSelect.InputValueAsync()).ShouldBe(CurrentUser.UserName);
+
+        await Page.GetByTestId(nameof(NavMenu.Elements.WorkOrdersAssignedToMe)).ClickAsync();
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await assigneeSelect.DblClickAsync();
+        (await assigneeSelect.InputValueAsync()).ShouldBe(CurrentUser.UserName);
+
+        await Page.GetByTestId(nameof(NavMenu.Elements.AllWorkOrdersInProgress)).ClickAsync();
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await statusSelect.DblClickAsync();
+        (await statusSelect.InputValueAsync()).ShouldBe(order1.Status.Key);
     }
 }

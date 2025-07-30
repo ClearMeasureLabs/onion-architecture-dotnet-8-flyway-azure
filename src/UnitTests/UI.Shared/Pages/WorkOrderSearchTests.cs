@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using MediatR;
+using Palermo.BlazorMvc;
 using TestContext = Bunit.TestContext;
 
 namespace ClearMeasure.Bootcamp.UnitTests.UI.Shared.Pages;
@@ -22,9 +23,10 @@ public class WorkOrderSearchTests
         // Arrange
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
         ctx.Services.AddSingleton<IBus>(new StubBus());
+        ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
 
         // Act
-        var component = ctx.RenderComponent<WorkOrderSearch>();
+        var component = ctx.RenderComponent<WorkOrderSearchController>();
 
         // Assert
         var creatorSelect = component.Find($"#{WorkOrderSearch.Elements.CreatorSelect}");
@@ -59,9 +61,10 @@ public class WorkOrderSearchTests
         var stubBus = new StubBus();
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
         ctx.Services.AddSingleton<IBus>(stubBus);
+        ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
 
         // Act
-        var component = ctx.RenderComponent<WorkOrderSearch>();
+        var component = ctx.RenderComponent<WorkOrderSearchController>();
 
         // Assert
         stubBus.QueryWasCalled.ShouldBeTrue();
@@ -85,13 +88,14 @@ public class WorkOrderSearchTests
         var stubBus = new StubBus();
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
         ctx.Services.AddSingleton<IBus>(stubBus);
+        ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
 
         var navigationManager = ctx.Services.GetRequiredService<NavigationManager>();
         var uri = navigationManager.GetUriWithQueryParameter("Creator", "somename");
         navigationManager.NavigateTo(uri);
 
         // Act
-        var component = ctx.RenderComponent<WorkOrderSearch>();
+        var component = ctx.RenderComponent<WorkOrderSearchController>();
 
         // Assert
         stubBus.QueryWasCalled.ShouldBeTrue();
@@ -114,13 +118,14 @@ public class WorkOrderSearchTests
         var stubBus = new StubBus();
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
         ctx.Services.AddSingleton<IBus>(stubBus);
+        ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
 
         var navigationManager = ctx.Services.GetRequiredService<NavigationManager>();
         var uri = navigationManager.GetUriWithQueryParameter("Assignee", "somename");
         navigationManager.NavigateTo(uri);
 
         // Act
-        var component = ctx.RenderComponent<WorkOrderSearch>();
+        var component = ctx.RenderComponent<WorkOrderSearchController>();
 
         // Assert
         stubBus.QueryWasCalled.ShouldBeTrue();
@@ -143,13 +148,14 @@ public class WorkOrderSearchTests
         var stubBus = new StubBus();
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
         ctx.Services.AddSingleton<IBus>(stubBus);
+        ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
 
         var navigationManager = ctx.Services.GetRequiredService<NavigationManager>();
         var uri = navigationManager.GetUriWithQueryParameter("Status", WorkOrderStatus.Assigned.Key);
         navigationManager.NavigateTo(uri);
 
         // Act
-        var component = ctx.RenderComponent<WorkOrderSearch>();
+        var component = ctx.RenderComponent<WorkOrderSearchController>();
 
         // Assert
         stubBus.QueryWasCalled.ShouldBeTrue();
@@ -172,8 +178,9 @@ public class WorkOrderSearchTests
         var stubBus = new StubBus();
         ctx.Services.AddSingleton<IEmployeeRepository>(new StubEmployeeRepository());
         ctx.Services.AddSingleton<IBus>(stubBus);
+        ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
 
-        var component = ctx.RenderComponent<WorkOrderSearch>();
+        var component = ctx.RenderComponent<WorkOrderSearchController>();
 
         // Act
         var creatorSelect = component.Find($"#{WorkOrderSearch.Elements.CreatorSelect}");
