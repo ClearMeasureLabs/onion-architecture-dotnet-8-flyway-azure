@@ -1,9 +1,3 @@
-@page "/login"
-@inherits Palermo.BlazorMvc.MvcComponentBase
-@inject CustomAuthenticationStateProvider AuthStateProvider
-@inject NavigationManager NavigationManager
-@inject IEmployeeRepository EmployeeRepository
-
 <PageTitle>Login</PageTitle>
 
 <div class="row justify-content-center">
@@ -42,57 +36,3 @@
         </div>
     </div>
 </div>
-
-@code {
-    private readonly LoginModel loginModel = new();
-    private string? errorMessage;
-    private Employee[] employees = Array.Empty<Employee>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadEmployees();
-    }
-
-    private async Task LoadEmployees()
-    {
-        try
-        {
-            employees = await EmployeeRepository.GetEmployeesAsync(EmployeeSpecification.All);
-        }
-        catch (Exception ex)
-        {
-            errorMessage = "Error loading employees: " + ex.Message;
-        }
-    }
-
-    private void HandleLogin()
-    {
-        if (string.IsNullOrEmpty(loginModel.Username))
-        {
-            errorMessage = "Please select an employee";
-            return;
-        }
-
-        // Find the selected employee
-        var selectedEmployee = employees.FirstOrDefault(e => e.UserName == loginModel.Username);
-        if (selectedEmployee != null)
-        {
-            // Successful login
-            AuthStateProvider.Login(loginModel.Username);
-            Bus.Notify(new UserLoggedInEvent(loginModel.Username));
-            NavigationManager.NavigateTo("/");
-        }
-        else
-        {
-            // Failed login
-            errorMessage = "Invalid employee selection";
-        }
-    }
-
-    public class LoginModel
-    {
-        [Required(ErrorMessage = "Employee selection is required")]
-        public string Username { get; set; } = string.Empty;
-    }
-
-}
