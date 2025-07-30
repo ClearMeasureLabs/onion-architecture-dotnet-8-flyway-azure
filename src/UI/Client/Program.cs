@@ -1,12 +1,12 @@
 using System.Net.Http.Json;
 using BlazorApplicationInsights;
+using ClearMeasure.Bootcamp.UI.Client;
 using Lamar;
 using Lamar.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
-using UI.Client;
+using ClearMeasure.Bootcamp.Core;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

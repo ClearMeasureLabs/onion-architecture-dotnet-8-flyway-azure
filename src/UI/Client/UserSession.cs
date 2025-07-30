@@ -1,14 +1,9 @@
-using System.Collections.Generic;
-using System.Security.Authentication;
-using System.Threading.Tasks;
-using Core.Model;
-using Core.Services;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Services;
+using ClearMeasure.Bootcamp.UI.Shared.Authentication;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
-using UI.Shared.Authentication;
 
-namespace UI.Services
+namespace ClearMeasure.Bootcamp.UI.Client
 {
     public class UserSession : IUserSession
     {

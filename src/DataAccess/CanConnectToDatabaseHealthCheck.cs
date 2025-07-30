@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess;
+namespace ClearMeasure.Bootcamp.DataAccess;
 
 public class CanConnectToDatabaseHealthCheck : IHealthCheck
 {

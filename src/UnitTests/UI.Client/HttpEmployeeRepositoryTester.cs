@@ -1,12 +1,11 @@
 using System.Net;
 using System.Net.Http.Json;
-using Core.Model;
-using Core.Services;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Services;
 using Shouldly;
-using UI.Client;
+using ClearMeasure.Bootcamp.UI.Client;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests.UI.Client;
+namespace ClearMeasure.Bootcamp.UnitTests.UI.Client;
 
 [TestFixture]
 public class HttpEmployeeRepositoryTester

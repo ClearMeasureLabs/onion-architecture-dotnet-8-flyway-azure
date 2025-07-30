@@ -1,6 +1,6 @@
 using System;
 
-namespace Core.Services.Impl
+namespace ClearMeasure.Bootcamp.Core.Services.Impl
 {
 	public class WorkOrderNumberGenerator : IWorkOrderNumberGenerator
 	{

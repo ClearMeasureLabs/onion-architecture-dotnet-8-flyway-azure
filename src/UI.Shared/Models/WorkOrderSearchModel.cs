@@ -1,18 +1,11 @@
-using System.ComponentModel.DataAnnotations;
-using Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 
-namespace UIWasm.Models
+namespace ClearMeasure.Bootcamp.UI.Shared.Models
 {
     public class WorkOrderSearchModel
     {
-        public WorkOrderSearchModel()
-        {
-            Filters = new SearchFilters();
-            Results = new WorkOrder[0];
-        }
-
-        public SearchFilters Filters { get; set; }
-        public WorkOrder[] Results { get; set; }
+        public SearchFilters Filters { get; set; } = new();
+        public WorkOrder[] Results { get; set; } = [];
 
         public class SearchFilters
         {

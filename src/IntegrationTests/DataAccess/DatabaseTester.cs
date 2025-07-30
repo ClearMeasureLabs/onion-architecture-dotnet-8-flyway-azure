@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
+using ClearMeasure.Bootcamp.IntegrationTests;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess
+namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
 {
     [TestFixture]
     public class DatabaseTester

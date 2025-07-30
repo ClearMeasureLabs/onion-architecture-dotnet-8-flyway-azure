@@ -1,8 +1,8 @@
-﻿using MediatR;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
+﻿using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Queries;
+using MediatR;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers;
+namespace ClearMeasure.Bootcamp.DataAccess.Handlers;
 
 public class ForecastQueryHandler : IRequestHandler<ForecastQuery, WeatherForecast[]>
 {

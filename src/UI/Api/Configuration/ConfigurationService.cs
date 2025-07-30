@@ -1,6 +1,6 @@
-﻿using ProgrammingWithPalermo.ChurchBulletin.Core;
+﻿using ClearMeasure.Bootcamp.Core;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UI.Api.Configuration
+namespace ClearMeasure.Bootcamp.UI.Api.Configuration
 {
     public class ConfigurationService
     {

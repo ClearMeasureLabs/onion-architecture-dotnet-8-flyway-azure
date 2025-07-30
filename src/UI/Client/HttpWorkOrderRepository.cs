@@ -1,10 +1,10 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Core.Model;
-using Core.Services;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Services;
 
-namespace UI.Client
+namespace ClearMeasure.Bootcamp.UI.Client
 {
     public class HttpWorkOrderRepository : IWorkOrderRepository
     {

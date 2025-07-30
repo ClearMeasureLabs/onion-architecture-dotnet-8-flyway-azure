@@ -1,4 +1,4 @@
-namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.ChurchBulletin;
+namespace ClearMeasure.Bootcamp.AcceptanceTests.ChurchBulletin;
 
 [TestFixture]
 public class ChurchBulletinItemTester : AcceptanceTestBase

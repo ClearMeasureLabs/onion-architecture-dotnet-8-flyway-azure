@@ -1,8 +1,8 @@
+using ClearMeasure.Bootcamp.Core;
+using ClearMeasure.Bootcamp.UI.Api.Configuration;
 using Microsoft.AspNetCore.Mvc;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
-using ProgrammingWithPalermo.ChurchBulletin.UI.Api.Configuration;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UI.Api.Controllers;
+namespace ClearMeasure.Bootcamp.UI.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]

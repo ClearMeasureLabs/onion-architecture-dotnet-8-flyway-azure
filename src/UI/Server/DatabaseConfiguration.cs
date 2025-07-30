@@ -1,6 +1,6 @@
-using ProgrammingWithPalermo.ChurchBulletin.Core;
+using ClearMeasure.Bootcamp.Core;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UI.Server;
+namespace ClearMeasure.Bootcamp.UI.Server;
 
 public class DatabaseConfiguration : IDatabaseConfiguration
 {

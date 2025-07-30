@@ -1,9 +1,8 @@
 using System.IO;
 using System.Net.Mail;
-using Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 
-namespace Core.Services.Impl
+namespace ClearMeasure.Bootcamp.Core.Services.Impl
 {
 	public class SmtpNotifier : INotifier
 	{
@@ -39,12 +38,12 @@ namespace Core.Services.Impl
 
         #region INotifier Members
 
-        public void Notify(Model.WorkOrder workOrder, Employee employee)
+        public void Notify(WorkOrder workOrder, Employee employee)
         {
             //throw new System.NotImplementedException("tbd");
         }
 
-        public void Tweet(Model.WorkOrder workOrder)
+        public void Tweet(WorkOrder workOrder)
         {
             throw new System.NotImplementedException("tbd");
         }

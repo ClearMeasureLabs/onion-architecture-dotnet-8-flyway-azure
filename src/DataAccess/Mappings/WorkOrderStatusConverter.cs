@@ -1,8 +1,8 @@
 using System;
-using Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings
+namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
     public class WorkOrderStatusConverter : ValueConverter<WorkOrderStatus, string>
     {

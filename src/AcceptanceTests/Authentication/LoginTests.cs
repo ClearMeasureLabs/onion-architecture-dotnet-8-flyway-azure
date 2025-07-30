@@ -1,6 +1,7 @@
-﻿using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+﻿using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.IntegrationTests;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Authentication;
+namespace ClearMeasure.Bootcamp.AcceptanceTests.Authentication;
 
 [TestFixture]
 public class LoginTests : AcceptanceTestBase

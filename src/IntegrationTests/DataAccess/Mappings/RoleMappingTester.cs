@@ -1,7 +1,7 @@
-using Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
+using ClearMeasure.Bootcamp.IntegrationTests;
 using Shouldly;
 
 namespace IntegrationTests.DataAccess.Mappings

@@ -1,4 +1,4 @@
-﻿namespace ProgrammingWithPalermo.ChurchBulletin.Core;
+﻿namespace ClearMeasure.Bootcamp.Core;
 
 public interface IDatabaseConfiguration
 {

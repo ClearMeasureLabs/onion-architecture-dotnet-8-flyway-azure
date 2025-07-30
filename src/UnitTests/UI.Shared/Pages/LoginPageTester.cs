@@ -1,17 +1,16 @@
 using System.ComponentModel.DataAnnotations;
 using Bunit;
-using Core.Model;
-using Core.Services;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Services;
+using ClearMeasure.Bootcamp.UI.Shared.Pages;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Palermo.BlazorMvc;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using Shouldly;
-using UI.Shared.Authentication;
-using UI.Shared.Pages;
+using ClearMeasure.Bootcamp.UI.Shared.Authentication;
 using TestContext = Bunit.TestContext;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests.UI.Shared.Pages;
+namespace ClearMeasure.Bootcamp.UnitTests.UI.Shared.Pages;
 
 [TestFixture]
 public class LoginPageTester

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
+namespace ClearMeasure.Bootcamp.IntegrationTests;
 
 public sealed class DatabaseEmptier
 {

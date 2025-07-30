@@ -1,8 +1,7 @@
-using Core.Model;
 using System.Threading.Tasks;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 
-namespace Core.Services
+namespace ClearMeasure.Bootcamp.Core.Services
 {
 	public interface IUserSession
 	{

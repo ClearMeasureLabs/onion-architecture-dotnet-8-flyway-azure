@@ -1,9 +1,8 @@
-﻿using Core.Model;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 
-namespace Core.Services
+namespace ClearMeasure.Bootcamp.Core.Services
 {
     public class LoggingNotifier : INotifier 
     {

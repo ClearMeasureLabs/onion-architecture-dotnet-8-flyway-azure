@@ -1,6 +1,6 @@
-using Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 using Microsoft.EntityFrameworkCore;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
+using ClearMeasure.Bootcamp.DataAccess.Mappings;
 
 namespace DataAccess.Mappings
 {

@@ -1,12 +1,11 @@
-using Core.Model;
-using Core.Services;
 using Microsoft.EntityFrameworkCore;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
-using ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
-using ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess;
+using ClearMeasure.Bootcamp.DataAccess.Handlers;
+using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using ClearMeasure.Bootcamp.IntegrationTests;
+using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
 using System.Threading.Tasks;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Services;
 
 namespace IntegrationTests.DataAccess
 {

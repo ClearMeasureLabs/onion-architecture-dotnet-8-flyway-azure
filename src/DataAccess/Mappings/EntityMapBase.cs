@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ClearMeasure.Bootcamp.Core.Model;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
+namespace ClearMeasure.Bootcamp.DataAccess.Mappings;
 
 public abstract class EntityMapBase<T> : IEntityFrameworkMapping where T : EntityBase<T>, new()
 {

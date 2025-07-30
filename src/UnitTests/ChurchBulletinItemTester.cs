@@ -1,7 +1,7 @@
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 using Shouldly;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests;
+namespace ClearMeasure.Bootcamp.UnitTests;
 
 public class ChurchBulletinItemTester
 {

@@ -1,11 +1,11 @@
 using System;
-using Core.Services;
-using Core.Services.Impl;
+using ClearMeasure.Bootcamp.Core.Services;
+using ClearMeasure.Bootcamp.Core.Services.Impl;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 
-namespace Core.Model.StateCommands
+namespace ClearMeasure.Bootcamp.Core.Model.StateCommands
 {
 	public abstract class StateCommandBase : IStateCommand
 	{

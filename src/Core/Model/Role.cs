@@ -1,4 +1,4 @@
-namespace Core.Model
+namespace ClearMeasure.Bootcamp.Core.Model
 {
     public class Role
     {

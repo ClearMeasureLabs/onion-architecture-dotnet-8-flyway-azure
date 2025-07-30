@@ -1,8 +1,8 @@
-﻿using MediatR;
+﻿using ClearMeasure.Bootcamp.Core;
+using MediatR;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess;
+namespace ClearMeasure.Bootcamp.DataAccess;
 
 public class HealthCheckRemotableRequestHandler : IRequestHandler<HealthCheckRemotableRequest, HealthStatus>
 {

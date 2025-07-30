@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests;
+namespace ClearMeasure.Bootcamp.AcceptanceTests;
 
 [SetUpFixture]
 public class ServerFixture

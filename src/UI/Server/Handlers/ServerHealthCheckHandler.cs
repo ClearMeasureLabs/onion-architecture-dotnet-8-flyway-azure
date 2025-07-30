@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using UI.Client;
+using ClearMeasure.Bootcamp.UI.Client;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UI.Server.Handlers;
+namespace ClearMeasure.Bootcamp.UI.Server.Handlers;
 
 public class ServerHealthCheckHandler(HealthCheckService healthCheckService) : IRequestHandler<ServerHealthCheckQuery, HealthStatus>
 {

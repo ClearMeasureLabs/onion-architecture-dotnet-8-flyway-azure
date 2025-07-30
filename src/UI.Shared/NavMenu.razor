@@ -1,9 +1,8 @@
 @inherits Palermo.BlazorMvc.MvcComponentBase
-@implements Palermo.BlazorMvc.IListener<UI.Shared.Models.UserLoggedInEvent>
-@using Core.Model
-@using Core.Services
-@using ProgrammingWithPalermo.ChurchBulletin.Core.Model
-@using UI.Shared.Models
+@implements Palermo.BlazorMvc.IListener<UserLoggedInEvent>
+@using ClearMeasure.Bootcamp.Core.Model
+@using ClearMeasure.Bootcamp.Core.Services
+@using ClearMeasure.Bootcamp.UI.Shared.Models
 @inject IUserSession UserSession
 @inject NavigationManager NavigationManager
 

@@ -1,4 +1,4 @@
-﻿namespace ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
+﻿namespace ClearMeasure.Bootcamp.Core.Queries;
 
 public interface IRoomSearchHandler
 {

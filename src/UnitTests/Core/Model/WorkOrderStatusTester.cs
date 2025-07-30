@@ -1,5 +1,5 @@
-using Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.UnitTests.Core.Queries;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.UnitTests.Core.Queries;
 using System.Text.Json;
 
 namespace UnitTests.Core.Model;

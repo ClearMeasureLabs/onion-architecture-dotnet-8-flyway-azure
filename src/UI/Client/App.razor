@@ -1,9 +1,10 @@
-﻿@using UI.Shared.Authentication
+﻿@using ClearMeasure.Bootcamp.UI.Shared.Authentication
+@using ClearMeasure.Bootcamp.UI.Shared
 <ApplicationInsightsInit IsWasmStandalone="true" />
 <CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new[] {typeof(UI.Shared.MainLayout).Assembly}">
+    <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new[] {typeof(ClearMeasure.Bootcamp.UI.Shared.MainLayout).Assembly}">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(UI.Shared.MainLayout)">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(ClearMeasure.Bootcamp.UI.Shared.MainLayout)">
                 <NotAuthorized>
                     <RedirectToLogin />
                 </NotAuthorized>
@@ -12,7 +13,7 @@
         </Found>
         <NotFound>
             <PageTitle>Not found</PageTitle>
-            <LayoutView Layout="@typeof(UI.Shared.MainLayout)">
+            <LayoutView Layout="@typeof(ClearMeasure.Bootcamp.UI.Shared.MainLayout)">
                 <p role="alert">Sorry, there's nothing at this address.</p>
             </LayoutView>
         </NotFound>

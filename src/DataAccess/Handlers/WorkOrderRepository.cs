@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Model;
-using Core.Services;
+using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Services;
 using Microsoft.EntityFrameworkCore;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers
+namespace ClearMeasure.Bootcamp.DataAccess.Handlers
 {
     public class WorkOrderRepository : IWorkOrderRepository
     {

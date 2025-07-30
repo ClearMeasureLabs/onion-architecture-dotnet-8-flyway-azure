@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
-using UI.Client.Pages;
-using UI.Shared.Components;
+﻿using ClearMeasure.Bootcamp.UI.Client.Pages;
+using ClearMeasure.Bootcamp.UI.Shared.Components;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using ClearMeasure.Bootcamp.AcceptanceTests;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.App;
+namespace ClearMeasure.Bootcamp.AcceptanceTests.App;
 
 [TestFixture]
 public class ClientHealthCheckTests : AcceptanceTestBase

@@ -1,4 +1,4 @@
-﻿namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Counter;
+﻿namespace ClearMeasure.Bootcamp.AcceptanceTests.Counter;
 
 [TestFixture]
 public class CounterPageTests : AcceptanceTestBase

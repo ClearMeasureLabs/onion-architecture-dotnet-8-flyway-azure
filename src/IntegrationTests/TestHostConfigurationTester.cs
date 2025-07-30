@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Shouldly;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
+namespace ClearMeasure.Bootcamp.IntegrationTests;
 
 [TestFixture]
 public class TestHostConfigurationTester

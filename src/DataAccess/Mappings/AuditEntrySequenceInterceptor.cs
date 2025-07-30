@@ -1,8 +1,8 @@
-﻿using Core.Model;
+﻿using ClearMeasure.Bootcamp.Core.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
+namespace ClearMeasure.Bootcamp.DataAccess.Mappings;
 
 public class AuditEntrySequenceInterceptor : SaveChangesInterceptor
 {

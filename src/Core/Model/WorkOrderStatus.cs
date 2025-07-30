@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Core.Model
+namespace ClearMeasure.Bootcamp.Core.Model
 {
 	[JsonConverter(typeof(WorkOrderStatusJsonConverter))]
 	public class WorkOrderStatus

@@ -1,4 +1,4 @@
-namespace ProgrammingWithPalermo.ChurchBulletin.Core.Model
+namespace ClearMeasure.Bootcamp.Core.Model
 {
     /// <summary>
     /// Template class from sample app - moved from UI.Shared

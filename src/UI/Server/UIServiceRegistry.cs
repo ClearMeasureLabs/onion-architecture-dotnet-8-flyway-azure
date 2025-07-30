@@ -1,14 +1,14 @@
-﻿using Lamar;
+﻿using ClearMeasure.Bootcamp.Core;
+using ClearMeasure.Bootcamp.DataAccess;
+using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using Lamar;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
-using UI.Client;
-using UI.Shared;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.UI.Client;
+using ClearMeasure.Bootcamp.UI.Shared;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UI.Server;
+namespace ClearMeasure.Bootcamp.UI.Server;
 
 public class UiServiceRegistry : ServiceRegistry
 {

@@ -1,4 +1,4 @@
-﻿namespace ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+﻿namespace ClearMeasure.Bootcamp.Core.Model;
 
 public readonly struct TrimmedDecimal : IComparable
 {

@@ -1,4 +1,4 @@
-﻿namespace ProgrammingWithPalermo.ChurchBulletin.UI.Server;
+﻿namespace ClearMeasure.Bootcamp.UI.Server;
 
 public class Is64BitProcessHealthCheck : IHealthCheck
 {

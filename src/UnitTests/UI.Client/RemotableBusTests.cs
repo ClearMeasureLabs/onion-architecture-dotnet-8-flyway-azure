@@ -1,11 +1,11 @@
-﻿using MediatR;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
+﻿using ClearMeasure.Bootcamp.Core;
+using ClearMeasure.Bootcamp.Core.Queries;
+using MediatR;
+using ClearMeasure.Bootcamp.Core.Model;
 using Shouldly;
-using UI.Client;
+using ClearMeasure.Bootcamp.UI.Client;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests.UI.Client;
+namespace ClearMeasure.Bootcamp.UnitTests.UI.Client;
 
 [TestFixture]
 public class RemotableBusTests

@@ -1,8 +1,7 @@
-using Core.Model;
-using Core.Model.StateCommands;
-using Core.Services;
-using Core.Services.Impl;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model.StateCommands;
+using ClearMeasure.Bootcamp.Core.Services;
+using ClearMeasure.Bootcamp.Core.Services.Impl;
+using ClearMeasure.Bootcamp.Core.Model;
 
 namespace UnitTests.Core.Services;
 

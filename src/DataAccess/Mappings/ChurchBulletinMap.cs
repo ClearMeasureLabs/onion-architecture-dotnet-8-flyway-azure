@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+﻿using ClearMeasure.Bootcamp.Core.Model;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
+namespace ClearMeasure.Bootcamp.DataAccess.Mappings;
 
 public class ChurchBulletinMap : EntityMapBase<ChurchBulletinItem>
 {

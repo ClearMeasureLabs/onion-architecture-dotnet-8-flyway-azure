@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
-using UI.Shared;
+using ClearMeasure.Bootcamp.Core;
+using ClearMeasure.Bootcamp.UI.Shared;
 
-namespace UI.Client;
+namespace ClearMeasure.Bootcamp.UI.Client;
 
 public class RemotableBus(IMediator mediator, IPublisherGateway gateway) : Bus(mediator)
 {

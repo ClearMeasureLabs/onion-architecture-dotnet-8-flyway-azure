@@ -1,11 +1,11 @@
-﻿using Core.Model;
+﻿using ClearMeasure.Bootcamp.Core;
+using ClearMeasure.Bootcamp.Core.Model;
 using DataAccess.Mappings;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
+namespace ClearMeasure.Bootcamp.DataAccess.Mappings;
 
 public class DataContext : DbContext
 {

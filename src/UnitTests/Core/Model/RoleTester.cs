@@ -1,4 +1,4 @@
-using Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 
 namespace UnitTests.Core.Model;
 

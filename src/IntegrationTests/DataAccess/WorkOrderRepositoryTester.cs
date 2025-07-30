@@ -1,13 +1,12 @@
-using Core.Model;
-using Core.Services;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.DataAccess.Handlers;
+using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using ClearMeasure.Bootcamp.Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 using Shouldly;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess
+namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
 {
     [TestFixture]
     public class WorkOrderRepositoryTester

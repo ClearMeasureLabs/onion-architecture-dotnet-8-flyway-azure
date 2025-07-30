@@ -1,14 +1,14 @@
-using Core.Services;
 using Lamar;
 using MediatR;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Palermo.BlazorMvc;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
-using UI.Shared;
-using UI.Shared.Authentication;
+using ClearMeasure.Bootcamp.Core;
+using ClearMeasure.Bootcamp.Core.Services;
+using ClearMeasure.Bootcamp.UI.Shared;
+using ClearMeasure.Bootcamp.UI.Shared.Authentication;
 
-namespace UI.Client;
+namespace ClearMeasure.Bootcamp.UI.Client;
 
 // ReSharper disable once InconsistentNaming
 public class UIClientServiceRegistry : ServiceRegistry
@@ -22,7 +22,7 @@ public class UIClientServiceRegistry : ServiceRegistry
         this.AddScoped<IUiBus>(provider => new MvcBus(NullLogger<MvcBus>.Instance));
         this.AddScoped<IEmployeeRepository, UI.Client.HttpEmployeeRepository>();
         this.AddScoped<IWorkOrderRepository, UI.Client.HttpWorkOrderRepository>();
-        this.AddScoped<IUserSession, UI.Services.UserSession>();
+        this.AddScoped<IUserSession, UserSession>();
         this.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<RemotableBus>());
         this.AddTransient<IBus, RemotableBus>();
 

@@ -1,18 +1,16 @@
 ﻿using Bunit;
-using Core.Model;
-using Core.Services;
+using ClearMeasure.Bootcamp.Core;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Queries;
+using ClearMeasure.Bootcamp.Core.Services;
+using ClearMeasure.Bootcamp.UI.Shared.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
-using UI.Shared.Pages;
-using UIWasm.Models;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
 using MediatR;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using TestContext = Bunit.TestContext;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests.UI.Shared.Pages;
+namespace ClearMeasure.Bootcamp.UnitTests.UI.Shared.Pages;
 
 public class WorkOrderSearchTests
 {

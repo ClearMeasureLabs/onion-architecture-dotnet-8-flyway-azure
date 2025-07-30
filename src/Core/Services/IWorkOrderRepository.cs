@@ -1,7 +1,7 @@
-using Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 using System.Threading.Tasks;
 
-namespace Core.Services
+namespace ClearMeasure.Bootcamp.Core.Services
 {
 	public interface IWorkOrderRepository
 	{

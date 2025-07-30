@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
-using Core.Services;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Services;
+using ClearMeasure.Bootcamp.Core.Model;
 
-namespace Core.Model.StateCommands
+namespace ClearMeasure.Bootcamp.Core.Model.StateCommands
 {
     public class InProgressToAssignedCommand : StateCommandBase
     {

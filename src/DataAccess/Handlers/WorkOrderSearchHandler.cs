@@ -1,10 +1,10 @@
-﻿using Core.Model;
+﻿using ClearMeasure.Bootcamp.Core.Queries;
+using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using ClearMeasure.Bootcamp.Core.Model;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers;
+namespace ClearMeasure.Bootcamp.DataAccess.Handlers;
 
 public class WorkOrderSearchHandler(DataContext context) : IRequestHandler<WorkOrderSpecificationQuery, WorkOrder[]>
 {

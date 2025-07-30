@@ -1,7 +1,7 @@
-using Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Services;
 
-namespace Core.Services
+namespace ClearMeasure.Bootcamp.Core.Services
 {
 	public interface IEmployeeRepository
 	{

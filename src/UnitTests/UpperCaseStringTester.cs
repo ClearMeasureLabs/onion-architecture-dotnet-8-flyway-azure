@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+﻿using ClearMeasure.Bootcamp.Core.Model;
+using Newtonsoft.Json;
 using Shouldly;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests;
+namespace ClearMeasure.Bootcamp.UnitTests;
 
 [TestFixture]
 public class UpperCaseStringTester

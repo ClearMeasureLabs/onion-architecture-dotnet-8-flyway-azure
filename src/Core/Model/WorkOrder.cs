@@ -1,6 +1,6 @@
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 
-namespace Core.Model
+namespace ClearMeasure.Bootcamp.Core.Model
 {
     public class WorkOrder : EntityBase<WorkOrder>
     {

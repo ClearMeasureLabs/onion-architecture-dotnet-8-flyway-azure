@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Core.Model;
-using Core.Services;
 using System.Threading.Tasks;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Services;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UI.Api.Controllers;
+namespace ClearMeasure.Bootcamp.UI.Api.Controllers;
 
 [ApiController]
 [Route("employee")]

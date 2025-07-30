@@ -1,8 +1,7 @@
-using Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 using Microsoft.EntityFrameworkCore;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings
+namespace ClearMeasure.Bootcamp.DataAccess.Mappings
 {
     public class WorkOrderMap : IEntityFrameworkMapping
     {

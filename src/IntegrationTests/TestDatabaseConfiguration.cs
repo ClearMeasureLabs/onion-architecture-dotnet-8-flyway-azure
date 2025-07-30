@@ -1,7 +1,7 @@
+using ClearMeasure.Bootcamp.Core;
 using Microsoft.Extensions.Configuration;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
+namespace ClearMeasure.Bootcamp.IntegrationTests;
 
 public class TestDatabaseConfiguration : IDatabaseConfiguration
 {

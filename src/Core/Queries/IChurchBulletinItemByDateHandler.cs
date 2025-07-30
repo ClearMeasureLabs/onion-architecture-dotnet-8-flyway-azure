@@ -1,6 +1,6 @@
-﻿using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+﻿using ClearMeasure.Bootcamp.Core.Model;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
+namespace ClearMeasure.Bootcamp.Core.Queries;
 
 public interface IChurchBulletinItemByDateHandler
 {

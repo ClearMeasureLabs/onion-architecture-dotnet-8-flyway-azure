@@ -1,6 +1,6 @@
 
 
-namespace Core.Services
+namespace ClearMeasure.Bootcamp.Core.Services
 {
 	public interface IApplicationInformation
 	{

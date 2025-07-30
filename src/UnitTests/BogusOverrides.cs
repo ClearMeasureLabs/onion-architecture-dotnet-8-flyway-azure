@@ -1,9 +1,9 @@
 ﻿using AutoBogus;
 using Bogus.Extensions;
-using Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
+using ClearMeasure.Bootcamp.Core.Queries;
+using ClearMeasure.Bootcamp.Core.Model;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests;
+namespace ClearMeasure.Bootcamp.UnitTests;
 
 internal class BogusOverrides : AutoGeneratorOverride
 {

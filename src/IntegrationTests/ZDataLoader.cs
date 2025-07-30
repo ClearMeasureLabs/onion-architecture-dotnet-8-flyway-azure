@@ -1,9 +1,8 @@
-﻿using Core.Model;
+﻿using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
 using Microsoft.EntityFrameworkCore;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
+namespace ClearMeasure.Bootcamp.IntegrationTests;
 
 [TestFixture]
 public class ZDataLoader

@@ -1,9 +1,8 @@
-﻿using Core.Model;
+﻿using ClearMeasure.Bootcamp.Core.Model;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
+namespace ClearMeasure.Bootcamp.DataAccess.Mappings;
 
 public class AuditEntrySequenceGenerator : ValueGenerator<int>
 {

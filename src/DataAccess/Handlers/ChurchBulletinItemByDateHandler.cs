@@ -1,8 +1,8 @@
-﻿using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
+﻿using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Queries;
+using ClearMeasure.Bootcamp.DataAccess.Mappings;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers;
+namespace ClearMeasure.Bootcamp.DataAccess.Handlers;
 
 public class ChurchBulletinItemByDateHandler : IChurchBulletinItemByDateHandler
 {

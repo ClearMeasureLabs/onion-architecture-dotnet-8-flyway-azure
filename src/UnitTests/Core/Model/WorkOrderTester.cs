@@ -1,5 +1,4 @@
-using Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 
 namespace UnitTests.Core.Model;
 

@@ -1,15 +1,14 @@
 ﻿using MediatR;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
 using Shouldly;
 using System.Text.Json;
-using Core.Model;
+using ClearMeasure.Bootcamp.Core;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Queries;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using UI.Client;
+using ClearMeasure.Bootcamp.UI.Client;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests.Core.Queries;
+namespace ClearMeasure.Bootcamp.UnitTests.Core.Queries;
 
 public class RemotableRequestTests
 {

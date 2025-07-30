@@ -1,5 +1,5 @@
 ﻿using Palermo.BlazorMvc;
 
-namespace UI.Shared.Models;
+namespace ClearMeasure.Bootcamp.UI.Shared.Models;
 
 public record UserLoggedInEvent(string LoginModelUsername) : IUiBusEvent;

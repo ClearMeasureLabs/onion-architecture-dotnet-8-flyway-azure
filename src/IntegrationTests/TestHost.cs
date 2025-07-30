@@ -1,18 +1,18 @@
 ﻿using System.CodeDom;
 using AutoBogus;
 using AutoBogus.Conventions;
-using Core.Model;
+using ClearMeasure.Bootcamp.Core;
+using ClearMeasure.Bootcamp.Core.Queries;
+using ClearMeasure.Bootcamp.DataAccess.Handlers;
+using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using ClearMeasure.Bootcamp.UnitTests;
+using ClearMeasure.Bootcamp.Core.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
-using ProgrammingWithPalermo.ChurchBulletin.UnitTests;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
+namespace ClearMeasure.Bootcamp.IntegrationTests;
 
 public static class TestHost
 {

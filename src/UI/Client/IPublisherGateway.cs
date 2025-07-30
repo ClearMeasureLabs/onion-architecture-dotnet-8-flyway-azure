@@ -1,6 +1,6 @@
-﻿using ProgrammingWithPalermo.ChurchBulletin.Core;
+﻿using ClearMeasure.Bootcamp.Core;
 
-namespace UI.Client
+namespace ClearMeasure.Bootcamp.UI.Client
 {
     public interface IPublisherGateway
     {

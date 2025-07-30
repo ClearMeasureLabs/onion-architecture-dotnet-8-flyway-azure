@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace UI.Shared.Authentication
+namespace ClearMeasure.Bootcamp.UI.Shared.Authentication
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {

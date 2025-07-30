@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UI.Api.Controllers;
+namespace ClearMeasure.Bootcamp.UI.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]

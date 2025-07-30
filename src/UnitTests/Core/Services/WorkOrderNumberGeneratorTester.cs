@@ -1,4 +1,4 @@
-using Core.Services.Impl;
+using ClearMeasure.Bootcamp.Core.Services.Impl;
 
 namespace UnitTests.Core.Services;
 

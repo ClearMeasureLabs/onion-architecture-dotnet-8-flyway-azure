@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
+using ClearMeasure.Bootcamp.Core;
 
-namespace UI.Client;
+namespace ClearMeasure.Bootcamp.UI.Client;
 
 public record ServerHealthCheckQuery : IRequest<HealthStatus>, IRemotableRequest;

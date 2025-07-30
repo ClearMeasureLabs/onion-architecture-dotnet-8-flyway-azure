@@ -1,4 +1,6 @@
-﻿namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests;
+﻿using ClearMeasure.Bootcamp.IntegrationTests;
+
+namespace ClearMeasure.Bootcamp.AcceptanceTests;
 
 public abstract class AcceptanceTestBase : PageTest
 {

@@ -1,7 +1,7 @@
-﻿using MediatR;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+﻿using ClearMeasure.Bootcamp.Core.Model;
+using MediatR;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
+namespace ClearMeasure.Bootcamp.Core.Queries;
 
 public record ForecastQuery : IRequest<WeatherForecast[]>, IRemotableRequest
 {

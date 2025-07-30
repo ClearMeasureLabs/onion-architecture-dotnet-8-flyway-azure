@@ -1,7 +1,6 @@
-﻿using Core.Model;
-using Core.Model.StateCommands;
-using Core.Services;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+﻿using ClearMeasure.Bootcamp.Core.Model.StateCommands;
+using ClearMeasure.Bootcamp.Core.Services;
+using ClearMeasure.Bootcamp.Core.Model;
 using Shouldly;
 
 namespace UnitTests.Core.Model.StateCommands;

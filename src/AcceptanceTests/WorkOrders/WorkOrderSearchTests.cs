@@ -1,7 +1,8 @@
-﻿using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
-using UI.Shared.Pages;
+﻿using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.IntegrationTests;
+using ClearMeasure.Bootcamp.UI.Shared.Pages;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.WorkOrders;
+namespace ClearMeasure.Bootcamp.AcceptanceTests.WorkOrders;
 
 public class WorkOrderSearchTests : AcceptanceTestBase
 {

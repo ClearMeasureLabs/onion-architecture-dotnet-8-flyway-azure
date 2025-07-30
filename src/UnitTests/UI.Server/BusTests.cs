@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using ProgrammingWithPalermo.ChurchBulletin.UI.Server;
+using ClearMeasure.Bootcamp.UI.Server;
 using Shouldly;
-using UI.Shared;
+using ClearMeasure.Bootcamp.UI.Shared;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests.UI.Server;
+namespace ClearMeasure.Bootcamp.UnitTests.UI.Server;
 
 [TestFixture]
 public class BusTests

@@ -1,7 +1,7 @@
 using Shouldly;
-using UI.Shared.Authentication;
+using ClearMeasure.Bootcamp.UI.Shared.Authentication;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests.UI.Client.Authentication;
+namespace ClearMeasure.Bootcamp.UnitTests.UI.Client.Authentication;
 
 [TestFixture]
 public class CustomAuthenticationStateProviderTester

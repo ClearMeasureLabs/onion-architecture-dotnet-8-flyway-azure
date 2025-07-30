@@ -1,7 +1,6 @@
-using Core.Model;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 
-namespace Core.Services.Impl
+namespace ClearMeasure.Bootcamp.Core.Services.Impl
 {
 	public class WorkOrderBuilder : IWorkOrderBuilder
 	{

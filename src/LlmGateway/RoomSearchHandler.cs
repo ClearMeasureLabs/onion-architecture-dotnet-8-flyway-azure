@@ -1,4 +1,4 @@
-﻿using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
+﻿using ClearMeasure.Bootcamp.Core.Queries;
 
 namespace LlmGateway
 {

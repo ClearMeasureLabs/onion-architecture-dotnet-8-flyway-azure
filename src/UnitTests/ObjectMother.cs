@@ -2,11 +2,11 @@
 using AutoBogus;
 using AutoBogus.Conventions;
 using BlazorApplicationInsights.Models;
-using Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
 using System.Reflection;
 using Shouldly;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests;
+namespace ClearMeasure.Bootcamp.UnitTests;
 
 public class ObjectMother
 {

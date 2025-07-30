@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess;
+namespace ClearMeasure.Bootcamp.DataAccess;
 
 public class CanConnectToLlmServerHealthCheck : IHealthCheck
 {

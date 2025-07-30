@@ -1,9 +1,8 @@
-﻿using Core.Model;
+﻿using ClearMeasure.Bootcamp.Core.Model;
 using Microsoft.EntityFrameworkCore;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using Shouldly;
 
-namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess.Mappings;
+namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings;
 
 [TestFixture]
 public class WorkOrderMappingTests

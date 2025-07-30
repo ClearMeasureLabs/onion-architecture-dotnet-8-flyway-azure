@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
+using ClearMeasure.Bootcamp.Core;
 
-namespace UI.Shared
+namespace ClearMeasure.Bootcamp.UI.Shared
 {
     public class Bus : IBus
     {

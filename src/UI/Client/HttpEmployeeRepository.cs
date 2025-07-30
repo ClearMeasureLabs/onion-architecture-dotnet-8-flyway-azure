@@ -1,10 +1,9 @@
 using System.Net.Http;
 using System.Net.Http.Json;
-using Core.Model;
-using Core.Services;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Services;
 
-namespace UI.Client
+namespace ClearMeasure.Bootcamp.UI.Client
 {
     public class HttpEmployeeRepository : IEmployeeRepository
     {

@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
-using ProgrammingWithPalermo.ChurchBulletin.Core;
+using ClearMeasure.Bootcamp.Core;
 
-namespace UI.Client
+namespace ClearMeasure.Bootcamp.UI.Client
 {
     public class PublisherGateway(HttpClient httpClient) : IPublisherGateway
     {
