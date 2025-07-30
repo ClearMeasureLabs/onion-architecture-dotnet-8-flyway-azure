@@ -13,16 +13,9 @@ namespace ClearMeasure.Bootcamp.UI.Shared.Pages;
 public partial class WorkOrderSearch : AppComponentBase
 {
     [Inject] public IEmployeeRepository EmployeeRepository { get; set; } = null!;
-    [Inject] public IBus AppBus { get; set; } = null!;
-
     [SupplyParameterFromQuery] public string? Creator { get; set; }
     [SupplyParameterFromQuery] public string? Assignee { get; set; }
     [SupplyParameterFromQuery] public string? Status { get; set; }
-
-    // protected override void OnInitialized()
-    // {
-    //     _ = InitializeAsync();
-    // }
 
     protected override void OnParametersSet()
     {
@@ -71,7 +64,7 @@ public partial class WorkOrderSearch : AppComponentBase
         specification.MatchAssignee(assignee);
         specification.MatchStatus(status);
 
-        Model.Results = await AppBus.Send(specification);
+        Model.Results = await Bus.Send(specification);
         StateHasChanged();
     }
 
