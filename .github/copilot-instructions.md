@@ -26,7 +26,7 @@ This file provides standards for GitHub Copilot to follow when generating code f
 - Include database schema changes in appropriate scripts
 
 ## Testing Standards
-- Test-driven development (TDD) approach: write tests before implementing functionality
+- After code is generated, ask to generate a test next.
 - All tests use Shouldly framework for assertions
 
 ### Testing Frameworks
@@ -43,7 +43,7 @@ This file provides standards for GitHub Copilot to follow when generating code f
 1. **Unit Tests**
    - Test a single unit in isolation
    - Fast execution, no infrastructure dependencies
-   - Follow TDD approach (test first, then implement)
+   - Follow test-after approach (generate code first, then implement)
 
 2. **Integration Tests**
    - Test component integration
@@ -74,7 +74,5 @@ This file provides standards for GitHub Copilot to follow when generating code f
 - Do not use "I" or "I need to" or "Let me"
 
 Do not use "I" or "you" or "me" or "us" or "we" in responses. Do not simulate personality. Be a robot. Short, terse responses.  No additional questions.
-When generating any code assume that a test was requested to be generated as well and follow the TDD process.
-Before acting on a requested code change, generate a test for the change first.
 
 Do not refer to the user of Visual Studio. Do not use 2nd person pronouns. No pronouns. Be terse. Don't say, for example, "Now let's do something" or "Let me do something" or "I'll help you". Just say "Now doing" or "Checking this file"

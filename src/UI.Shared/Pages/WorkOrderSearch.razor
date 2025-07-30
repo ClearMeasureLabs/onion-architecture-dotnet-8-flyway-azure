@@ -1,57 +1,51 @@
-@page "/workorder/search"
+@inherits Palermo.BlazorMvc.ViewComponentBase
 @using ClearMeasure.Bootcamp.Core
-@using ClearMeasure.Bootcamp.Core.Model
-@using ClearMeasure.Bootcamp.Core.Queries
-@using ClearMeasure.Bootcamp.Core.Services
-@using ClearMeasure.Bootcamp.UI.Shared.Models
-@inject IEmployeeRepository EmployeeRepository
-@inject IBus Bus
 
 <h2>Search Results</h2>
 
-<EditForm Model="@Model" OnValidSubmit="HandleSearch">
+<EditForm Model="@Model" OnValidSubmit="OnSearch!">
     <table class="search-filters">
         <thead>
-            <tr>
-                <th>Creator</th>
-                <th>Assignee</th>
-                <th>Status</th>
-                <th>&nbsp;</th>
-            </tr>
+        <tr>
+            <th>Creator</th>
+            <th>Assignee</th>
+            <th>Status</th>
+            <th>&nbsp;</th>
+        </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>
-                    <InputSelect id="@Elements.CreatorSelect"  @bind-Value="Model.Filters.Creator" class="form-control" style="width: 200px;">
-                        <option value="">All</option>
-                        @foreach (var user in UserOptions)
-                        {
-                            <option value="@user.Value">@user.Text</option>
-                        }
-                    </InputSelect>
-                </td>
-                <td>
-                    <InputSelect id="@Elements.AssigneeSelect" @bind-Value="Model.Filters.Assignee" class="form-control" style="width: 200px;">
-                        <option value="">All</option>
-                        @foreach (var user in UserOptions)
-                        {
-                            <option value="@user.Value">@user.Text</option>
-                        }
-                    </InputSelect>
-                </td>
-                <td>
-                    <InputSelect id="@Elements.StatusSelect" @bind-Value="Model.Filters.Status" class="form-control" style="width: 200px;">
-                        <option value="">All</option>
-                        @foreach (var status in StatusOptions)
-                        {
-                            <option value="@status.Value">@status.Text</option>
-                        }
-                    </InputSelect>
-                </td>
-                <td>
-                    <button id="@Elements.SearchButton" type="submit" class="btn btn-primary">Search</button>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                <InputSelect id="@WorkOrderSearch.Elements.CreatorSelect" @bind-Value="Model.Filters.Creator" class="form-control" style="width: 200px;">
+                    <option value="">All</option>
+                    @foreach (var user in UserOptions)
+                    {
+                        <option value="@user.Value">@user.Text</option>
+                    }
+                </InputSelect>
+            </td>
+            <td>
+                <InputSelect id="@WorkOrderSearch.Elements.AssigneeSelect" @bind-Value="Model.Filters.Assignee" class="form-control" style="width: 200px;">
+                    <option value="">All</option>
+                    @foreach (var user in UserOptions)
+                    {
+                        <option value="@user.Value">@user.Text</option>
+                    }
+                </InputSelect>
+            </td>
+            <td>
+                <InputSelect id="@WorkOrderSearch.Elements.StatusSelect" @bind-Value="Model.Filters.Status" class="form-control" style="width: 200px;">
+                    <option value="">All</option>
+                    @foreach (var status in StatusOptions)
+                    {
+                        <option value="@status.Value">@status.Text</option>
+                    }
+                </InputSelect>
+            </td>
+            <td>
+                <button id="@WorkOrderSearch.Elements.SearchButton" type="submit" class="btn btn-primary">Search</button>
+            </td>
+        </tr>
         </tbody>
     </table>
 </EditForm>
@@ -59,111 +53,47 @@
 <br/>
 <table class="grid-data">
     <thead>
-        <tr>    
-            <th style="width:10%;">WO #</th>
-            <th style="width:20%;">Creator</th>
-            <th style="width:20%;">Assignee</th>
-            <th style="width:15%;">Status</th>
-            <th>Title</th>
-        </tr>
+    <tr>
+        <th style="width:10%;">WO #</th>
+        <th style="width:20%;">Creator</th>
+        <th style="width:20%;">Assignee</th>
+        <th style="width:15%;">Status</th>
+        <th>Title</th>
+    </tr>
     </thead>
     <tbody>
-    @{ int i=0;
-    foreach (var order in Model.Results)
-    {
-        var rowClass = (i++%2) == 0 ? "odd" : "even";
-        <tr class="@rowClass">
-            <td><a href="/workorder/manage/@order.Number?mode=Edit">@order.Number</a></td>
-            <td>@order.Creator?.GetFullName()</td>
-            <td>@order.Assignee?.GetFullName()</td>
-            <td style="white-space: nowrap;">@order.Status</td>
-            <td>@order.Title</td>
-        </tr>
-       }
-    }    
+    @{
+        var i = 0;
+        foreach (var order in Model.Results)
+        {
+            var rowClass = i++ % 2 == 0 ? "odd" : "even";
+            <tr class="@rowClass">
+                <td>
+                    <a href="/workorder/manage/@order.Number?mode=Edit">@order.Number</a>
+                </td>
+                <td>@order.Creator?.GetFullName()</td>
+                <td>@order.Assignee?.GetFullName()</td>
+                <td style="white-space: nowrap;">@order.Status</td>
+                <td>@order.Title</td>
+            </tr>
+        }
+    }
     </tbody>
 </table>
 
 @code {
-
     public enum Elements
     {
         CreatorSelect,
         AssigneeSelect,
         StatusSelect,
         SearchButton
-    };
-    public WorkOrderSearchModel Model { get; set; } = new WorkOrderSearchModel();
-    public List<SelectListItem> UserOptions { get; set; } = new List<SelectListItem>();
-    public List<SelectListItem> StatusOptions { get; set; } = new List<SelectListItem>();
-
-    [SupplyParameterFromQuery]
-    public string? Creator { get; set; }
-
-    [SupplyParameterFromQuery]
-    public string? Assignee { get; set; }
-
-    [SupplyParameterFromQuery]
-    public string? Status { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Initialize dropdown options
-        await LoadUserOptions();
-        LoadStatusOptions();
-
-        // Apply any query parameters
-        if (!string.IsNullOrEmpty(Creator))
-            Model.Filters.Creator = Creator;
-
-        if (!string.IsNullOrEmpty(Assignee))
-            Model.Filters.Assignee = Assignee;
-
-        if (!string.IsNullOrEmpty(Status))
-            Model.Filters.Status = Status;
-
-        await SearchWorkOrders();
     }
 
-    private async Task HandleSearch()
-    {
-        await SearchWorkOrders();
-    }
-
-    private async Task SearchWorkOrders()
-    {
-        var creator = !string.IsNullOrWhiteSpace(Model.Filters.Creator) 
-            ? await EmployeeRepository.GetByUserNameAsync(Model.Filters.Creator) 
-            : null;
-
-        var assignee = !string.IsNullOrWhiteSpace(Model.Filters.Assignee) 
-            ? await EmployeeRepository.GetByUserNameAsync(Model.Filters.Assignee) 
-            : null;
-
-        var status = !string.IsNullOrWhiteSpace(Model.Filters.Status) 
-            ? WorkOrderStatus.FromKey(Model.Filters.Status) 
-            : null;
-
-        var specification = new WorkOrderSpecificationQuery();
-        specification.MatchCreator(creator);
-        specification.MatchAssignee(assignee);
-        specification.MatchStatus(status);
-
-        Model.Results = await Bus.Send(specification);
-    }
-
-    private async Task LoadUserOptions()
-    {
-        // In a real implementation, this would load all employees from the repository
-        var employees = await EmployeeRepository.GetEmployeesAsync(EmployeeSpecification.All);
-        UserOptions = employees.Select(e => new SelectListItem(value: e.UserName, text: e.GetFullName())).ToList();
-    }
-
-    private void LoadStatusOptions()
-    {
-        // Get all work order statuses
-        StatusOptions = WorkOrderStatus.GetAllItems().Select(s => new SelectListItem(s.Key, s.FriendlyName)).ToList();
-    }
+    public WorkOrderSearchModel Model { get; set; } = new();
+    public List<SelectListItem> UserOptions { get; set; } = new();
+    public List<SelectListItem> StatusOptions { get; set; } = new();
+    public Func<Task>? OnSearch { get; set; }
 
     public class SelectListItem(string value, string text)
     {
