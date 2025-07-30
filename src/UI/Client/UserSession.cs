@@ -1,62 +1,35 @@
+using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Queries;
 using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.UI.Shared.Authentication;
 using Microsoft.AspNetCore.Components;
 
 namespace ClearMeasure.Bootcamp.UI.Client
 {
-    public class UserSession : IUserSession
+    public class UserSession(
+        IBus bus,
+        CustomAuthenticationStateProvider authProvider,
+        NavigationManager navigationManager)
+        : IUserSession
     {
-        private readonly IEmployeeRepository _employeeRepository;
-        private readonly CustomAuthenticationStateProvider _authProvider;
-        private readonly NavigationManager _navigationManager;
-        private readonly Stack<FlashMessage?> _flashMessages = new();
-
-        public UserSession(IEmployeeRepository employeeRepository, CustomAuthenticationStateProvider authProvider, NavigationManager navigationManager)
-        {
-            _employeeRepository = employeeRepository;
-            _authProvider = authProvider;
-            _navigationManager = navigationManager;
-        }
-
-        // IUserSession Members
         public async Task<Employee?> GetCurrentUserAsync()
         {
-            var username = _authProvider.GetUsername();
+            var username = authProvider.GetUsername();
             if (string.IsNullOrEmpty(username))
                 return null;
-            var currentUser = await _employeeRepository.GetByUserNameAsync(username);
-            blowUpIfEmployeeCannotLogin(currentUser);
+            var currentUser = await bus.Send(new EmployeeByUserNameQuery(username));
+            BlowUpIfEmployeeCannotLogin(currentUser);
             return currentUser;
-        }
-
-        public void LogIn(Employee employee)
-        {
-            blowUpIfEmployeeCannotLogin(employee);
-            _authProvider.Login(employee.UserName);
-            _navigationManager.NavigateTo("/");
         }
 
         public void LogOut()
         {
-            _authProvider.Logout();
-            _navigationManager.NavigateTo("/login");
+            authProvider.Logout();
+            navigationManager.NavigateTo("/login");
         }
 
-        public void PushUserMessage(FlashMessage? message)
-        {
-            if (message != null)
-                _flashMessages.Push(message);
-        }
-
-        public FlashMessage? PopUserMessage()
-        {
-            if (_flashMessages.Count == 0)
-                return null;
-            return _flashMessages.Pop();
-        }
-
-        private void blowUpIfEmployeeCannotLogin(Employee? employee)
+        private void BlowUpIfEmployeeCannotLogin(Employee? employee)
         {
             if (employee == null)
             {

@@ -71,4 +71,27 @@ public abstract class AcceptanceTestBase : PageTest
     {
         return TestHost.Faker<TK>();
     }
+
+    protected async Task LoginAsCurrentUser()
+    {
+        var username = CurrentUser.UserName;
+        if (await Page.Locator($"text=Welcome {username}!").IsVisibleAsync())
+        {
+            return;
+        }
+
+        await Page.GotoAsync("/login");
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Fill in username only
+        await Page.SelectOptionAsync("#employee", username);
+
+        // Submit form
+        var loginButton = Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Login" });
+        await loginButton.ClickAsync();
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Assert: Should be redirected to home and see welcome message
+        await Expect(Page.Locator($"text=Welcome {username}!")).ToBeVisibleAsync();
+    }
 }

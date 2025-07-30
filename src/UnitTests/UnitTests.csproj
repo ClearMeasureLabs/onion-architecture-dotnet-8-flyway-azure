@@ -55,8 +55,4 @@
 		<ProjectReference Include="..\UI.Shared\UI.Shared.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="UI.Api\" />
-	</ItemGroup>
-
 </Project>

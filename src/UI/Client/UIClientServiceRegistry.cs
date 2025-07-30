@@ -20,8 +20,6 @@ public class UIClientServiceRegistry : ServiceRegistry
             provider.GetRequiredService<CustomAuthenticationStateProvider>());
 
         this.AddScoped<IUiBus>(provider => new MvcBus(NullLogger<MvcBus>.Instance));
-        this.AddScoped<IEmployeeRepository, UI.Client.HttpEmployeeRepository>();
-        this.AddScoped<IWorkOrderRepository, UI.Client.HttpWorkOrderRepository>();
         this.AddScoped<IUserSession, UserSession>();
         this.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<RemotableBus>());
         this.AddTransient<IBus, RemotableBus>();

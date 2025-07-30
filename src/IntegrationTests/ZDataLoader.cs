@@ -69,6 +69,7 @@ public class ZDataLoader
         //Person 13
 
         var hsimpson = new Employee("hsimpson", "Homer", "Simpson", "homer@simpson.com");
+        hsimpson.AddRole(lead);
         hsimpson.AddRole(fulfillment);
         db.Add(hsimpson);
 

@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Components;
-using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Queries;
-using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.UI.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
 
 namespace ClearMeasure.Bootcamp.UI.Shared.Pages;
 
@@ -12,7 +10,6 @@ namespace ClearMeasure.Bootcamp.UI.Shared.Pages;
 [Authorize]
 public partial class WorkOrderSearch : AppComponentBase
 {
-    [Inject] public IEmployeeRepository EmployeeRepository { get; set; } = null!;
     [SupplyParameterFromQuery] public string? Creator { get; set; }
     [SupplyParameterFromQuery] public string? Assignee { get; set; }
     [SupplyParameterFromQuery] public string? Status { get; set; }
@@ -26,11 +23,11 @@ public partial class WorkOrderSearch : AppComponentBase
     {
         OnSearch = HandleSearch;
 
-        var employees = await EmployeeRepository.GetEmployeesAsync(EmployeeSpecification.All);
-        UserOptions = employees.Select(e => new WorkOrderSearch.SelectListItem(e.UserName, e.GetFullName())).ToList();
-        StatusOptions = WorkOrderStatus.GetAllItems().Select(s => new WorkOrderSearch.SelectListItem(s.Key, s.FriendlyName)).ToList();
+        var employees = await Bus.Send(new EmployeeGetAllQuery());
+        UserOptions = employees.Select(e => new SelectListItem(e.UserName, e.GetFullName())).ToList();
+        StatusOptions = WorkOrderStatus.GetAllItems().Select(s => new SelectListItem(s.Key, s.FriendlyName)).ToList();
         Model = new WorkOrderSearchModel();
-        
+
         // Apply any query parameters
         if (!string.IsNullOrEmpty(Creator))
             Model.Filters.Creator = Creator;
@@ -48,11 +45,11 @@ public partial class WorkOrderSearch : AppComponentBase
     private async Task SearchWorkOrders()
     {
         var creator = !string.IsNullOrWhiteSpace(Model.Filters.Creator)
-            ? await EmployeeRepository.GetByUserNameAsync(Model.Filters.Creator)
+            ? await Bus.Send(new EmployeeByUserNameQuery(Model.Filters.Creator))
             : null;
 
         var assignee = !string.IsNullOrWhiteSpace(Model.Filters.Assignee)
-            ? await EmployeeRepository.GetByUserNameAsync(Model.Filters.Assignee)
+            ? await Bus.Send(new EmployeeByUserNameQuery(Model.Filters.Assignee))
             : null;
 
         var status = !string.IsNullOrWhiteSpace(Model.Filters.Status)

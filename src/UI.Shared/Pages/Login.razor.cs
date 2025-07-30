@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Queries;
 using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.UI.Shared.Authentication;
 using ClearMeasure.Bootcamp.UI.Shared.Models;
@@ -12,7 +13,6 @@ public partial class Login : AppComponentBase
 {
     [Inject] public CustomAuthenticationStateProvider? AuthStateProvider { get; set; }
     [Inject] public NavigationManager? NavigationManager { get; set; }
-    [Inject] public IEmployeeRepository? EmployeeRepository { get; set; }
 
     public readonly LoginModel loginModel = new();
     public string? errorMessage;
@@ -27,7 +27,7 @@ public partial class Login : AppComponentBase
     {
         try
         {
-            employees = await EmployeeRepository.GetEmployeesAsync(EmployeeSpecification.All);
+            employees = await Bus.Send(new EmployeeGetAllQuery());
         }
         catch (Exception ex)
         {
