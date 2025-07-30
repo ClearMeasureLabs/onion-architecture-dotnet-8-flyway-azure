@@ -1,10 +1,5 @@
 @page "/login"
 @inherits Palermo.BlazorMvc.MvcComponentBase
-@using System.ComponentModel.DataAnnotations
-@using ClearMeasure.Bootcamp.Core.Model
-@using ClearMeasure.Bootcamp.Core.Services
-@using ClearMeasure.Bootcamp.UI.Shared.Authentication
-@using ClearMeasure.Bootcamp.UI.Shared.Models
 @inject CustomAuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 @inject IEmployeeRepository EmployeeRepository
@@ -19,8 +14,8 @@
             </div>
             <div class="card-body">
                 <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary/>
 
                     <div class="form-group mb-3">
                         <label for="employee">Select Employee</label>
@@ -31,7 +26,7 @@
                                 <option value="@employee.UserName">@employee.GetFullName()</option>
                             }
                         </InputSelect>
-                        <ValidationMessage For="@(() => loginModel.Username)" />
+                        <ValidationMessage For="@(() => loginModel.Username)"/>
                     </div>
 
                     @if (!string.IsNullOrEmpty(errorMessage))
@@ -49,7 +44,7 @@
 </div>
 
 @code {
-    private LoginModel loginModel = new();
+    private readonly LoginModel loginModel = new();
     private string? errorMessage;
     private Employee[] employees = Array.Empty<Employee>();
 
@@ -84,7 +79,7 @@
         {
             // Successful login
             AuthStateProvider.Login(loginModel.Username);
-            base.Bus.Notify(new UserLoggedInEvent(loginModel.Username));
+            Bus.Notify(new UserLoggedInEvent(loginModel.Username));
             NavigationManager.NavigateTo("/");
         }
         else
@@ -99,4 +94,5 @@
         [Required(ErrorMessage = "Employee selection is required")]
         public string Username { get; set; } = string.Empty;
     }
+
 }

@@ -5,13 +5,12 @@ using ClearMeasure.Bootcamp.Core.Queries;
 using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.UI.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
-using Palermo.BlazorMvc;
 
 namespace ClearMeasure.Bootcamp.UI.Shared.Pages;
 
 [Route("/workorder/search")]
 [Authorize]
-public class WorkOrderSearchController : ControllerComponentBase<WorkOrderSearch>
+public partial class WorkOrderSearch : AppComponentBase
 {
     [Inject] public IEmployeeRepository EmployeeRepository { get; set; } = null!;
     [Inject] public IBus AppBus { get; set; } = null!;
@@ -20,37 +19,34 @@ public class WorkOrderSearchController : ControllerComponentBase<WorkOrderSearch
     [SupplyParameterFromQuery] public string? Assignee { get; set; }
     [SupplyParameterFromQuery] public string? Status { get; set; }
 
-    protected override void OnViewInitialized()
+    protected override void OnInitialized()
     {
         _ = InitializeAsync();
     }
 
     protected override void OnParametersSet()
     {
-        if (View != null)
-        {
-            _ = InitializeAsync();
-        }
+        _ = InitializeAsync();
     }
 
     private async Task InitializeAsync()
     {
-        View.OnSearch = HandleSearch;
+        OnSearch = HandleSearch;
 
         var employees = await EmployeeRepository.GetEmployeesAsync(EmployeeSpecification.All);
-        View.UserOptions = employees.Select(e => new WorkOrderSearch.SelectListItem(e.UserName, e.GetFullName())).ToList();
-        View.StatusOptions = WorkOrderStatus.GetAllItems().Select(s => new WorkOrderSearch.SelectListItem(s.Key, s.FriendlyName)).ToList();
-        View.Model = new WorkOrderSearchModel();
+        UserOptions = employees.Select(e => new WorkOrderSearch.SelectListItem(e.UserName, e.GetFullName())).ToList();
+        StatusOptions = WorkOrderStatus.GetAllItems().Select(s => new WorkOrderSearch.SelectListItem(s.Key, s.FriendlyName)).ToList();
+        Model = new WorkOrderSearchModel();
         
         // Apply any query parameters
         if (!string.IsNullOrEmpty(Creator))
-            View.Model.Filters.Creator = Creator;
+            Model.Filters.Creator = Creator;
 
         if (!string.IsNullOrEmpty(Assignee))
-            View.Model.Filters.Assignee = Assignee;
+            Model.Filters.Assignee = Assignee;
 
         if (!string.IsNullOrEmpty(Status))
-            View.Model.Filters.Status = Status;
+            Model.Filters.Status = Status;
 
         // Perform initial search
         await SearchWorkOrders();
@@ -58,16 +54,16 @@ public class WorkOrderSearchController : ControllerComponentBase<WorkOrderSearch
 
     private async Task SearchWorkOrders()
     {
-        var creator = !string.IsNullOrWhiteSpace(View.Model.Filters.Creator)
-            ? await EmployeeRepository.GetByUserNameAsync(View.Model.Filters.Creator)
+        var creator = !string.IsNullOrWhiteSpace(Model.Filters.Creator)
+            ? await EmployeeRepository.GetByUserNameAsync(Model.Filters.Creator)
             : null;
 
-        var assignee = !string.IsNullOrWhiteSpace(View.Model.Filters.Assignee)
-            ? await EmployeeRepository.GetByUserNameAsync(View.Model.Filters.Assignee)
+        var assignee = !string.IsNullOrWhiteSpace(Model.Filters.Assignee)
+            ? await EmployeeRepository.GetByUserNameAsync(Model.Filters.Assignee)
             : null;
 
-        var status = !string.IsNullOrWhiteSpace(View.Model.Filters.Status)
-            ? WorkOrderStatus.FromKey(View.Model.Filters.Status)
+        var status = !string.IsNullOrWhiteSpace(Model.Filters.Status)
+            ? WorkOrderStatus.FromKey(Model.Filters.Status)
             : null;
 
         var specification = new WorkOrderSpecificationQuery();
@@ -75,7 +71,7 @@ public class WorkOrderSearchController : ControllerComponentBase<WorkOrderSearch
         specification.MatchAssignee(assignee);
         specification.MatchStatus(status);
 
-        View.Model.Results = await AppBus.Send(specification);
+        Model.Results = await AppBus.Send(specification);
         StateHasChanged();
     }
 

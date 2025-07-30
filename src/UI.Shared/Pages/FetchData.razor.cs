@@ -8,15 +8,15 @@ using Palermo.BlazorMvc;
 namespace ClearMeasure.Bootcamp.UI.Shared.Pages;
 
 [Route("/fetchdata")]
-public class FetchDataController : ControllerComponentBase<FetchDataView>
+public partial class FetchData : AppComponentBase
 {
-    private WeatherForecast[]? _forecasts;
+    public WeatherForecast[]? Model { get; set; }
+
     [Inject] public IBus? ApplicationBus { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Logger.LogInformation("FetchDataController");
-        _forecasts = await ApplicationBus!.Send(new ForecastQuery());
-        View.Model = _forecasts;
+        Model = await ApplicationBus!.Send(new ForecastQuery());
     }
 }

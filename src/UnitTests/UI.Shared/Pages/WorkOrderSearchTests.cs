@@ -26,7 +26,7 @@ public class WorkOrderSearchTests
         ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
 
         // Act
-        var component = ctx.RenderComponent<WorkOrderSearchController>();
+        var component = ctx.RenderComponent<WorkOrderSearch>();
 
         // Assert
         var creatorSelect = component.Find($"#{WorkOrderSearch.Elements.CreatorSelect}");
@@ -64,7 +64,7 @@ public class WorkOrderSearchTests
         ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
 
         // Act
-        var component = ctx.RenderComponent<WorkOrderSearchController>();
+        var component = ctx.RenderComponent<WorkOrderSearch>();
 
         // Assert
         stubBus.QueryWasCalled.ShouldBeTrue();
@@ -95,7 +95,7 @@ public class WorkOrderSearchTests
         navigationManager.NavigateTo(uri);
 
         // Act
-        var component = ctx.RenderComponent<WorkOrderSearchController>();
+        var component = ctx.RenderComponent<WorkOrderSearch>();
 
         // Assert
         stubBus.QueryWasCalled.ShouldBeTrue();
@@ -125,7 +125,7 @@ public class WorkOrderSearchTests
         navigationManager.NavigateTo(uri);
 
         // Act
-        var component = ctx.RenderComponent<WorkOrderSearchController>();
+        var component = ctx.RenderComponent<WorkOrderSearch>();
 
         // Assert
         stubBus.QueryWasCalled.ShouldBeTrue();
@@ -155,7 +155,7 @@ public class WorkOrderSearchTests
         navigationManager.NavigateTo(uri);
 
         // Act
-        var component = ctx.RenderComponent<WorkOrderSearchController>();
+        var component = ctx.RenderComponent<WorkOrderSearch>();
 
         // Assert
         stubBus.QueryWasCalled.ShouldBeTrue();
@@ -180,7 +180,7 @@ public class WorkOrderSearchTests
         ctx.Services.AddSingleton<IBus>(stubBus);
         ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
 
-        var component = ctx.RenderComponent<WorkOrderSearchController>();
+        var component = ctx.RenderComponent<WorkOrderSearch>();
 
         // Act
         var creatorSelect = component.Find($"#{WorkOrderSearch.Elements.CreatorSelect}");
