@@ -1,6 +1,6 @@
 using ClearMeasure.Bootcamp.Core.Services;
 
-namespace UnitTests.Core;
+namespace ClearMeasure.Bootcamp.UnitTests.Core;
 
 public class StubbedCalendar : ICalendar
 {

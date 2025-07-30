@@ -4,7 +4,7 @@ using NUnit.Framework;
 using ClearMeasure.Bootcamp.IntegrationTests;
 using Shouldly;
 
-namespace IntegrationTests.DataAccess.Mappings
+namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess.Mappings
 {
     [TestFixture]
     public class RoleMappingTester

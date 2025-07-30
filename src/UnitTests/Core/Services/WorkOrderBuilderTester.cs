@@ -2,7 +2,7 @@ using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.Core.Services.Impl;
 using ClearMeasure.Bootcamp.Core.Model;
 
-namespace UnitTests.Core.Services;
+namespace ClearMeasure.Bootcamp.UnitTests.Core.Services;
 
 [TestFixture]
 public class WorkOrderBuilderTester

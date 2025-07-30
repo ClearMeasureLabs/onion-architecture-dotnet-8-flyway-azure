@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Services;
 
-namespace IntegrationTests.DataAccess
+namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
 {
     [TestFixture]
     public class EmployeeRepositoryTester

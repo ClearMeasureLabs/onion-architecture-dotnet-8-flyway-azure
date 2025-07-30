@@ -2,8 +2,9 @@ using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.Core.Model;
 using Shouldly;
+using ClearMeasure.Bootcamp.UnitTests.Core;
 
-namespace UnitTests.Core.Model.StateCommands;
+namespace ClearMeasure.Bootcamp.UnitTests.Core.Model.StateCommands;
 
 [TestFixture]
 public class AssignedToInProgressCommandTester : StateCommandBaseTester

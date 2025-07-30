@@ -1,7 +1,7 @@
 using ClearMeasure.Bootcamp.Core.Model;
 using Shouldly;
 
-namespace UnitTests.Core.Model;
+namespace ClearMeasure.Bootcamp.UnitTests.Core.Model;
 
 [TestFixture]
 public class EmployeeTester

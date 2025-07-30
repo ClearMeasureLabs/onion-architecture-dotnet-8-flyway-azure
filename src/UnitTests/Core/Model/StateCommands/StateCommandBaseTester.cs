@@ -2,7 +2,7 @@ using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.Core.Model;
 
-namespace UnitTests.Core.Model.StateCommands;
+namespace ClearMeasure.Bootcamp.UnitTests.Core.Model.StateCommands;
 
 public abstract class StateCommandBaseTester
 {

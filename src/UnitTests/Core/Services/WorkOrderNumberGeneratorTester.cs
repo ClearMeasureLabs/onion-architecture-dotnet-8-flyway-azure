@@ -1,6 +1,6 @@
 using ClearMeasure.Bootcamp.Core.Services.Impl;
 
-namespace UnitTests.Core.Services;
+namespace ClearMeasure.Bootcamp.UnitTests.Core.Services;
 
 [TestFixture]
 public class WorkOrderNumberGeneratorTester
