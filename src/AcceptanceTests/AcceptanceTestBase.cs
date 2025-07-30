@@ -62,4 +62,9 @@ public abstract class AcceptanceTestBase : PageTest
         });
         TestContext.AddTestAttachment(Path.GetFullPath(fileName));
     }
+    
+    protected TK Faker<TK>()
+    {
+        return TestHost.Faker<TK>();
+    }
 }

@@ -1,4 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.CodeDom;
+using AutoBogus;
+using AutoBogus.Conventions;
+using Bogus.Extensions;
+using Core.Model;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -57,6 +62,8 @@ public static class TestHost
 
 
         _host = host;
+        
+        ConfigureBogus();
     }
 
     private static void EnsureDependenciesRegistered()
@@ -75,5 +82,44 @@ public static class TestHost
     public static DataContext NewDbContext()
     {
         return TestHost.GetRequiredService<DataContext>();
+    }
+
+    public static TK Faker<TK>()
+    {
+        EnsureDependenciesRegistered();
+        return AutoFaker.Generate<TK>();
+    }
+
+    private static void ConfigureBogus()
+    {
+        AutoFaker.Configure(builder =>
+        {
+            builder.WithConventions()
+                .WithSkip<WorkOrder>(wo => wo.AuditEntries)
+                .WithOverride(new DefaultOverrides());
+        });
+    }
+}
+
+internal class DefaultOverrides : AutoGeneratorOverride
+{
+    public override bool CanOverride(AutoGenerateContext context)
+    {
+        return true;
+    }
+
+    public override void Generate(AutoGenerateOverrideContext context)
+    {
+        switch (context.Instance)
+        {
+            case WorkOrder order:
+                order.Description = order.Description.ClampLength(1, 2000);
+                order.Number = order.Number.ClampLength(1, 5);
+                // order.Status = context.Faker.PickRandom<WorkOrderStatus>(WorkOrderStatus.GetAllItems());
+                break;
+            case WorkOrderStatus:
+                context.Instance = context.Faker.PickRandom<WorkOrderStatus>(WorkOrderStatus.GetAllItems());
+                break;
+        }
     }
 }
