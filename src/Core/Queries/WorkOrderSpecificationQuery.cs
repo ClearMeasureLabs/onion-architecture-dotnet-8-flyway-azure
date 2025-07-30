@@ -7,7 +7,7 @@ public record WorkOrderSpecificationQuery : IRequest<WorkOrder[]>, IRemotableReq
 {
     public void MatchStatus(WorkOrderStatus? status)
     {
-        Status = status;
+        StatusKey = status?.Key;
     }
 
     public void MatchAssignee(Employee? assignee)
@@ -20,9 +20,10 @@ public record WorkOrderSpecificationQuery : IRequest<WorkOrder[]>, IRemotableReq
         Creator = creator;
     }
 
-    public WorkOrderStatus? Status { get; set; } = null;
+    public string? StatusKey { get; set; } = null;
 
     public Employee? Assignee { get; set; } = null;
 
     public Employee? Creator { get; set; } = null;
+    public WorkOrderStatus? Status => StatusKey != null ? WorkOrderStatus.FromKey(StatusKey) : null;
 }

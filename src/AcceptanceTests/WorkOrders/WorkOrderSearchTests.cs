@@ -146,7 +146,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
     {
         // Arrange
         var creator = Faker<Employee>();
-        var status = Faker<WorkOrderStatus>();
+        var status = WorkOrderStatus.Draft;
         var order = Faker<WorkOrder>();
         order.Creator = creator;
         order.Status = status;
