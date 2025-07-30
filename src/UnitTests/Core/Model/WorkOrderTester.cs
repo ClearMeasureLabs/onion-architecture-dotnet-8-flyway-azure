@@ -1,4 +1,5 @@
 using Core.Model;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace UnitTests.Core.Model;
 

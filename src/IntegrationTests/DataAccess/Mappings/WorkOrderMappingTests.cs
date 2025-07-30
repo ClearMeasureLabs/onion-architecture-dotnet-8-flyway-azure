@@ -1,5 +1,6 @@
 ﻿using Core.Model;
 using Microsoft.EntityFrameworkCore;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using Shouldly;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess.Mappings;

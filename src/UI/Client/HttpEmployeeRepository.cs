@@ -2,6 +2,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using Core.Model;
 using Core.Services;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace UI.Client
 {

@@ -1,6 +1,7 @@
 using System.IO;
 using System.Net.Mail;
 using Core.Model;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace Core.Services.Impl
 {
@@ -38,7 +39,7 @@ namespace Core.Services.Impl
 
         #region INotifier Members
 
-        public void Notify(Model.WorkOrder workOrder, Model.Employee employee)
+        public void Notify(Model.WorkOrder workOrder, Employee employee)
         {
             //throw new System.NotImplementedException("tbd");
         }

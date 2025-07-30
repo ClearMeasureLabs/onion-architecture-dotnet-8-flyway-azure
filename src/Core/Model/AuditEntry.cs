@@ -1,4 +1,6 @@
-﻿namespace Core.Model
+﻿using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+
+namespace Core.Model
 {
     public class AuditEntry : IEquatable<AuditEntry>
     {

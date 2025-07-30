@@ -1,4 +1,6 @@
 using Core.Model;
+using ProgrammingWithPalermo.ChurchBulletin.UnitTests.Core.Queries;
+using System.Text.Json;
 
 namespace UnitTests.Core.Model;
 
@@ -32,5 +34,42 @@ public class WorkOrderStatusTester
 
         var complete = WorkOrderStatus.Parse("complete");
         Assert.That(complete, Is.EqualTo(WorkOrderStatus.Complete));
+    }
+
+    [Test]
+    public void ShouldBeRemotable()
+    {
+        RemotableRequestTests.AssertRemotable(WorkOrderStatus.Draft);
+    }
+
+    [Test]
+    public void ShouldSerializeAndDeserializeWithJsonUsingKey()
+    {
+        var original = WorkOrderStatus.Complete;
+        var json = JsonSerializer.Serialize(original);
+        Console.WriteLine($"JSON: {json}");
+        var deserialized = JsonSerializer.Deserialize<WorkOrderStatus>(json);
+
+        Assert.That(deserialized, Is.EqualTo(original));
+        Assert.That(json, Does.Contain(original.Key));
+    }
+
+    [Test]
+    public void WorkOrderShouldSerializeCorrectly()
+    {
+        var workOrder = new WorkOrder
+        {
+            Id = Guid.NewGuid(),
+            Title = "Test",
+            Description = "Test Description",
+            Status = WorkOrderStatus.Complete,
+            Number = "123"
+        };
+
+        var json = JsonSerializer.Serialize(workOrder);
+        Console.WriteLine($"WorkOrder JSON: {json}");
+        var deserialized = JsonSerializer.Deserialize<WorkOrder>(json);
+
+        Assert.That(deserialized!.Status, Is.EqualTo(workOrder.Status));
     }
 }

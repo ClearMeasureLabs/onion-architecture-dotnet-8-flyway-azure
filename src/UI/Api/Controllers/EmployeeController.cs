@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Core.Model;
 using Core.Services;
 using System.Threading.Tasks;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.UI.Api.Controllers;
 

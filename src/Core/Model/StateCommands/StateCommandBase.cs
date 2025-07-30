@@ -3,6 +3,7 @@ using Core.Services;
 using Core.Services.Impl;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace Core.Model.StateCommands
 {

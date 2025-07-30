@@ -4,6 +4,7 @@ using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
 using Shouldly;
 using System.Text.Json;
+using Core.Model;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using UI.Client;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -20,10 +21,13 @@ public class RemotableRequestTests
         AssertRemotable(new HealthCheckRemotableRequest());
         AssertRemotable(HealthStatus.Degraded);
         AssertRemotable(ObjectMother.Faker<WorkOrderSpecificationQuery>());
+        AssertRemotable(WorkOrderStatus.Draft);
+        AssertRemotable(ObjectMother.Faker<WorkOrder>());
+        AssertRemotable(ObjectMother.Faker<Employee>());
         AssertRemotable(new ServerHealthCheckQuery());
     }
 
-    private void AssertRemotable(object theObject)
+    public static void AssertRemotable(object theObject)
     {
         var json = new WebServiceMessage(theObject).GetJson();
         var message = JsonSerializer.Deserialize<WebServiceMessage>(json);

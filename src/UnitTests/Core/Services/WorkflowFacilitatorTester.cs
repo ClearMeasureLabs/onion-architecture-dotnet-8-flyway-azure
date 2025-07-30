@@ -2,6 +2,7 @@ using Core.Model;
 using Core.Model.StateCommands;
 using Core.Services;
 using Core.Services.Impl;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace UnitTests.Core.Services;
 

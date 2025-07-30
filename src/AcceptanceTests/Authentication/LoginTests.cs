@@ -1,4 +1,6 @@
-﻿namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Authentication;
+﻿using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+
+namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.Authentication;
 
 [TestFixture]
 public class LoginTests : AcceptanceTestBase

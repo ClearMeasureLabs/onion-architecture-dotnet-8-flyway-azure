@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Core.Services;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace Core.Model.StateCommands 
 {

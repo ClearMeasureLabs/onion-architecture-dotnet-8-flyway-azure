@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
+using Core.Model;
 
-namespace Core.Model
+namespace ProgrammingWithPalermo.ChurchBulletin.Core.Model
 {
-    public class Employee : IComparable<Employee>, IEquatable<Employee>
+    public class Employee : EntityBase<Employee>, IComparable<Employee>
     {
         public Employee()
         {
@@ -21,7 +20,7 @@ namespace Core.Model
             EmailAddress = emailAddress;
         }
 
-        public Guid Id { get; set; }
+        public override Guid Id { get; set; }
 
         public string UserName { get; set; }
 
@@ -89,42 +88,5 @@ namespace Core.Model
         {
             return EmailAddress;
         }
-
-        #region Equality Members
-
-        public override bool Equals(object? obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(Employee)) return false;
-            return Equals((Employee)obj);
-        }
-
-        public virtual bool Equals(Employee? other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Id.Equals(other.Id) && !Id.Equals(Guid.Empty);
-        }
-
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
-
-        public static bool operator ==(Employee? left, Employee? right)
-        {
-            if (ReferenceEquals(left, null))
-                return ReferenceEquals(right, null);
-
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(Employee? left, Employee? right)
-        {
-            return !(left == right);
-        }
-
-        #endregion
     }
 }

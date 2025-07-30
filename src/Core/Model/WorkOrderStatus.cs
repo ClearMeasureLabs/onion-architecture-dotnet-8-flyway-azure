@@ -1,9 +1,12 @@
 using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Core.Model
 {
+	[JsonConverter(typeof(WorkOrderStatusJsonConverter))]
 	public class WorkOrderStatus
 	{
 		private static readonly ILogger _logger = NullLogger<WorkOrderStatus>.Instance;
@@ -116,6 +119,20 @@ namespace Core.Model
 		public static WorkOrderStatus Parse(string? name)
 		{
 			return FromKey(name);
+		}
+	}
+
+	public class WorkOrderStatusJsonConverter : JsonConverter<WorkOrderStatus>
+	{
+		public override WorkOrderStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		{
+			var key = reader.GetString();
+			return WorkOrderStatus.FromKey(key);
+		}
+
+		public override void Write(Utf8JsonWriter writer, WorkOrderStatus value, JsonSerializerOptions options)
+		{
+			writer.WriteStringValue(value.Key);
 		}
 	}
 }

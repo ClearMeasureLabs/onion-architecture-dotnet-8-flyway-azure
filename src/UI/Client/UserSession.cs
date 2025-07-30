@@ -5,6 +5,7 @@ using Core.Model;
 using Core.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using UI.Shared.Authentication;
 
 namespace UI.Services

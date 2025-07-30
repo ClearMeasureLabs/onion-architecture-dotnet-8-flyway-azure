@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Core.Model;
 using Core.Services;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using Shouldly;
 using UI.Client;
 

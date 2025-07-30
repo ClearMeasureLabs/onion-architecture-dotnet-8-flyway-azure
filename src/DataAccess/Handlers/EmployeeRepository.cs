@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Core.Model;
 using Core.Services;
 using Microsoft.EntityFrameworkCore;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers

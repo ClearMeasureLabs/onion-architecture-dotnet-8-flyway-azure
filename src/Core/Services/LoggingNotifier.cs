@@ -1,6 +1,7 @@
 ﻿using Core.Model;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace Core.Services
 {

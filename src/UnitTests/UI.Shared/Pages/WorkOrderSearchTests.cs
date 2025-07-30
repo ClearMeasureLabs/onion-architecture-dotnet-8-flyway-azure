@@ -9,6 +9,7 @@ using UIWasm.Models;
 using ProgrammingWithPalermo.ChurchBulletin.Core;
 using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
 using MediatR;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using TestContext = Bunit.TestContext;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests.UI.Shared.Pages;

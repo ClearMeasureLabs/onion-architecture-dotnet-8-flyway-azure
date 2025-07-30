@@ -1,17 +1,12 @@
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+
 namespace Core.Model
 {
-    public class WorkOrder
+    public class WorkOrder : EntityBase<WorkOrder>
     {
         private string _description = "";
 
-        public WorkOrder()
-        {
-            AuditEntries = new List<AuditEntry>();
-        }
-
-        public IList<AuditEntry> AuditEntries { get; set; }
-
-        public Guid Id { get; set; }
+        public IList<AuditEntry> AuditEntries { get; set; } = new List<AuditEntry>();
 
         public string Title { get; set; } = "";
 
@@ -52,6 +47,8 @@ namespace Core.Model
         {
             return Status.ToString();
         }
+
+        public override Guid Id { get; set; }
 
         public override string ToString()
         {

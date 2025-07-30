@@ -1,5 +1,6 @@
 ﻿using Core.Model;
 using MediatR;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
 

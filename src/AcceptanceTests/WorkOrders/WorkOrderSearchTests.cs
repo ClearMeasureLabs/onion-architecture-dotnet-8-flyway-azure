@@ -1,4 +1,5 @@
-﻿using UI.Shared.Pages;
+﻿using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+using UI.Shared.Pages;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.AcceptanceTests.WorkOrders;
 

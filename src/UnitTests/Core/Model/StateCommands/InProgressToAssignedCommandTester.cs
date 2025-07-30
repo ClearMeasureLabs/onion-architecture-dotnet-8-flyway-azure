@@ -1,6 +1,7 @@
 ﻿using Core.Model;
 using Core.Model.StateCommands;
 using Core.Services;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using Shouldly;
 
 namespace UnitTests.Core.Model.StateCommands;

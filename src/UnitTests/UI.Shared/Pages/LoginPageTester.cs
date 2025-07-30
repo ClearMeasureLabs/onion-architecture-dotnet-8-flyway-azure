@@ -5,6 +5,7 @@ using Core.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Palermo.BlazorMvc;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using Shouldly;
 using UI.Shared.Authentication;
 using UI.Shared.Pages;

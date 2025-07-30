@@ -2,6 +2,7 @@ using Core.Model;
 using Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using ProgrammingWithPalermo.ChurchBulletin.Core.Queries;
 using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Handlers;
 using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;

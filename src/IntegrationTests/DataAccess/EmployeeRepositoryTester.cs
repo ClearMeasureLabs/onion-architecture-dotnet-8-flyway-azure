@@ -6,6 +6,7 @@ using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
 using ProgrammingWithPalermo.ChurchBulletin.IntegrationTests;
 using ProgrammingWithPalermo.ChurchBulletin.IntegrationTests.DataAccess;
 using System.Threading.Tasks;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace IntegrationTests.DataAccess
 {

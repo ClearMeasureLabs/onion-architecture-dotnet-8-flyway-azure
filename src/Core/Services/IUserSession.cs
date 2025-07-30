@@ -1,5 +1,6 @@
 using Core.Model;
 using System.Threading.Tasks;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
 namespace Core.Services
 {
