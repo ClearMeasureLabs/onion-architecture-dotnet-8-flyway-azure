@@ -1,9 +1,8 @@
 using Core.Model;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
-namespace DataAccess.Mappings
+namespace ProgrammingWithPalermo.ChurchBulletin.DataAccess.Mappings
 {
     public class WorkOrderMap : IEntityFrameworkMapping
     {

@@ -1,6 +1,6 @@
-﻿using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+﻿using Core.Model;
 
-namespace Core.Model
+namespace ProgrammingWithPalermo.ChurchBulletin.Core.Model
 {
     public class AuditEntry : IEquatable<AuditEntry>
     {

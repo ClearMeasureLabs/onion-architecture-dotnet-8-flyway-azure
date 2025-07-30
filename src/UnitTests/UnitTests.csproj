@@ -9,7 +9,7 @@
 
 		<AssemblyName>ProgrammingWithPalermo.ChurchBulletin.$(MSBuildProjectName)</AssemblyName>
 
-		<RootNamespace>ProgrammingWithPalermo.ChurchBulletin.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 
 		<Configurations>Debug;Release;exclude-maui.slnf</Configurations>
 	</PropertyGroup>

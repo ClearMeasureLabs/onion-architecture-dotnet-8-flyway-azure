@@ -5,8 +5,8 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>ProgrammingWithPalermo.ChurchBulletin.$(MSBuildProjectName)</AssemblyName>
-    <RootNamespace>ProgrammingWithPalermo.ChurchBulletin.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <AssemblyName>ClearMeasure.Bootcamp.$(MSBuildProjectName)</AssemblyName>
+	<RootNamespace>ClearMeasure.Bootcamp.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <Configurations>Debug;Release;exclude-maui.slnf</Configurations>
   </PropertyGroup>
 
