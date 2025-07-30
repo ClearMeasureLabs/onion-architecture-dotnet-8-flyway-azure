@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Components;
+using System.ComponentModel.DataAnnotations;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Services;
-using ClearMeasure.Bootcamp.UI.Shared.Models;
 using ClearMeasure.Bootcamp.UI.Shared.Authentication;
-using Palermo.BlazorMvc;
-using System.ComponentModel.DataAnnotations;
+using ClearMeasure.Bootcamp.UI.Shared.Models;
+using Microsoft.AspNetCore.Components;
 
 namespace ClearMeasure.Bootcamp.UI.Shared.Pages;
 
@@ -58,8 +57,6 @@ public partial class Login : AppComponentBase
             // Failed login
             errorMessage = "Invalid employee selection";
         }
-        
-        
     }
 
     public class LoginModel

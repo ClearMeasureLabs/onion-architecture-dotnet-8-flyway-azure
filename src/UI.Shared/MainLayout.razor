@@ -1,21 +1,25 @@
-@inherits LayoutComponentBase
-@using ClearMeasure.Bootcamp.UI.Shared.Authentication
-@using Microsoft.AspNetCore.Components.Authorization
-@using ClearMeasure.Bootcamp.UI.Shared.Components
+@using System.Runtime.CompilerServices
+@using System.Security.Principal
+@using Palermo.BlazorMvc
+@inherits Palermo.BlazorMvc.MvcLayoutComponentBase
 @inject CustomAuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 
 <div class="page">
     <div class="sidebar">
-        <NavMenu />
-        <HealthCheckLink />
+        <NavMenu/>
+        <HealthCheckLink/>
     </div>
 
     <main>
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    <span>Welcome @context.User.Identity?.Name!</span>
+                    <span>Welcome
+                        @{
+                            var userIdentity = context.User.Identity;
+                        }
+                        @userIdentity?.Name!</span>
                     <a href="#" @onclick="Logout" class="ms-3">Logout</a>
                 </Authorized>
                 <NotAuthorized>
@@ -32,9 +36,16 @@
 </div>
 
 @code {
+
     private void Logout()
     {
         AuthStateProvider.Logout();
+        base.Bus.Notify(new UserLoggedOutEvent(AuthStateProvider.GetUsername()));
         NavigationManager.NavigateTo("/login");
     }
+
+    public record UserLoggedOutEvent(string? Username) : IUiBusEvent
+    {
+    }
+
 }

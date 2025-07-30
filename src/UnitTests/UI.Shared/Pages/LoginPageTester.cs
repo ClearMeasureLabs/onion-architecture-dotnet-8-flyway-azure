@@ -1,13 +1,17 @@
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices.ObjectiveC;
 using Bunit;
+using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Services;
+using ClearMeasure.Bootcamp.UI.Shared;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Palermo.BlazorMvc;
 using Shouldly;
 using ClearMeasure.Bootcamp.UI.Shared.Authentication;
+using MediatR;
 using TestContext = Bunit.TestContext;
 
 namespace ClearMeasure.Bootcamp.UnitTests.UI.Shared.Pages;
@@ -53,6 +57,7 @@ public class LoginPageTester
         ctx.Services.AddSingleton<AuthenticationStateProvider>(provider);
         ctx.Services.AddSingleton<IEmployeeRepository>(new MockEmployeeRepository());
         ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
+        ctx.Services.AddSingleton<IBus>(new Bus(null!));
 
         var component = ctx.RenderComponent<Login>();
 
@@ -73,6 +78,7 @@ public class LoginPageTester
         ctx.Services.AddSingleton<AuthenticationStateProvider>(provider);
         ctx.Services.AddSingleton<IEmployeeRepository>(new MockEmployeeRepository());
         ctx.Services.AddSingleton<IUiBus>(new StubUiBus());
+        ctx.Services.AddSingleton<IBus>(new Bus(null!));
 
         var component = ctx.RenderComponent<Login>();
 

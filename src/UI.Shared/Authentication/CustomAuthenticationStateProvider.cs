@@ -7,16 +7,6 @@ namespace ClearMeasure.Bootcamp.UI.Shared.Authentication
     {
         private ClaimsPrincipal _currentUser = new ClaimsPrincipal(new ClaimsIdentity());
 
-        private static ClaimsPrincipal hardcodeHSimpson()
-        {
-            var identity = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.Name, "hsimpson")
-            }, "Custom Authentication");
-
-            return new ClaimsPrincipal(identity);
-        }
-
         public override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             return Task.FromResult(new AuthenticationState(_currentUser));
