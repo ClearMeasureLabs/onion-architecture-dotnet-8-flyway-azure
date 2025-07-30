@@ -2,8 +2,6 @@
 @using System.Security.Principal
 @using Palermo.BlazorMvc
 @inherits Palermo.BlazorMvc.MvcLayoutComponentBase
-@inject CustomAuthenticationStateProvider AuthStateProvider
-@inject NavigationManager NavigationManager
 
 <div class="page">
     <div class="sidebar">
@@ -15,17 +13,13 @@
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    <span>Welcome
-                        @{
-                            var userIdentity = context.User.Identity;
-                        }
-                        @userIdentity?.Name!</span>
-                    <a href="#" @onclick="Logout" class="ms-3">Logout</a>
+                    <Logout />
                 </Authorized>
                 <NotAuthorized>
                     <a href="/login">Login</a>
                 </NotAuthorized>
             </AuthorizeView>
+            
             <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
 
@@ -34,18 +28,3 @@
         </article>
     </main>
 </div>
-
-@code {
-
-    private void Logout()
-    {
-        AuthStateProvider.Logout();
-        base.Bus.Notify(new UserLoggedOutEvent(AuthStateProvider.GetUsername()));
-        NavigationManager.NavigateTo("/login");
-    }
-
-    public record UserLoggedOutEvent(string? Username) : IUiBusEvent
-    {
-    }
-
-}

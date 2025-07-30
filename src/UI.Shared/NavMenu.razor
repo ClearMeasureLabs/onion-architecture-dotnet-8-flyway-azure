@@ -1,5 +1,5 @@
 @implements Palermo.BlazorMvc.IListener<UserLoggedInEvent>
-@implements Palermo.BlazorMvc.IListener<MainLayout.UserLoggedOutEvent>
+@implements Palermo.BlazorMvc.IListener<UserLoggedOutEvent>
 @inject IUserSession UserSession
 @inject NavigationManager NavigationManager
 
@@ -101,7 +101,7 @@
         });
     }
 
-    public void Handle(MainLayout.UserLoggedOutEvent theEvent)
+    public void Handle(UserLoggedOutEvent theEvent)
     {
         InvokeAsync(async () =>
         {

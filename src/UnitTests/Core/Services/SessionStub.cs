@@ -1,0 +1,34 @@
+using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Services;
+
+namespace ClearMeasure.Bootcamp.UnitTests.Core.Services;
+
+public class SessionStub : IUserSession
+{
+    public FlashMessage? FlashMessage;
+
+    public Task<Employee?> GetCurrentUserAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void LogIn(Employee employee)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void LogOut()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void PushUserMessage(FlashMessage? message)
+    {
+        FlashMessage = message;
+    }
+
+    public FlashMessage? PopUserMessage()
+    {
+        throw new NotImplementedException();
+    }
+}

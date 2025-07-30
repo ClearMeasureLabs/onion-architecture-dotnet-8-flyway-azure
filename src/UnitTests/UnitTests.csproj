@@ -57,7 +57,6 @@
 
 	<ItemGroup>
 	  <Folder Include="UI.Api\" />
-	  <Folder Include="UI.Shared\Components\" />
 	</ItemGroup>
 
 </Project>
