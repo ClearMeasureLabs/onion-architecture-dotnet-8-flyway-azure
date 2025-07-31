@@ -1,151 +1,127 @@
-<h2>Work Order #@Model.WorkOrderNumber (@Model.Status)</h2>
-
-<EditForm Model="@Model" OnValidSubmit="HandleSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <input type="hidden" @bind-value="Model.IsReadOnly" />
-    <input type="hidden" @bind-value="Model.Status" />
-    <input type="hidden" @bind-value="Model.CanReassign" />
-
-    <table>
-        <tr>
-            <td style="vertical-align: top;">
-                <label for="CreatorFullName">Creator:</label>
-            </td>
-            <td>
-                <InputText id="CreatorFullName" @bind-Value="Model.CreatorFullName" style="width: 200px;" />
-                <input type="hidden" @bind-value="Model.CreatorUserName" />
-            </td>
-        </tr>
-        <tr>
-            <td style="vertical-align: top;">
-                <label for="AssignedToUserName">Assigned To:</label>
-            </td>
-            <td>
-                @if (Model.CanReassign && !Model.IsReadOnly)
-                {
-                    <InputSelect id="AssignedToUserName" @bind-Value="Model.AssignedToUserName" style="width: 200px;">
-                        @foreach (var user in UserOptions)
-                        {
-                            <option value="@user.Value">@user.Text</option>
-                        }
-                    </InputSelect>
-                }
-                else
-                {
-                    <InputSelect id="AssignedToUserName" @bind-Value="Model.AssignedToUserName" style="width: 200px;" disabled>
-                        @foreach (var user in UserOptions)
-                        {
-                            <option value="@user.Value">@user.Text</option>
-                        }
-                    </InputSelect>
-                    <input type="hidden" @bind-value="Model.AssignedToUserName" />
-                }
-            </td>
-        </tr>
-        <tr>
-            <td style="vertical-align: top;">
-                <label for="Title">Title:</label>
-            </td>
-            <td>
-                @if (!Model.IsReadOnly)
-                {
-                    <InputText id="Title" @bind-Value="Model.Title" style="width: 200px;" />
-                }
-                else
-                {
-                    <InputText id="Title" @bind-Value="Model.Title" style="width: 200px;" disabled />
-                }
-            </td>
-        </tr>
-        <tr>
-            <td style="vertical-align: top;">
-                <label for="Description">Description:</label>
-            </td>
-            <td>
-                @if (!Model.IsReadOnly)
-                {
-                    <InputTextArea id="Description" @bind-Value="Model.Description" style="width: 250px; height: 80px;" />
-                }
-                else
-                {
-                    <InputTextArea id="Description" @bind-Value="Model.Description" style="width: 250px; height: 80px;" disabled />
-                }
-            </td>
-        </tr>
-        <tr>
-            <td style="vertical-align: top;">
-                <label for="RoomNumber">Room Number:</label>
-            </td>
-            <td>
-                @if (!Model.IsReadOnly)
-                {
-                    <InputText id="RoomNumber" @bind-Value="Model.RoomNumber" style="width: 200px;" />
-                }
-                else
-                {
-                    <InputText id="RoomNumber" @bind-Value="Model.RoomNumber" style="width: 200px;" disabled />
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>Assigned Date:</td>
-            <td>@Model.AssignedDate</td>
-        </tr>
-        <tr>
-            <td>Completed Date:</td>
-            <td>@Model.CompletedDate</td>
-        </tr>
-        <tr>
-            <td>Created Date:</td>
-            <td>@Model.CreatedDate</td>
-        </tr>
-    </table>
-
-    @if (Model.WorkOrder != null && Model.WorkOrder.AuditEntries.Any())
-    {
-        <h3>Audit History</h3>
-        <table class="grid-data">
-            <thead>
-                <tr>
-                    <th>Employee Name</th>
-                    <th style="width:20%;">Date</th>
-                    <th style="width:20%;">Begin Status</th>
-                    <th style="width:20%;">End Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    int i = 0;
-                    foreach (var auditEntry in Model.WorkOrder.AuditEntries)
-                    {
-                        var rowClass = (i++ % 2) == 0 ? "odd" : "even";
-                        <tr class="@rowClass">
-                            <td>@auditEntry.ArchivedEmployeeName</td>
-                            <td>@auditEntry.Date</td>
-                            <td>@auditEntry.BeginStatus</td>
-                            <td>@auditEntry.EndStatus</td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
-    }
-
-    <div style="padding:5px; text-align:right;">
-        @if (Model.IsReadOnly)
-        {
-            <text>This work order is read-only for you at this time.</text>
-        }
-        else
-        {
-            @foreach (IStateCommand command in ValidCommands)
-            {
-                <button type="submit" @onclick="@(() => SelectedCommand = command.TransitionVerbPresentTense)" class="btn btn-primary">
-                    @command.TransitionVerbPresentTense
-                </button>
-            }
-        }
+<div class="work-order-container">
+    <div class="work-order-header">
+        <h2>Work Order #@Model.WorkOrderNumber (@Model.Status)</h2>
     </div>
-</EditForm>
+
+    <EditForm Model="@Model" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <input type="hidden" @bind-value="Model.IsReadOnly" />
+        <input type="hidden" @bind-value="Model.Status" />
+        <input type="hidden" @bind-value="Model.CanReassign" />
+
+        <div class="form-container">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Creator:</label>
+                    <div>
+                        <span class="value">@Model.CreatorFullName</span>
+                        <input type="hidden" @bind-value="Model.CreatorUserName"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="AssignedToUserName" class="form-label">Assigned To:</label>
+                    <div>
+                        @if (!Model.IsReadOnly)
+                        {
+                            <InputSelect id="AssignedToUserName" @bind-Value="Model.AssignedToUserName" class="form-control input-select">
+                                @foreach (var user in UserOptions)
+                                {
+                                    <option value="@user.Value">@user.Text</option>
+                                }
+                            </InputSelect>
+                        }
+                        else
+                        {
+                            <span class="value">@Model.WorkOrder?.Assignee?.GetFullName()</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="Title" class="form-label">Title:</label>
+                    <div>
+                        <InputText id="Title" @bind-Value="Model.Title" class="form-control input-text" disabled="@Model.IsReadOnly" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="Description" class="form-label">Description:</label>
+                    <div>
+                        <InputTextArea id="Description" @bind-Value="Model.Description" class="form-control input-textarea" disabled="@Model.IsReadOnly" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="RoomNumber" class="form-label">Room Number:</label>
+                    <div>
+                        <InputText id="RoomNumber" @bind-Value="Model.RoomNumber" class="form-control input-text" disabled="@Model.IsReadOnly" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="readonly-info">
+                <span class="label">Assigned Date:</span>
+                <span class="value">@Model.AssignedDate</span>
+
+                <span class="label">Completed Date:</span>
+                <span class="value">@Model.CompletedDate</span>
+
+                <span class="label">Created Date:</span>
+                <span class="value">@Model.CreatedDate</span>
+            </div>
+        </div>
+
+        @if (Model.WorkOrder != null && Model.WorkOrder.AuditEntries.Any())
+        {
+            <div class="audit-section">
+                <h3>Audit History</h3>
+                <table class="audit-table">
+                    <thead>
+                        <tr>
+                            <th>Employee Name</th>
+                            <th style="width:20%;">Date</th>
+                            <th style="width:20%;">Begin Status</th>
+                            <th style="width:20%;">End Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 0;
+                            foreach (var auditEntry in Model.WorkOrder.AuditEntries)
+                            {
+                                var rowClass = (i++ % 2) == 0 ? "odd" : "even";
+                                <tr class="@rowClass">
+                                    <td>@auditEntry.ArchivedEmployeeName</td>
+                                    <td>@auditEntry.Date</td>
+                                    <td>@auditEntry.BeginStatus</td>
+                                    <td>@auditEntry.EndStatus</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div class="action-section">
+            @if (Model.IsReadOnly)
+            {
+                <div class="readonly-message">This work order is read-only for you at this time.</div>
+            }
+            else
+            {
+                <div class="action-buttons">
+                    @foreach (IStateCommand command in ValidCommands)
+                    {
+                        <button type="submit" @onclick="@(() => SelectedCommand = command.TransitionVerbPresentTense)" class="btn btn-primary">
+                            @command.TransitionVerbPresentTense
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    </EditForm>
+</div>

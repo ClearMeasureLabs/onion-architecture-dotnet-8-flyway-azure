@@ -15,8 +15,6 @@ public class UiServiceRegistry : ServiceRegistry
     public UiServiceRegistry()
     {
         this.AddScoped<DbContext, DataContext>();
-        this.AddDbContextFactory<DataContext>();
-        this.AddDbContextFactory<DbContext>();
         
         this.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<UiServiceRegistry>());
         this.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Api.HealthCheck>());

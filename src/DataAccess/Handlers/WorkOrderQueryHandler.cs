@@ -8,15 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Handlers;
 
-public class WorkOrderRepository(DataContext context) : IWorkOrderRepository,
+public class WorkOrderQueryHandler(DataContext context) : 
     IRequestHandler<WorkOrderByNumberQuery, WorkOrder?>
 {
-    public async Task SaveAsync(WorkOrder workOrder)
-    {
-        context.Attach(workOrder);
-        await context.SaveChangesAsync();
-    }
-
     public async Task<WorkOrder?> GetWorkOrderAsync(string number)
     {
         return await context.Set<WorkOrder>()

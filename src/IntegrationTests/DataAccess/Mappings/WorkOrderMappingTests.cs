@@ -1,4 +1,5 @@
 ﻿using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.DataAccess.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 
@@ -11,7 +12,7 @@ public class WorkOrderMappingTests
     public void ShouldMapWorkOrderBasicProperties()
     {
         new DatabaseTester().Clean();
-        
+
         var creator = new Employee("creator1", "John", "Doe", "john@example.com");
         var workOrder = new WorkOrder
         {
@@ -49,10 +50,99 @@ public class WorkOrderMappingTests
     }
 
     [Test]
+    public async Task ShouldSaveWorkOrder()
+    {
+        new DatabaseTester().Clean();
+
+        var creator = new Employee("1", "1", "1", "1");
+        var assignee = new Employee("2", "2", "2", "2");
+        var order = new WorkOrder
+        {
+            Creator = creator,
+            Assignee = assignee,
+            Title = "foo",
+            Description = "bar",
+            RoomNumber = "123 a"
+        };
+        order.ChangeStatus(WorkOrderStatus.InProgress);
+        order.Number = "123";
+
+        await using (var context = TestHost.GetRequiredService<DbContext>())
+        {
+            context.Add(creator);
+            context.Add(assignee);
+            await context.SaveChangesAsync();
+        }
+
+        var dataContext = TestHost.GetRequiredService<DataContext>();
+        dataContext.Attach(order);
+        await dataContext.SaveChangesAsync();
+
+        await using (var context = TestHost.GetRequiredService<DbContext>())
+        {
+            var rehydratedWorkOrder = context.Set<WorkOrder>()
+                .Include(wo => wo.Creator)
+                .Include(wo => wo.Assignee)
+                .Single(wo => wo.Id == order.Id);
+            rehydratedWorkOrder.Id.ShouldBe(order.Id);
+            rehydratedWorkOrder.Creator!.Id.ShouldBe(order.Creator.Id);
+            rehydratedWorkOrder.Assignee!.Id.ShouldBe(order.Assignee.Id);
+            rehydratedWorkOrder.Title.ShouldBe(order.Title);
+            rehydratedWorkOrder.Description.ShouldBe(order.Description);
+            rehydratedWorkOrder.Status.ShouldBe(order.Status);
+            rehydratedWorkOrder.RoomNumber.ShouldBe(order.RoomNumber);
+            rehydratedWorkOrder.Number.ShouldBe(order.Number);
+        }
+    }
+
+    [Test]
+    public async Task ShouldSaveAuditEntries()
+    {
+        new DatabaseTester().Clean();
+
+        var creator = new Employee("1", "1", "1", "1");
+        var assignee = new Employee("2", "2", "2", "2");
+        var order = new WorkOrder
+        {
+            Creator = creator,
+            Assignee = assignee,
+            Title = "foo",
+            Description = "bar",
+            RoomNumber = "123 a"
+        };
+        order.ChangeStatus(WorkOrderStatus.InProgress);
+        order.Number = "123";
+        order.AuditEntries.Add(new AuditEntry(creator, DateTime.Now, WorkOrderStatus.Cancelled,
+            WorkOrderStatus.Complete));
+
+        await using (var context = TestHost.GetRequiredService<DbContext>())
+        {
+            context.Add(creator);
+            context.Add(assignee);
+            await context.SaveChangesAsync();
+        }
+
+        var dataContext = TestHost.GetRequiredService<DataContext>();
+        dataContext.Attach(order);
+        await dataContext.SaveChangesAsync();
+
+        await using (var context = TestHost.GetRequiredService<DbContext>())
+        {
+            var rehydratedWorkOrder = context.Set<WorkOrder>()
+                .Include(wo => wo.AuditEntries)
+                .Single(wo => wo.Id == order.Id);
+            var x = order.AuditEntries[0];
+            var y = rehydratedWorkOrder.AuditEntries[0];
+            x.BeginStatus.ShouldBe(y.BeginStatus);
+        }
+    }
+
+
+    [Test]
     public void ShouldMapWorkOrderWithCreatorAndAssignee()
     {
         new DatabaseTester().Clean();
-        
+
         var creator = new Employee("creator1", "John", "Doe", "john@example.com");
         var assignee = new Employee("assignee1", "Jane", "Smith", "jane@example.com");
         var workOrder = new WorkOrder
@@ -90,10 +180,10 @@ public class WorkOrderMappingTests
     public void ShouldMapWorkOrderWithAuditEntries()
     {
         new DatabaseTester().Clean();
-        
+
         var creator = new Employee("creator1", "John", "Doe", "john@example.com");
         var assignee = new Employee("assignee1", "Jane", "Smith", "jane@example.com");
-        
+
         // Save employees first in separate context
         using (var context = TestHost.GetRequiredService<DbContext>())
         {
@@ -112,9 +202,11 @@ public class WorkOrderMappingTests
             Status = WorkOrderStatus.InProgress
         };
 
-        var auditEntry1 = new AuditEntry(creator, DateTime.Now.AddDays(-2), WorkOrderStatus.Draft, WorkOrderStatus.Assigned);
-        var auditEntry2 = new AuditEntry(assignee, DateTime.Now.AddDays(-1), WorkOrderStatus.Assigned, WorkOrderStatus.InProgress);
-        
+        var auditEntry1 = new AuditEntry(creator, DateTime.Now.AddDays(-2), WorkOrderStatus.Draft,
+            WorkOrderStatus.Assigned);
+        var auditEntry2 = new AuditEntry(assignee, DateTime.Now.AddDays(-1), WorkOrderStatus.Assigned,
+            WorkOrderStatus.InProgress);
+
         workOrder.AuditEntries.Add(auditEntry1);
         workOrder.AuditEntries.Add(auditEntry2);
 
@@ -138,13 +230,13 @@ public class WorkOrderMappingTests
         }
 
         rehydratedWorkOrder.AuditEntries.Count.ShouldBe(2);
-        
+
         var firstAudit = rehydratedWorkOrder.AuditEntries[0];
         firstAudit.Employee.Id.ShouldBe(creator.Id);
         firstAudit.ArchivedEmployeeName.ShouldBe(creator.GetFullName());
         firstAudit.BeginStatus.ShouldBe(WorkOrderStatus.Draft);
         firstAudit.EndStatus.ShouldBe(WorkOrderStatus.Assigned);
-        
+
         var secondAudit = rehydratedWorkOrder.AuditEntries[1];
         secondAudit.Employee.Id.ShouldBe(assignee.Id);
         secondAudit.ArchivedEmployeeName.ShouldBe(assignee.GetFullName());
@@ -156,7 +248,7 @@ public class WorkOrderMappingTests
     public void ShouldMapWorkOrderStatusConversion()
     {
         new DatabaseTester().Clean();
-        
+
         var creator = new Employee("creator1", "John", "Doe", "john@example.com");
         var workOrder = new WorkOrder
         {
@@ -188,7 +280,7 @@ public class WorkOrderMappingTests
     public void ShouldEnforceRequiredProperties()
     {
         new DatabaseTester().Clean();
-        
+
         var creator = new Employee("creator1", "John", "Doe", "john@example.com");
         var workOrder = new WorkOrder
         {
@@ -197,20 +289,18 @@ public class WorkOrderMappingTests
             // Intentionally omitting Number and Title which are required
         };
 
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            context.Add(creator);
-            context.Add(workOrder);
-            
-            Should.Throw<DbUpdateException>(() => context.SaveChanges());
-        }
+        using var context = TestHost.GetRequiredService<DbContext>();
+        context.Add(creator);
+        context.Add(workOrder);
+
+        Should.Throw<DbUpdateException>(() => context.SaveChanges());
     }
 
     [Test]
     public void ShouldRespectMaxLengthConstraints()
     {
         new DatabaseTester().Clean();
-        
+
         var creator = new Employee("creator1", "John", "Doe", "john@example.com");
         var workOrder = new WorkOrder
         {
@@ -222,20 +312,18 @@ public class WorkOrderMappingTests
             Status = WorkOrderStatus.Draft
         };
 
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            context.Add(creator);
-            context.Add(workOrder);
-            
-            Should.Throw<DbUpdateException>(() => context.SaveChanges());
-        }
+        using var context = TestHost.GetRequiredService<DbContext>();
+        context.Add(creator);
+        context.Add(workOrder);
+
+        Should.Throw<DbUpdateException>(() => context.SaveChanges());
     }
 
     [Test]
     public void ShouldDeleteAuditEntriesWhenWorkOrderIsDeleted()
     {
         new DatabaseTester().Clean();
-        
+
         var creator = new Employee("creator1", "John", "Doe", "john@example.com");
         var workOrder = new WorkOrder
         {
@@ -287,7 +375,7 @@ public class WorkOrderMappingTests
     public void ShouldEagerFetchCreatorAndAssigneeByDefault()
     {
         new DatabaseTester().Clean();
-        
+
         var creator = new Employee("creator1", "John", "Doe", "john@example.com");
         var assignee = new Employee("assignee1", "Jane", "Smith", "jane@example.com");
         var workOrder = new WorkOrder
@@ -331,10 +419,10 @@ public class WorkOrderMappingTests
     public void ShouldGenerateSequenceBasedOnListIndex()
     {
         new DatabaseTester().Clean();
-        
+
         var creator = new Employee("creator1", "John", "Doe", "john@example.com");
         var assignee = new Employee("assignee1", "Jane", "Smith", "jane@example.com");
-        
+
         // Save employees first in separate context
         using (var context = TestHost.GetRequiredService<DbContext>())
         {
@@ -353,9 +441,12 @@ public class WorkOrderMappingTests
         };
 
         // Add audit entries to list
-        var auditEntry1 = new AuditEntry(creator, DateTime.Now.AddDays(-3), WorkOrderStatus.Draft, WorkOrderStatus.Assigned);
-        var auditEntry2 = new AuditEntry(assignee, DateTime.Now.AddDays(-2), WorkOrderStatus.Assigned, WorkOrderStatus.InProgress);
-        var auditEntry3 = new AuditEntry(creator, DateTime.Now.AddDays(-1), WorkOrderStatus.InProgress, WorkOrderStatus.Complete);
+        var auditEntry1 = new AuditEntry(creator, DateTime.Now.AddDays(-3), WorkOrderStatus.Draft,
+            WorkOrderStatus.Assigned);
+        var auditEntry2 = new AuditEntry(assignee, DateTime.Now.AddDays(-2), WorkOrderStatus.Assigned,
+            WorkOrderStatus.InProgress);
+        var auditEntry3 = new AuditEntry(creator, DateTime.Now.AddDays(-1), WorkOrderStatus.InProgress,
+            WorkOrderStatus.Complete);
         workOrder.AuditEntries.Add(auditEntry1);
         workOrder.AuditEntries.Add(auditEntry2);
         workOrder.AuditEntries.Add(auditEntry3);
@@ -373,12 +464,12 @@ public class WorkOrderMappingTests
         {
             rehydratedWorkOrder = context.Set<WorkOrder>()
                 .Include(wo => wo.AuditEntries)
-                    .ThenInclude(ae => ae.Employee)
+                .ThenInclude(ae => ae.Employee)
                 .Single(wo => wo.Id == workOrder.Id);
         }
 
         rehydratedWorkOrder.AuditEntries.Count.ShouldBe(3);
-        
+
         // Sequence should match list index
         var auditEntries = rehydratedWorkOrder.AuditEntries.ToList();
         auditEntries[0].ShouldBe(auditEntry1);

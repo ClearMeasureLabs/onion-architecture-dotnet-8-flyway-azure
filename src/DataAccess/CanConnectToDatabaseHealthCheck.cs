@@ -4,23 +4,16 @@ using Microsoft.Extensions.Logging;
 
 namespace ClearMeasure.Bootcamp.DataAccess;
 
-public class CanConnectToDatabaseHealthCheck : IHealthCheck
+public class CanConnectToDatabaseHealthCheck(ILogger<CanConnectToDatabaseHealthCheck> logger, DataContext context)
+    : IHealthCheck
 {
-    private readonly ILogger<CanConnectToDatabaseHealthCheck> _logger;
-    private readonly DataContext _context;
-
-    public CanConnectToDatabaseHealthCheck(ILogger<CanConnectToDatabaseHealthCheck> logger, DataContext context)
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context1,
+        CancellationToken cancellationToken = new())
     {
-        _logger = logger;
-        _context = context;
-    }
-    
-    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new CancellationToken())
-    {
-        if (!_context.Database.CanConnect()) 
+        if (!context.Database.CanConnect())
             return Task.FromResult(HealthCheckResult.Unhealthy("Cannot connect to database"));
-        
-        _logger.LogInformation($"Health check success");
+
+        logger.LogInformation("Health check success");
         return Task.FromResult(HealthCheckResult.Healthy());
     }
 }

@@ -3,21 +3,15 @@ using Microsoft.Extensions.Logging;
 
 namespace ClearMeasure.Bootcamp.DataAccess;
 
-public class CanConnectToLlmServerHealthCheck : IHealthCheck
+public class CanConnectToLlmServerHealthCheck(ILogger<CanConnectToLlmServerHealthCheck> logger) : IHealthCheck
 {
-    private readonly ILogger<CanConnectToLlmServerHealthCheck> _logger;
-
-    public CanConnectToLlmServerHealthCheck(ILogger<CanConnectToLlmServerHealthCheck> logger)
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
+        CancellationToken cancellationToken = new())
     {
-        _logger = logger;
-    }
-    
-    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new CancellationToken())
-    {
-        if (!connectedOk()) 
+        if (!connectedOk())
             return Task.FromResult(HealthCheckResult.Unhealthy("Cannot connect to LLM Server"));
-        
-        _logger.LogInformation($"Health check success");
+
+        logger.LogInformation("Health check success");
         return Task.FromResult(HealthCheckResult.Healthy());
     }
 

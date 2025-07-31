@@ -48,8 +48,9 @@ public partial class WorkOrderManage : AppComponentBase
         }
 
         Model = CreateViewModel(CurrentMode, workOrder);
-        Model.IsReadOnly = !(CommandList!.GetValidStateCommands(workOrder, currentUser)).Any();
-        ValidCommands = CommandList.GetValidStateCommands(workOrder, currentUser);
+        var commandList = new StateCommandList();
+        Model.IsReadOnly = !(commandList!.GetValidStateCommands(workOrder, currentUser)).Any();
+        ValidCommands = commandList.GetValidStateCommands(workOrder, currentUser);
     }
 
     private WorkOrderManageModel CreateViewModel(EditMode mode, WorkOrder workOrder)
@@ -75,7 +76,9 @@ public partial class WorkOrderManage : AppComponentBase
     {
         // In a real implementation, this would load all employees from the repository
         var employees = await Bus.Send(new EmployeeGetAllQuery());
-        UserOptions = employees.Select(e => new SelectListItem(value: e.UserName, text: e.GetFullName())).ToList();
+        var items = employees.Select(e => new SelectListItem(value: e.UserName, text: e.GetFullName())).ToList();
+        items.Insert(0, new SelectListItem("", ""));
+        UserOptions = items;
     }
 
     private async Task HandleSubmit()
