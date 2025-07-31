@@ -1,5 +1,6 @@
 ﻿using ClearMeasure.Bootcamp.UI.Shared;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
+using Spectre.Console;
 
 namespace ClearMeasure.Bootcamp.AcceptanceTests.WorkOrders;
 
@@ -453,16 +454,18 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         await Click(nameof(NavMenu.Elements.MyWorkOrders));
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await creatorSelect.DblClickAsync();
-        (await creatorSelect.InputValueAsync()).ShouldBe(CurrentUser.UserName);
+        await Expect(creatorSelect).ToHaveValueAsync(CurrentUser.UserName);
 
         await Click(nameof(NavMenu.Elements.WorkOrdersAssignedToMe));
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await assigneeSelect.DblClickAsync();
-        (await assigneeSelect.InputValueAsync()).ShouldBe(CurrentUser.UserName);
+        await Expect(assigneeSelect).ToHaveValueAsync(CurrentUser.UserName);
 
         await Click(nameof(NavMenu.Elements.AllWorkOrdersInProgress));
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await statusSelect.DblClickAsync();
-        (await statusSelect.InputValueAsync()).ShouldBe(order1.Status.Key);
+        await Expect(statusSelect).ToHaveValueAsync(order1.Status.Key);
     }
+
+    protected override bool? Headless { get; set; } = true;
 }
