@@ -44,29 +44,34 @@ public class WorkOrderSaveDraftTests : AcceptanceTestBase
         roomNumberField.ShouldBe(order.RoomNumber);
     }
 
-    private async Task<WorkOrder> CreateAndSaveNewWorkOrder()
+    [Test]
+    public async Task ShouldAssignEmployeeAndSave()
     {
-        var order = Faker<WorkOrder>();
-        order.Number = null;
-        var testTitle = order.Title;
-        var testDescription = order.Description;
-        var testRoomNumber = order.RoomNumber;
+        await LoginAsCurrentUser();
 
+        WorkOrder order = await CreateAndSaveNewWorkOrder();
+
+        await Click(nameof(WorkOrderSearch.Elements.WorkOrderLink) + order.Number);
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await Click(nameof(NavMenu.Elements.NewWorkOrder));
-        await Page.WaitForURLAsync("**/workorder/manage?mode=New");
-        await TakeScreenshotAsync(1, "NewWorkOrderPage");
 
-        var newWorkOrderNumber = await Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber)).InnerTextAsync();
-        order.Number = newWorkOrderNumber;
-        await Input(nameof(WorkOrderManage.Elements.Title), testTitle);
-        await Input(nameof(WorkOrderManage.Elements.Description), testDescription);
-        await Input(nameof(WorkOrderManage.Elements.RoomNumber), testRoomNumber);
-        await TakeScreenshotAsync(2, "FormFilled");
+        ILocator woNumberLocator = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
+        await woNumberLocator.WaitForAsync();
+        (await woNumberLocator.InnerTextAsync())
+            .ShouldBe(order.Number);
+        await Select(nameof(WorkOrderManage.Elements.Assignee), CurrentUser.UserName);
+        await Input(nameof(WorkOrderManage.Elements.Title), "newtitle");
+        await Input(nameof(WorkOrderManage.Elements.Description), "newdesc");
+        await Click(nameof(WorkOrderManage.Elements.CommandButton) + SaveDraftCommand.Name);
+        
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await Click(nameof(WorkOrderSearch.Elements.WorkOrderLink) + order.Number);
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-        var saveButtonTestId = nameof(WorkOrderManage.Elements.CommandButton) + SaveDraftCommand.Name;
-        await Click(saveButtonTestId);
+        await woNumberLocator.WaitForAsync();
+        (await woNumberLocator.InnerTextAsync()).ShouldBe(order.Number);
 
-        return order;
+        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Title)).InputValueAsync()).ShouldBe("newtitle");
+        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Description)).InputValueAsync()).ShouldBe("newdesc");
+        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Assignee)).InputValueAsync()).ShouldBe(CurrentUser.UserName);
     }
 }

@@ -38,6 +38,9 @@ public class ObjectMother
         {
             builder.WithConventions()
                 .WithSkip<WorkOrder>(wo => wo.AuditEntries)
+                .WithSkip<WorkOrder>(wo => wo.Creator)
+                .WithSkip<WorkOrder>(wo => wo.Assignee)
+                .WithSkip<WorkOrder>(wo => wo.AuditEntries)
                 .WithOverride(new BogusOverrides());
         });
     }
@@ -51,7 +54,6 @@ public class ObjectMother
         }
         
         var properties = expected.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-        var p = properties.Where(p => p.Name.Contains("Shrink"));
         foreach (var property in properties)
         {
 

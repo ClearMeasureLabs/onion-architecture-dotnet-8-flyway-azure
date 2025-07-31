@@ -28,7 +28,10 @@ public partial class WorkOrderManage : AppComponentBase
     protected override async Task OnInitializedAsync()
     {
         await LoadUserOptions();
+        StateHasChanged();
+
         await LoadWorkOrder();
+        StateHasChanged();
     }
 
     private async Task LoadWorkOrder()

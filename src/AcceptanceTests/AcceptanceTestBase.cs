@@ -1,5 +1,8 @@
 ﻿using ClearMeasure.Bootcamp.Core;
+using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.IntegrationTests;
+using ClearMeasure.Bootcamp.UI.Shared;
+using ClearMeasure.Bootcamp.UI.Shared.Pages;
 
 namespace ClearMeasure.Bootcamp.AcceptanceTests;
 
@@ -108,5 +111,36 @@ public abstract class AcceptanceTestBase : PageTest
     protected async Task Input(string elementTestId, string? value)
     {
         await Page.GetByTestId(elementTestId).FillAsync(value ?? "");
+    }
+    protected async Task Select(string elementTestId, string? value)
+    {
+        await Page.GetByTestId(elementTestId).SelectOptionAsync(value ?? "");
+    }
+
+    protected async Task<WorkOrder> CreateAndSaveNewWorkOrder()
+    {
+        var order = Faker<WorkOrder>();
+        order.Number = null;
+        var testTitle = order.Title;
+        var testDescription = order.Description;
+        var testRoomNumber = order.RoomNumber;
+
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await Click(nameof(NavMenu.Elements.NewWorkOrder));
+        await Page.WaitForURLAsync("**/workorder/manage?mode=New");
+        await TakeScreenshotAsync(1, "NewWorkOrderPage");
+
+        var newWorkOrderNumber = await Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber)).InnerTextAsync();
+        order.Number = newWorkOrderNumber;
+        await Input(nameof(WorkOrderManage.Elements.Title), testTitle);
+        await Input(nameof(WorkOrderManage.Elements.Description), testDescription);
+        await Input(nameof(WorkOrderManage.Elements.RoomNumber), testRoomNumber);
+        await TakeScreenshotAsync(2, "FormFilled");
+
+        var saveButtonTestId = nameof(WorkOrderManage.Elements.CommandButton) + SaveDraftCommand.Name;
+        await Click(saveButtonTestId);
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        return order;
     }
 }

@@ -16,20 +16,31 @@ public class StateCommandHandler(DbContext dbContext, TimeProvider time, ILogger
         logger.LogInformation("Executing");
         request.Execute(new StateCommandContext(){CurrentDateTime = time.GetUtcNow().DateTime});
 
-        if (request.WorkOrder.Assignee == request.WorkOrder.Creator)
-            request.WorkOrder.Assignee = request.WorkOrder.Creator; //EFCore reference checking
-        
-        dbContext.Attach(request.WorkOrder);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        var order = request.WorkOrder;
+        if (order.Assignee == order.Creator)
+            order.Assignee = order.Creator; //EFCore reference checking
+
+        if (order.Id == Guid.Empty)
+        {
+            dbContext.Attach(order);
+            dbContext.Add(order);
+        }
+        else
+        {
+            dbContext.Attach(order);
+            dbContext.Update(order);
+        }
+
+        await dbContext.SaveChangesAsync();
 
         var loweredTransitionVerb = request.TransitionVerbPastTense.ToLower();
-        var workOrderNumber = request.WorkOrder.Number;
+        var workOrderNumber = order.Number;
         var fullName = request.CurrentUser.GetFullName();
         var debugMessage = string.Format("{0} has {1} work order {2}", fullName, loweredTransitionVerb,
             workOrderNumber);
         logger.LogDebug(debugMessage);
         logger.LogInformation("Executed");
 
-        return new StateCommandResult(request.TransitionVerbPresentTense, request.WorkOrder, debugMessage);
+        return new StateCommandResult(request.TransitionVerbPresentTense, order, debugMessage);
     }
 }
