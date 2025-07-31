@@ -29,6 +29,7 @@ public abstract class AcceptanceTestBase : PageTest
         });
 
         var context = await browser.NewContextAsync(ContextOptions());
+        context.SetDefaultTimeout(10_000);
         Page = await context.NewPageAsync().ConfigureAwait(false);
     }
 

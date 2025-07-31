@@ -6,13 +6,6 @@ namespace ClearMeasure.Bootcamp.Core.Services.Impl
 {
 	public class WorkflowFacilitator : IWorkflowFacilitator
 	{
-	    private ICalendar _calendar;
-
-        public WorkflowFacilitator(ICalendar calendar)
-        {
-            _calendar = calendar;
-        }
-
 	    public IStateCommand[] GetValidStateCommands(WorkOrder workOrder, Employee currentUser)
 		{
 			List<IStateCommand> commands = new List<IStateCommand>(

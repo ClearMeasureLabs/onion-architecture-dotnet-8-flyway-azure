@@ -1,11 +1,15 @@
 using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Queries;
 using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using ClearMeasure.Bootcamp.UI.Shared.Pages;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClearMeasure.Bootcamp.DataAccess.Handlers;
 
-public class WorkOrderRepository(DataContext context) : IWorkOrderRepository
+public class WorkOrderRepository(DataContext context) : IWorkOrderRepository,
+    IRequestHandler<WorkOrderByNumberQuery, WorkOrder?>
 {
     public async Task SaveAsync(WorkOrder workOrder)
     {
@@ -31,5 +35,10 @@ public class WorkOrderRepository(DataContext context) : IWorkOrderRepository
         if (specification.Status != null) query = query.Where(wo => wo.Status == specification.Status);
 
         return await query.ToArrayAsync();
+    }
+
+    public async Task<WorkOrder?> Handle(WorkOrderByNumberQuery request, CancellationToken cancellationToken = default)
+    {
+        return await GetWorkOrderAsync(request.Number);
     }
 }

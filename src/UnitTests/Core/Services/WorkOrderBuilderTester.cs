@@ -11,9 +11,8 @@ public class WorkOrderBuilderTester
     public void ShouldCorrectlyBuildAWorkOrder()
     {
         var generator = new WorkOrderNumberGeneratorStub("124");
-        ICalendar calendar = new StubbedCalendar(new DateTime(2000, 1, 1));
 
-        var builder = new WorkOrderBuilder(generator, calendar);
+        var builder = new WorkOrderBuilder(generator);
         var creator = new Employee();
         var workOrder = builder.CreateNewWorkOrder(creator);
 

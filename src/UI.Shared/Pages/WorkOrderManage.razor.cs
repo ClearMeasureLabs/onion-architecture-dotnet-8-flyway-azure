@@ -12,21 +12,19 @@ namespace ClearMeasure.Bootcamp.UI.Shared.Pages;
 public partial class WorkOrderManage : AppComponentBase
 {
     [Inject] public IWorkOrderBuilder? WorkOrderBuilder { get; set; }
-    [Inject] public IWorkOrderRepository? WorkOrderRepository { get; set; }
     [Inject] public IUserSession? UserSession { get; set; }
     [Inject] private IWorkflowFacilitator? WorkflowFacilitator { get; set; }
     [Inject] private NavigationManager? NavigationManager { get; set; }
-    
+
     public WorkOrderManageModel Model { get; set; } = new WorkOrderManageModel();
     public List<SelectListItem> UserOptions { get; set; } = new List<SelectListItem>();
     public IEnumerable<IStateCommand> ValidCommands { get; set; } = new List<IStateCommand>();
     public string? SelectedCommand { get; set; }
 
-    [Parameter]
-    public string? Id { get; set; }
+    [Parameter] public string? Id { get; set; }
 
-    [SupplyParameterFromQuery]
-    public EditMode Mode { get; set; } = EditMode.Edit;
+    [SupplyParameterFromQuery] public string? Mode { get; set; }
+    public EditMode CurrentMode => Mode?.ToLower() == "edit" ? EditMode.Edit : EditMode.New;
 
     protected override async Task OnInitializedAsync()
     {
@@ -39,7 +37,7 @@ public partial class WorkOrderManage : AppComponentBase
         Employee currentUser = (await UserSession!.GetCurrentUserAsync())!;
         WorkOrder workOrder;
 
-        if (Mode == EditMode.New)
+        if (CurrentMode == EditMode.New)
         {
             workOrder = WorkOrderBuilder!.CreateNewWorkOrder(currentUser);
             if (!string.IsNullOrEmpty(Id))
@@ -47,10 +45,10 @@ public partial class WorkOrderManage : AppComponentBase
         }
         else
         {
-            workOrder = (await WorkOrderRepository!.GetWorkOrderAsync(Id!))!;
+            workOrder = (await Bus.Send(new WorkOrderByNumberQuery(Id!)))!;
         }
 
-        Model = CreateViewModel(Mode, workOrder);
+        Model = CreateViewModel(CurrentMode, workOrder);
         Model.IsReadOnly = !(WorkflowFacilitator!.GetValidStateCommands(workOrder, currentUser)).Any();
         ValidCommands = WorkflowFacilitator.GetValidStateCommands(workOrder, currentUser);
     }
@@ -82,7 +80,7 @@ public partial class WorkOrderManage : AppComponentBase
         if (Model.Mode == EditMode.New)
             workOrder = WorkOrderBuilder!.CreateNewWorkOrder(currentUser);
         else
-            workOrder = (await WorkOrderRepository!.GetWorkOrderAsync(Model.WorkOrderNumber!))!;
+            workOrder = (await Bus.Send(new WorkOrderByNumberQuery(Model.WorkOrderNumber!)))!;
 
         var assignee = await Bus.Send(new EmployeeByUserNameQuery(Model.AssignedToUserName));
         var creator = await Bus.Send(new EmployeeByUserNameQuery(Model.CreatorUserName));
@@ -99,7 +97,7 @@ public partial class WorkOrderManage : AppComponentBase
             Array.Find(commands, obj => obj.Matches(SelectedCommand!))!;
 
         var result = await Bus.Send(matchingCommand);
-        
+
         NavigationManager!.NavigateTo("/workorder/search");
     }
 
@@ -107,16 +105,6 @@ public partial class WorkOrderManage : AppComponentBase
     {
         // In a real implementation, this would load all employees from the repository
         var employees = await Bus.Send(new EmployeeGetAllQuery());
-        UserOptions = employees.Select(e => new SelectListItem
-        {
-            Value = e.UserName,
-            Text = e.GetFullName()
-        }).ToList();
-    }
-
-    public class SelectListItem
-    {
-        public required string Value { get; set; }
-        public required string Text { get; set; }
+        UserOptions = employees.Select(e => new SelectListItem(value: e.UserName, text: e.GetFullName())).ToList();
     }
 }

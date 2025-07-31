@@ -11,7 +11,7 @@ public class WorkflowFacilitatorTester
     [Test]
     public void ShouldGetNoValidStateCommandsForWrongUser()
     {
-        var facilitator = new WorkflowFacilitator(new StubbedCalendar(new DateTime(2000, 1, 1)));
+        var facilitator = new WorkflowFacilitator();
         var workOrder = new WorkOrder();
         var employee = new Employee();
         var commands = facilitator.GetValidStateCommands(workOrder, employee);
@@ -22,7 +22,7 @@ public class WorkflowFacilitatorTester
     [Test]
     public void ShouldReturnAllStateCommandsInCorrectOrder()
     {
-        var facilitator = new WorkflowFacilitator(new StubbedCalendar(new DateTime(2000, 1, 1)));
+        var facilitator = new WorkflowFacilitator();
         var commands = facilitator.GetAllStateCommands(new WorkOrder(), new Employee());
 
         Assert.That(commands.Length, Is.EqualTo(4));
@@ -36,7 +36,7 @@ public class WorkflowFacilitatorTester
     [Test]
     public void ShouldFilterFullListToReturnValidCommands()
     {
-        var stubFacilitator = new StubWorkflowFacilitator(new StubbedCalendar(new DateTime(2000, 1, 1)));
+        var stubFacilitator = new StubWorkflowFacilitator();
         var commandsToReturn = new IStateCommand[]
         {
             new StubbedStateCommand(true),
@@ -51,7 +51,7 @@ public class WorkflowFacilitatorTester
         Assert.That(commands.Length, Is.EqualTo(2));
     }
 
-    public class StubWorkflowFacilitator(ICalendar calendar) : WorkflowFacilitator(calendar)
+    public class StubWorkflowFacilitator() : WorkflowFacilitator()
     {
         public IStateCommand[] CommandsToReturn { get; set; } = null!;
 

@@ -1,16 +1,12 @@
+using ClearMeasure.Bootcamp.Core.Model;
 using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.Core.Services;
-using ClearMeasure.Bootcamp.Core.Model;
-using Shouldly;
-using ClearMeasure.Bootcamp.UnitTests.Core;
 
 namespace ClearMeasure.Bootcamp.UnitTests.Core.Model.StateCommands;
 
 [TestFixture]
 public class DraftToAssignedCommandTester : StateCommandBaseTester
 {
-    private readonly ICalendar _calendar = new StubbedCalendar(new DateTime(2008, 3, 14));
-
     [Test]
     public void ShouldNotBeValidInWrongStatus()
     {

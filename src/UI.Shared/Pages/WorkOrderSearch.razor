@@ -91,10 +91,4 @@
     public List<SelectListItem> UserOptions { get; set; } = new();
     public List<SelectListItem> StatusOptions { get; set; } = new();
     public Func<Task>? OnSearch { get; set; }
-
-    public class SelectListItem(string value, string text)
-    {
-        public string Value { get; set; } = value;
-        public string Text { get; set; } = text;
-    }
 }

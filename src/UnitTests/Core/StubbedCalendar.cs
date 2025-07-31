@@ -1,8 +1,6 @@
-using ClearMeasure.Bootcamp.Core.Services;
-
 namespace ClearMeasure.Bootcamp.UnitTests.Core;
 
-public class StubbedCalendar : ICalendar
+public class StubbedCalendar
 {
     private readonly DateTime _currentTime;
 

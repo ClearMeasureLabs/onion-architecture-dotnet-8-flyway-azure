@@ -2,11 +2,9 @@ using ClearMeasure.Bootcamp.Core.Model;
 
 namespace ClearMeasure.Bootcamp.Core.Services.Impl
 {
-	public class WorkOrderBuilder(IWorkOrderNumberGenerator numberGenerator, ICalendar calendar)
+	public class WorkOrderBuilder(IWorkOrderNumberGenerator numberGenerator)
         : IWorkOrderBuilder
     {
-        private readonly ICalendar _calendar = calendar;
-
         public WorkOrder CreateNewWorkOrder(Employee creator)
 		{
 			WorkOrder workOrder = new WorkOrder

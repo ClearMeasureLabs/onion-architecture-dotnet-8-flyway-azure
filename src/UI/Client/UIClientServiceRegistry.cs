@@ -30,6 +30,7 @@ public class UIClientServiceRegistry : ServiceRegistry
         {
             scanner.WithDefaultConventions();
             scanner.AssemblyContainingType<UIClientServiceRegistry>();
+            scanner.AssemblyContainingType<IRemotableRequest>();
             scanner.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
             scanner.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
         });
