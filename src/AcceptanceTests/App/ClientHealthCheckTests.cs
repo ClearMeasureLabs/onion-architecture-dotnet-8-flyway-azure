@@ -25,7 +25,7 @@ public class ClientHealthCheckTests : AcceptanceTestBase
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         // Act
-        await Page.ClickAsync($"#{HealthCheckLink.Elements.HealthCheckLink}");
+        await Click(nameof(HealthCheckLink.Elements.HealthCheckLink));
 
         // Assert
         await Page.WaitForURLAsync("**/_clienthealthcheck");
