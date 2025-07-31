@@ -7,10 +7,6 @@
         <DataAnnotationsValidator/>
         <ValidationSummary/>
 
-        <input type="hidden" @bind-value="Model.IsReadOnly"/>
-        <input type="hidden" @bind-value="Model.Status"/>
-        <input type="hidden" @bind-value="Model.CanReassign"/>
-
         <div class="form-container">
             <div class="form-grid">
                 <div class="form-group">
@@ -116,7 +112,6 @@
                 <div class="action-buttons">
                     @foreach (var command in ValidCommands)
                     {
-
                         var buttonTestId = Elements.CommandButton + command.TransitionVerbPresentTense;
                         <button data-testid="@buttonTestId" type="submit" @onclick="@(() => SelectedCommand = command.TransitionVerbPresentTense)" class="btn btn-primary">
                             @command.TransitionVerbPresentTense

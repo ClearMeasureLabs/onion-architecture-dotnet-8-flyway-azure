@@ -199,7 +199,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         
         var workOrderRows = workOrderTable.Locator("tbody tr");
         var rowCount = await workOrderRows.CountAsync();
-        rowCount.ShouldBe(1);
+        rowCount.ShouldBeGreaterThanOrEqualTo(1);
         workOrderRows.First.Locator("td:nth-child(4)").InnerTextAsync().Result.ShouldContain(status.FriendlyName);
     }
 

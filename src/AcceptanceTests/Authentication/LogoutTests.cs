@@ -15,6 +15,7 @@ public class LogoutTests : AcceptanceTestBase
     public async Task ShouldLogout()
     {
         var newLink = Page.GetByTestId(nameof(NavMenu.Elements.NewWorkOrder));
+        await newLink.WaitForAsync();
         (await newLink.IsVisibleAsync()).ShouldBe(true);
 
         await Page.GetByTestId(nameof(Logout.Elements.LogoutLink)).ClickAsync();

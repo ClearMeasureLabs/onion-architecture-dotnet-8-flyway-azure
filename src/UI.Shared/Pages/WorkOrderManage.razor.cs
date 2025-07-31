@@ -66,6 +66,7 @@ public partial class WorkOrderManage : AppComponentBase
             AssignedToUserName = workOrder.Assignee?.UserName,
             Title = workOrder.Title,
             Description = workOrder.Description,
+            RoomNumber = workOrder.RoomNumber,
             CreatedDate = workOrder.CreatedDate.ToString(),
             AssignedDate = workOrder.AssignedDate?.ToString(),
             CompletedDate = workOrder.CompletedDate?.ToString()
@@ -74,7 +75,6 @@ public partial class WorkOrderManage : AppComponentBase
 
     private async Task LoadUserOptions()
     {
-        // In a real implementation, this would load all employees from the repository
         var employees = await Bus.Send(new EmployeeGetAllQuery());
         var items = employees.Select(e => new SelectListItem(value: e.UserName, text: e.GetFullName())).ToList();
         items.Insert(0, new SelectListItem("", ""));
