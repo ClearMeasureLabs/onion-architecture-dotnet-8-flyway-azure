@@ -56,36 +56,6 @@ public class ZDataLoader
         hsimpson.AddRole(fulfillment);
         db.Add(hsimpson);
 
-        foreach (WorkOrderStatus status in WorkOrderStatus.GetAllItems())
-        {
-            var order = new WorkOrder();
-            order.Number = Guid.NewGuid().ToString().Substring(0, 5).ToUpper();
-            order.Creator = jpalermo;
-            order.Assignee = hsimpson;
-            order.Status = status;
-            order.Title = "Work Order starting in status " + status;
-            order.Description = "Foo, foo, foo, foo " + status;
-            order.CreatedDate = new DateTime(2000, 1, 1, 8, 0, 0);
-            order.CompletedDate = new DateTime(2000, 1, 1, 8, 0, 0);
-            order.ChangeStatus(WorkOrderStatus.Draft);
-            order.ChangeStatus(WorkOrderStatus.Assigned);
-            order.ChangeStatus(WorkOrderStatus.InProgress);
-            order.ChangeStatus(WorkOrderStatus.Complete);
-
-            db.Add(order);
-        }
-
-        var order2 = new WorkOrder();
-        order2.Number = Guid.NewGuid().ToString().Substring(0, 5).ToUpper();
-        order2.Creator = hsimpson;
-        order2.Assignee = jpalermo;
-        order2.Status = WorkOrderStatus.Complete;
-        order2.Title = "Work Order starting in status ";
-        order2.Description = "Foo, foo, foo, foo ";
-        order2.CreatedDate = new DateTime(2000, 1, 1, 8, 0, 0);
-        order2.CompletedDate = new DateTime(2000, 1, 1, 8, 0, 0);
-        db.Add(order2);
-
         db.SaveChanges();
         db.Dispose();
 
