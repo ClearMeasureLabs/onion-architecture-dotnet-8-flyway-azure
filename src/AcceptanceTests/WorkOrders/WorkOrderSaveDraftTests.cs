@@ -1,6 +1,7 @@
 ﻿using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.UI.Shared;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
+using System.Text.RegularExpressions;
 
 namespace ClearMeasure.Bootcamp.AcceptanceTests.WorkOrders;
 
@@ -27,18 +28,20 @@ public class WorkOrderSaveDraftTests : AcceptanceTestBase
 
         await Click(nameof(WorkOrderSearch.Elements.WorkOrderLink) + order.Number);
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        Page.Url.ShouldContain($"/workorder/manage/{order.Number}");
+        await Expect(Page).ToHaveURLAsync(new Regex($"/workorder/manage/{Regex.Escape(order.Number)}"));
         await TakeScreenshotAsync(5, "WorkOrderManagePage");
 
-        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber)).InnerTextAsync())
-            .ShouldBe(order.Number);
-        var titleField = await Page.GetByTestId(nameof(WorkOrderManage.Elements.Title)).InputValueAsync();
-        var descriptionField = await Page.GetByTestId(nameof(WorkOrderManage.Elements.Description)).InputValueAsync();
-        var roomNumberField = await Page.GetByTestId(nameof(WorkOrderManage.Elements.RoomNumber)).InputValueAsync();
+        var workOrderNumber = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
+        await Expect(workOrderNumber).ToHaveTextAsync(order.Number);
 
-        titleField.ShouldBe(order.Title);
-        descriptionField.ShouldBe(order.Description);
-        roomNumberField.ShouldBe(order.RoomNumber);
+        var titleField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Title));
+        await Expect(titleField).ToHaveValueAsync(order.Title);
+
+        var descriptionField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Description));
+        await Expect(descriptionField).ToHaveValueAsync(order.Description);
+
+        var roomNumberField = Page.GetByTestId(nameof(WorkOrderManage.Elements.RoomNumber));
+        await Expect(roomNumberField).ToHaveValueAsync(order.RoomNumber);
     }
 
     [Test]
@@ -53,8 +56,8 @@ public class WorkOrderSaveDraftTests : AcceptanceTestBase
 
         var woNumberLocator = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
         await woNumberLocator.WaitForAsync();
-        (await woNumberLocator.InnerTextAsync())
-            .ShouldBe(order.Number);
+        await Expect(woNumberLocator).ToHaveTextAsync(order.Number);
+
         await Select(nameof(WorkOrderManage.Elements.Assignee), CurrentUser.UserName);
         await Input(nameof(WorkOrderManage.Elements.Title), "newtitle");
         await Input(nameof(WorkOrderManage.Elements.Description), "newdesc");
@@ -65,11 +68,15 @@ public class WorkOrderSaveDraftTests : AcceptanceTestBase
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         await woNumberLocator.WaitForAsync();
-        (await woNumberLocator.InnerTextAsync()).ShouldBe(order.Number);
+        await Expect(woNumberLocator).ToHaveTextAsync(order.Number);
 
-        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Title)).InputValueAsync()).ShouldBe("newtitle");
-        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Description)).InputValueAsync()).ShouldBe("newdesc");
-        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Assignee)).InputValueAsync()).ShouldBe(CurrentUser
-            .UserName);
+        var titleField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Title));
+        await Expect(titleField).ToHaveValueAsync("newtitle");
+
+        var descriptionField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Description));
+        await Expect(descriptionField).ToHaveValueAsync("newdesc");
+
+        var assigneeField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Assignee));
+        await Expect(assigneeField).ToHaveValueAsync(CurrentUser.UserName);
     }
 }
