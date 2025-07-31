@@ -1,8 +1,7 @@
+using ClearMeasure.Bootcamp.Core.Services;
+
 namespace ClearMeasure.Bootcamp.Core.Model.StateCommands;
 
-public class StateCommandResult(StateCommandBase command, WorkOrder order, string debugMessage)
+public record StateCommandResult(string TransitionVerbPresentTense, WorkOrder WorkOrder, string DebugMessage)
 {
-    public StateCommandBase Command { get; } = command;
-    public WorkOrder Order { get; } = order;
-    public string DebugMessage { get; } = debugMessage;
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 using ClearMeasure.Bootcamp.Core;
 
-namespace ClearMeasure.Bootcamp.UI.Client;
+namespace ClearMeasure.Bootcamp.UI.Client.HealthChecks;
 
 public class ServerHealthCheck(IBus bus, ILogger<ServerHealthCheck> logger) : IHealthCheck
 {

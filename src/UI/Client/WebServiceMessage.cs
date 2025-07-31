@@ -4,6 +4,8 @@ namespace ClearMeasure.Bootcamp.UI.Client
 {
     public class WebServiceMessage
     {
+        private readonly JsonSerializerOptions _jsonSerializerOptions = 
+            new JsonSerializerOptions(JsonSerializerDefaults.General){IncludeFields = false};
         public string Body { get; set; } = "";
         public string TypeName { get; set; } = "";
 
@@ -11,7 +13,7 @@ namespace ClearMeasure.Bootcamp.UI.Client
         {
             
         }
-     
+        
         public WebServiceMessage(object request) 
         {
             Body = GetBody(request);
@@ -20,27 +22,21 @@ namespace ClearMeasure.Bootcamp.UI.Client
 
         public string GetBody(object request)
         {
-            var body = JsonSerializer.Serialize(request, request.GetType());
+            var body = JsonSerializer.Serialize(request, request.GetType(), 
+                _jsonSerializerOptions);
             return body;
         }
 
         public string GetJson()
         {
-            return JsonSerializer.Serialize(this, this.GetType());
-        }
-
-        public TReturn GetBodyObject<TReturn>()
-        {
-            Type type = typeof(TReturn);
-            string value = Body;
-            return (TReturn)JsonSerializer.Deserialize(value, type)!;
+            return JsonSerializer.Serialize(this, this.GetType(), _jsonSerializerOptions);
         }
 
         public object GetBodyObject()
         {
             Type type = Type.GetType(TypeName, true)!;
             string value = Body;
-            return JsonSerializer.Deserialize(value, type)!;
+            return JsonSerializer.Deserialize(value, type, _jsonSerializerOptions)!;
         }
     }
 }

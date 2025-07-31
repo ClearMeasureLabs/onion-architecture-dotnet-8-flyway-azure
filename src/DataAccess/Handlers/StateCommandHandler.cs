@@ -23,6 +23,6 @@ public class StateCommandHandler(WorkOrderRepository repository, TimeProvider ti
         logger.LogDebug(debugMessage);
         logger.LogInformation("Executed");
 
-        return new StateCommandResult(request, request.WorkOrder, debugMessage);
+        return new StateCommandResult(request.TransitionVerbPresentTense, request.WorkOrder, debugMessage);
     }
 }

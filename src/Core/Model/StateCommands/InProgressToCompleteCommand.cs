@@ -2,7 +2,7 @@ using ClearMeasure.Bootcamp.Core.Services;
 
 namespace ClearMeasure.Bootcamp.Core.Model.StateCommands;
 
-public class InProgressToCompleteCommand(WorkOrder workOrder, Employee currentUser) : StateCommandBase(workOrder,
+public record InProgressToCompleteCommand(WorkOrder workOrder, Employee currentUser) : StateCommandBase(workOrder,
     currentUser)
 {
     public override string TransitionVerbPresentTense => "Complete";

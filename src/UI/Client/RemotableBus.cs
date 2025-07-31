@@ -13,7 +13,7 @@ public class RemotableBus(IMediator mediator, IPublisherGateway gateway) : Bus(m
         if (request is IRemotableRequest remotableRequest)
         {
             WebServiceMessage result = await gateway.Publish(remotableRequest) ?? throw new InvalidOperationException();
-            TResponse returnEvent = result.GetBodyObject<TResponse>();
+            TResponse returnEvent = (TResponse)result.GetBodyObject();
             return returnEvent;
         }
 

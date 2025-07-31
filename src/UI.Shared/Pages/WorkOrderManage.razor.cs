@@ -13,7 +13,6 @@ public partial class WorkOrderManage : AppComponentBase
 {
     [Inject] public IWorkOrderBuilder? WorkOrderBuilder { get; set; }
     [Inject] public IUserSession? UserSession { get; set; }
-    [Inject] private IWorkflowFacilitator? WorkflowFacilitator { get; set; }
     [Inject] private NavigationManager? NavigationManager { get; set; }
 
     public WorkOrderManageModel Model { get; set; } = new WorkOrderManageModel();
@@ -49,8 +48,8 @@ public partial class WorkOrderManage : AppComponentBase
         }
 
         Model = CreateViewModel(CurrentMode, workOrder);
-        Model.IsReadOnly = !(WorkflowFacilitator!.GetValidStateCommands(workOrder, currentUser)).Any();
-        ValidCommands = WorkflowFacilitator.GetValidStateCommands(workOrder, currentUser);
+        Model.IsReadOnly = !(CommandList!.GetValidStateCommands(workOrder, currentUser)).Any();
+        ValidCommands = CommandList.GetValidStateCommands(workOrder, currentUser);
     }
 
     private WorkOrderManageModel CreateViewModel(EditMode mode, WorkOrder workOrder)
@@ -72,6 +71,13 @@ public partial class WorkOrderManage : AppComponentBase
         };
     }
 
+    private async Task LoadUserOptions()
+    {
+        // In a real implementation, this would load all employees from the repository
+        var employees = await Bus.Send(new EmployeeGetAllQuery());
+        UserOptions = employees.Select(e => new SelectListItem(value: e.UserName, text: e.GetFullName())).ToList();
+    }
+
     private async Task HandleSubmit()
     {
         Employee currentUser = (await UserSession!.GetCurrentUserAsync())!;
@@ -82,29 +88,23 @@ public partial class WorkOrderManage : AppComponentBase
         else
             workOrder = (await Bus.Send(new WorkOrderByNumberQuery(Model.WorkOrderNumber!)))!;
 
-        var assignee = await Bus.Send(new EmployeeByUserNameQuery(Model.AssignedToUserName));
-        var creator = await Bus.Send(new EmployeeByUserNameQuery(Model.CreatorUserName));
+        Employee? assignee = null;
+        if (Model.AssignedToUserName != null)
+        {
+            assignee = await Bus.Send(new EmployeeByUserNameQuery(Model.AssignedToUserName));
+        }
 
         workOrder.Number = Model.WorkOrderNumber;
-        workOrder.Creator = creator;
         workOrder.Assignee = assignee;
         workOrder.Title = Model.Title;
         workOrder.Description = Model.Description;
         workOrder.RoomNumber = Model.RoomNumber;
 
-        IStateCommand[] commands = WorkflowFacilitator!.GetValidStateCommands(workOrder, currentUser);
-        IStateCommand matchingCommand =
-            Array.Find(commands, obj => obj.Matches(SelectedCommand!))!;
+        IStateCommand matchingCommand = new StateCommandList()
+            .GetMatchingCommand(workOrder, currentUser, SelectedCommand!);
 
         var result = await Bus.Send(matchingCommand);
 
         NavigationManager!.NavigateTo("/workorder/search");
-    }
-
-    private async Task LoadUserOptions()
-    {
-        // In a real implementation, this would load all employees from the repository
-        var employees = await Bus.Send(new EmployeeGetAllQuery());
-        UserOptions = employees.Select(e => new SelectListItem(value: e.UserName, text: e.GetFullName())).ToList();
     }
 }

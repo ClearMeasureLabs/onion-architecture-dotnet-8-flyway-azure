@@ -2,19 +2,12 @@
 
 namespace ClearMeasure.Bootcamp.UI.Api;
 
-public class HealthCheck : IHealthCheck
+public class HealthCheck(ILogger<HealthCheck> logger) : IHealthCheck
 {
-    private readonly ILogger<HealthCheck> _logger;
-
-    public HealthCheck(ILogger<HealthCheck> logger)
-    {
-        _logger = logger;
-    }
-
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
         CancellationToken cancellationToken = new CancellationToken())
     {
-        _logger.LogInformation("Health check success");
+        logger.LogInformation("Health check success");
         return Task.FromResult(HealthCheckResult.Healthy());
     }
 }

@@ -8,12 +8,8 @@ using MediatR;
 
 namespace ClearMeasure.Bootcamp.Core.Model.StateCommands
 {
-	public abstract class StateCommandBase(WorkOrder workOrder, Employee currentUser)
-        : IStateCommand
+	public abstract record StateCommandBase(WorkOrder WorkOrder, Employee CurrentUser) : IStateCommand
     {
-        public WorkOrder WorkOrder { get; init; } = workOrder;
-		public Employee CurrentUser { get; init; } = currentUser;
-
         public abstract WorkOrderStatus GetBeginStatus();
         public abstract WorkOrderStatus GetEndStatus();
         protected abstract bool UserCanExecute(Employee currentUser);

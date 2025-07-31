@@ -2,8 +2,8 @@ using ClearMeasure.Bootcamp.Core.Services;
 
 namespace ClearMeasure.Bootcamp.Core.Model.StateCommands;
 
-public class AssignedToInProgressCommand(WorkOrder workOrder, Employee currentUser)
-    : StateCommandBase(workOrder, currentUser)
+public record AssignedToInProgressCommand(WorkOrder WorkOrder, Employee CurrentUser)
+    : StateCommandBase(WorkOrder, CurrentUser)
 {
     public override WorkOrderStatus GetBeginStatus()
     {

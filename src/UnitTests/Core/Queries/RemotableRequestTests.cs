@@ -1,35 +1,54 @@
-﻿using MediatR;
-using Shouldly;
-using System.Text.Json;
+﻿using System.Text.Json;
 using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.Core.Queries;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.UI.Client;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using ClearMeasure.Bootcamp.UI.Client.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Shouldly;
 
 namespace ClearMeasure.Bootcamp.UnitTests.Core.Queries;
 
 public class RemotableRequestTests
 {
     [Test]
-    public void ShouldBeRemotableCompatible()
+    public void ShouldSerialize()
     {
         AssertRemotable(new ForecastQuery());
-        AssertRemotable(new WeatherForecast[1]{ObjectMother.Faker<WeatherForecast>()});
+        AssertRemotable(new WeatherForecast[1] { ObjectMother.Faker<WeatherForecast>() });
         AssertRemotable(new HealthCheckRemotableRequest());
         AssertRemotable(HealthStatus.Degraded);
         AssertRemotable(ObjectMother.Faker<WorkOrderSpecificationQuery>());
         AssertRemotable(WorkOrderStatus.Draft);
-        AssertRemotable(ObjectMother.Faker<WorkOrder>());
+    }
+
+    [Test]
+    public void ShouldBeRemotableCompatible()
+    {
+        var order = ObjectMother.Faker<WorkOrder>();
+        AssertRemotable(order);
         AssertRemotable(new ServerHealthCheckQuery());
         AssertRemotable(ObjectMother.Faker<Role>());
-        
-        Employee employee = ObjectMother.Faker<Employee>();
-        Role role = ObjectMother.Faker<Role>();
+
+        var employee = ObjectMother.Faker<Employee>();
+        var role = ObjectMother.Faker<Role>();
         employee.AddRole(role);
         var rehydratedRole = ((Employee)AssertRemotable(employee)).Roles.Single(role1 => role1 == role);
         ObjectMother.AssertAllProperties(role, rehydratedRole);
+
+        AssertRemotable(new SaveDraftCommand(order, employee));
+        AssertRemotable(new StateCommandResult("Save", order, "message"));
+    }
+
+    [Test]
+    public void ShouldSerializeStateCommand()
+    {
+        var order = ObjectMother.Faker<WorkOrder>();
+        var employee = ObjectMother.Faker<Employee>();
+        IStateCommand command = new SaveDraftCommand(order, employee);
+        AssertRemotable(command);
     }
 
     public static object AssertRemotable(object theObject)

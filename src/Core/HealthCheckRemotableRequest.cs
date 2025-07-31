@@ -3,5 +3,5 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace ClearMeasure.Bootcamp.Core;
 
-public record HealthCheckRemotableRequest : IRequest<HealthStatus>, IRemotableRequest
+public record HealthCheckRemotableRequest(HealthStatus Status = HealthStatus.Healthy) : IRequest<HealthStatus>, IRemotableRequest
 { }

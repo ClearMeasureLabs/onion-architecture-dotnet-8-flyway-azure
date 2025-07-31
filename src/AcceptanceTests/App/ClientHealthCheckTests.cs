@@ -9,6 +9,15 @@ namespace ClearMeasure.Bootcamp.AcceptanceTests.App;
 public class ClientHealthCheckTests : AcceptanceTestBase
 {
     [Test]
+    public async Task FirstStartShouldValidateClientHealthChecks()
+    {
+        await Page.GotoAsync("/_clienthealthcheck");
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        var statusSpan = Page.GetByTestId(nameof(ClientHealthCheck.Elements.Status));
+        var innerTextAsync = await statusSpan.InnerTextAsync();
+        innerTextAsync.ShouldBe(nameof(HealthStatus.Healthy));
+    }
+    [Test]
     public async Task Should_NavigateToHealthCheck_WhenGearIconClicked()
     {
         // Arrange

@@ -20,8 +20,8 @@ public class StateCommandHandlerTests : IntegratedTestBase
         
         var result = await handler.Handle(command);
         
-        result.Command.ShouldBe(command);
-        result.Order.ShouldBe(workOrder);
-        result.Order.CreatedDate.ShouldBe(TestHost.TestTime.DateTime);
+        result.TransitionVerbPresentTense.ShouldBe(command.TransitionVerbPresentTense);
+        result.WorkOrder.ShouldBe(workOrder);
+        result.WorkOrder.CreatedDate.ShouldBe(TestHost.TestTime.DateTime);
     }
 }

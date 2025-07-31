@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using ClearMeasure.Bootcamp.UI.Client;
+using ClearMeasure.Bootcamp.UI.Client.HealthChecks;
 
 namespace ClearMeasure.Bootcamp.UI.Server.Handlers;
 

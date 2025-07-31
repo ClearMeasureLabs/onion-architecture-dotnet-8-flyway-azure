@@ -6,8 +6,8 @@ namespace ClearMeasure.Bootcamp.DataAccess;
 
 public class HealthCheckRemotableRequestHandler : IRequestHandler<HealthCheckRemotableRequest, HealthStatus>
 {
-    public Task<HealthStatus> Handle(HealthCheckRemotableRequest request, CancellationToken cancellationToken)
+    public Task<HealthStatus> Handle(HealthCheckRemotableRequest request, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(HealthStatus.Healthy);
+        return Task.FromResult(request.Status);
     }
 }

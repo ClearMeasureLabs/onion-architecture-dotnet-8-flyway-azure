@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace ClearMeasure.Bootcamp.UI.Client;
+namespace ClearMeasure.Bootcamp.UI.Client.HealthChecks;
 
 public class HealthCheckTracer(ILogger<HealthCheckTracer> logger) : IHealthCheck
 {

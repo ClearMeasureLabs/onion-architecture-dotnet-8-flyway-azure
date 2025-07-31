@@ -6,12 +6,12 @@ using ClearMeasure.Bootcamp.Core.Model;
 namespace ClearMeasure.Bootcamp.UnitTests.Core.Services;
 
 [TestFixture]
-public class WorkflowFacilitatorTester
+public class StateCommandListTests
 {
     [Test]
     public void ShouldGetNoValidStateCommandsForWrongUser()
     {
-        var facilitator = new WorkflowFacilitator();
+        var facilitator = new StateCommandList();
         var workOrder = new WorkOrder();
         var employee = new Employee();
         var commands = facilitator.GetValidStateCommands(workOrder, employee);
@@ -22,7 +22,7 @@ public class WorkflowFacilitatorTester
     [Test]
     public void ShouldReturnAllStateCommandsInCorrectOrder()
     {
-        var facilitator = new WorkflowFacilitator();
+        var facilitator = new StateCommandList();
         var commands = facilitator.GetAllStateCommands(new WorkOrder(), new Employee());
 
         Assert.That(commands.Length, Is.EqualTo(4));
@@ -36,7 +36,7 @@ public class WorkflowFacilitatorTester
     [Test]
     public void ShouldFilterFullListToReturnValidCommands()
     {
-        var stubFacilitator = new StubWorkflowFacilitator();
+        var stubFacilitator = new StubStateCommandList();
         var commandsToReturn = new IStateCommand[]
         {
             new StubbedStateCommand(true),
@@ -51,7 +51,7 @@ public class WorkflowFacilitatorTester
         Assert.That(commands.Length, Is.EqualTo(2));
     }
 
-    public class StubWorkflowFacilitator() : WorkflowFacilitator()
+    public class StubStateCommandList() : StateCommandList()
     {
         public IStateCommand[] CommandsToReturn { get; set; } = null!;
 
