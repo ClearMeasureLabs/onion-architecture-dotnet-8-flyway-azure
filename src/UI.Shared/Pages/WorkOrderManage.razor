@@ -1,15 +1,15 @@
 <div class="work-order-container">
     <div class="work-order-header">
-        <h2>Work Order #@Model.WorkOrderNumber (@Model.Status)</h2>
+        <h2>Work Order #<span data-testid="@Elements.WorkOrderNumber">@Model.WorkOrderNumber</span> (@Model.Status)</h2>
     </div>
 
     <EditForm Model="@Model" OnValidSubmit="HandleSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
 
-        <input type="hidden" @bind-value="Model.IsReadOnly" />
-        <input type="hidden" @bind-value="Model.Status" />
-        <input type="hidden" @bind-value="Model.CanReassign" />
+        <input type="hidden" @bind-value="Model.IsReadOnly"/>
+        <input type="hidden" @bind-value="Model.Status"/>
+        <input type="hidden" @bind-value="Model.CanReassign"/>
 
         <div class="form-container">
             <div class="form-grid">
@@ -26,7 +26,7 @@
                     <div>
                         @if (!Model.IsReadOnly)
                         {
-                            <InputSelect id="AssignedToUserName" @bind-Value="Model.AssignedToUserName" class="form-control input-select">
+                            <InputSelect data-testid="@Elements.Assignee" id="AssignedToUserName" @bind-Value="Model.AssignedToUserName" class="form-control input-select">
                                 @foreach (var user in UserOptions)
                                 {
                                     <option value="@user.Value">@user.Text</option>
@@ -35,7 +35,7 @@
                         }
                         else
                         {
-                            <span class="value">@Model.WorkOrder?.Assignee?.GetFullName()</span>
+                            <span data-testid="@Elements.AssigneeFullName" class="value">@Model.WorkOrder?.Assignee?.GetFullName()</span>
                         }
                     </div>
                 </div>
@@ -43,34 +43,34 @@
                 <div class="form-group">
                     <label for="Title" class="form-label">Title:</label>
                     <div>
-                        <InputText id="Title" @bind-Value="Model.Title" class="form-control input-text" disabled="@Model.IsReadOnly" />
+                        <InputText data-testid="@Elements.Title" id="Title" @bind-Value="Model.Title" class="form-control input-text" disabled="@Model.IsReadOnly"/>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="Description" class="form-label">Description:</label>
                     <div>
-                        <InputTextArea id="Description" @bind-Value="Model.Description" class="form-control input-textarea" disabled="@Model.IsReadOnly" />
+                        <InputTextArea data-testid="@Elements.Description" id="Description" @bind-Value="Model.Description" class="form-control input-textarea" disabled="@Model.IsReadOnly" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="RoomNumber" class="form-label">Room Number:</label>
                     <div>
-                        <InputText id="RoomNumber" @bind-Value="Model.RoomNumber" class="form-control input-text" disabled="@Model.IsReadOnly" />
+                        <InputText data-testid="@Elements.RoomNumber" id="RoomNumber" @bind-Value="Model.RoomNumber" class="form-control input-text" disabled="@Model.IsReadOnly" />
                     </div>
                 </div>
             </div>
 
             <div class="readonly-info">
                 <span class="label">Assigned Date:</span>
-                <span class="value">@Model.AssignedDate</span>
+                <span data-testid="@Elements.AssignedDate" class="value">@Model.AssignedDate</span>
 
                 <span class="label">Completed Date:</span>
-                <span class="value">@Model.CompletedDate</span>
+                <span data-testid="@Elements.CompletedDate" class="value">@Model.CompletedDate</span>
 
                 <span class="label">Created Date:</span>
-                <span class="value">@Model.CreatedDate</span>
+                <span data-testid="@Elements.CreatedDate" class="value">@Model.CreatedDate</span>
             </div>
         </div>
 
@@ -78,29 +78,29 @@
         {
             <div class="audit-section">
                 <h3>Audit History</h3>
-                <table class="audit-table">
+                <table data-testid="@Elements.AuditEntriesTable" class="audit-table">
                     <thead>
-                        <tr>
-                            <th>Employee Name</th>
-                            <th style="width:20%;">Date</th>
-                            <th style="width:20%;">Begin Status</th>
-                            <th style="width:20%;">End Status</th>
-                        </tr>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th style="width:20%;">Date</th>
+                        <th style="width:20%;">Begin Status</th>
+                        <th style="width:20%;">End Status</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @{
-                            int i = 0;
-                            foreach (var auditEntry in Model.WorkOrder.AuditEntries)
-                            {
-                                var rowClass = (i++ % 2) == 0 ? "odd" : "even";
-                                <tr class="@rowClass">
-                                    <td>@auditEntry.ArchivedEmployeeName</td>
-                                    <td>@auditEntry.Date</td>
-                                    <td>@auditEntry.BeginStatus</td>
-                                    <td>@auditEntry.EndStatus</td>
-                                </tr>
-                            }
+                    @{
+                        var i = 0;
+                        foreach (var auditEntry in Model.WorkOrder.AuditEntries)
+                        {
+                            var rowClass = i++ % 2 == 0 ? "odd" : "even";
+                            <tr class="@rowClass">
+                                <td>@auditEntry.ArchivedEmployeeName</td>
+                                <td>@auditEntry.Date</td>
+                                <td>@auditEntry.BeginStatus</td>
+                                <td>@auditEntry.EndStatus</td>
+                            </tr>
                         }
+                    }
                     </tbody>
                 </table>
             </div>
@@ -109,14 +109,16 @@
         <div class="action-section">
             @if (Model.IsReadOnly)
             {
-                <div class="readonly-message">This work order is read-only for you at this time.</div>
+                <div data-testid="@Elements.ReadOnlyMessage" class="readonly-message">This work order is read-only for you at this time.</div>
             }
             else
             {
                 <div class="action-buttons">
-                    @foreach (IStateCommand command in ValidCommands)
+                    @foreach (var command in ValidCommands)
                     {
-                        <button type="submit" @onclick="@(() => SelectedCommand = command.TransitionVerbPresentTense)" class="btn btn-primary">
+
+                        var buttonTestId = Elements.CommandButton + command.TransitionVerbPresentTense;
+                        <button data-testid="@buttonTestId" type="submit" @onclick="@(() => SelectedCommand = command.TransitionVerbPresentTense)" class="btn btn-primary">
                             @command.TransitionVerbPresentTense
                         </button>
                     }
@@ -125,3 +127,23 @@
         </div>
     </EditForm>
 </div>
+
+@code
+{
+
+    public enum Elements
+    {
+        Assignee,
+        Title,
+        AssigneeFullName,
+        RoomNumber,
+        Description,
+        AssignedDate,
+        CompletedDate,
+        CreatedDate,
+        AuditEntriesTable,
+        ReadOnlyMessage,
+        CommandButton,
+        WorkOrderNumber
+    }
+}

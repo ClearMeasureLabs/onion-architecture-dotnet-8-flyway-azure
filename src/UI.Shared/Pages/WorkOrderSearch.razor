@@ -66,7 +66,11 @@
             var rowClass = i++ % 2 == 0 ? "odd" : "even";
             <tr class="@rowClass">
                 <td>
-                    <a href="/workorder/manage/@order.Number?mode=Edit">@order.Number</a>
+
+                    @{
+                        var workOrderLinkTestId = Elements.WorkOrderLink + order.Number;
+                    }
+                    <a data-testid="@workOrderLinkTestId" href="/workorder/manage/@order.Number?mode=Edit">@order.Number</a>
                 </td>
                 <td>@order.Creator?.GetFullName()</td>
                 <td>@order.Assignee?.GetFullName()</td>
@@ -84,7 +88,8 @@
         CreatorSelect,
         AssigneeSelect,
         StatusSelect,
-        SearchButton
+        SearchButton,
+        WorkOrderLink
     }
 
     public WorkOrderSearchModel Model { get; set; } = new();
