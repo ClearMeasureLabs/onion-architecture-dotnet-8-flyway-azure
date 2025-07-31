@@ -18,7 +18,6 @@ public class DataContext(IDatabaseConfiguration config) : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        new ChurchBulletinMap().Map(modelBuilder);
         new WorkOrderMap().Map(modelBuilder);
         new EmployeeMap().Map(modelBuilder);
         new RoleMap().Map(modelBuilder);

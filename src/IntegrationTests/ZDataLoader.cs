@@ -12,23 +12,6 @@ public class ZDataLoader
     public void LoadData()
     {
         new DatabaseTester().Clean();
-        var item1 = new ChurchBulletinItem {Date = new DateTime(2000, 1, 1), Name = "one", Place = "Sanctuary"};
-        var item2 = new ChurchBulletinItem {Date = new DateTime(2000, 1, 1), Name = "two", Place = "Room 205"};
-        var item3 = new ChurchBulletinItem {Date = new DateTime(2000, 1, 1), Name = "three", Place = "Nursery"};
-        var item4 = new ChurchBulletinItem {Date = new DateTime(2000, 1, 1), Name = "four", Place = "Youth room"};
-
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            context.AddRange(item1, item2, item3, item4);
-            context.SaveChanges();
-        }
-        
-        PopulateDatabase();
-    }
-
-    [Test]
-    public void PopulateDatabase()
-    {
         var lead = new Role("Facility Lead", true, false);
         var fulfillment = new Role("Fulfillment", false, true);
         var db = TestHost.GetRequiredService<DbContext>();
