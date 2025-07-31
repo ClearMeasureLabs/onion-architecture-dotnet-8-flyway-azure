@@ -1,6 +1,4 @@
-﻿using ClearMeasure.Bootcamp.Core.Model;
-using ClearMeasure.Bootcamp.IntegrationTests;
-using ClearMeasure.Bootcamp.UI.Shared;
+﻿using ClearMeasure.Bootcamp.UI.Shared;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
 
 namespace ClearMeasure.Bootcamp.AcceptanceTests.WorkOrders;
@@ -11,26 +9,23 @@ public class WorkOrderSearchTests : AcceptanceTestBase
     public async Task Setup()
     {
         var username = CurrentUser.UserName;
-        if (await Page.Locator($"text=Welcome {username}!").IsVisibleAsync())
-        {
-            return;
-        }
-        
+        if (await Page.Locator($"text=Welcome {username}!").IsVisibleAsync()) return;
+
         await Page.GotoAsync("/login");
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        
+
         // Fill in username only
         await Page.SelectOptionAsync("#employee", username);
-        
+
         // Submit form
         var loginButton = Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Login" });
         await loginButton.ClickAsync();
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        
+
         // Assert: Should be redirected to home and see welcome message
         await Expect(Page.Locator($"text=Welcome {username}!")).ToBeVisibleAsync();
     }
-    
+
     [Test]
     public async Task ShouldLoadDropDownsInitiallyOnLoad()
     {
@@ -50,20 +45,20 @@ public class WorkOrderSearchTests : AcceptanceTestBase
 
         var creatorOptions = await creatorSelect.Locator("option").AllAsync();
         creatorOptions.Count.ShouldBeGreaterThan(3);
-        
+
         var firstCreatorOption = await creatorOptions[0].TextContentAsync();
         firstCreatorOption.ShouldBe("All");
 
         var assigneeOptions = await assigneeSelect.Locator("option").AllAsync();
         assigneeOptions.Count.ShouldBeGreaterThan(3);
-        
+
         var firstAssigneeOption = await assigneeOptions[0].TextContentAsync();
         firstAssigneeOption.ShouldBe("All");
 
         // Verify status options are loaded (5 statuses + "All" option = 6 options)
         var statusOptions = await statusSelect.Locator("option").AllAsync();
         statusOptions.Count.ShouldBe(WorkOrderStatus.GetAllItems().Length + 1);
-        
+
         var firstStatusOption = await statusOptions[0].TextContentAsync();
         firstStatusOption.ShouldBe("All");
     }
@@ -96,7 +91,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         // Assert
         var workOrderTable = Page.Locator(".grid-data");
         await Expect(workOrderTable).ToBeVisibleAsync();
-        
+
         var workOrderRows = workOrderTable.Locator("tbody tr");
         var rowCount = await workOrderRows.CountAsync();
         rowCount.ShouldBeGreaterThanOrEqualTo(2);
@@ -126,7 +121,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
 
         var workOrderTable = Page.Locator(".grid-data");
         await Expect(workOrderTable).ToBeVisibleAsync();
-        
+
         var workOrderRows = workOrderTable.Locator("tbody tr");
         var rowCount = await workOrderRows.CountAsync();
         rowCount.ShouldBe(1);
@@ -161,7 +156,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
 
         var workOrderTable = Page.Locator(".grid-data");
         await Expect(workOrderTable).ToBeVisibleAsync();
-        
+
         var workOrderRows = workOrderTable.Locator("tbody tr");
         var rowCount = await workOrderRows.CountAsync();
         rowCount.ShouldBe(1);
@@ -195,7 +190,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
 
         var workOrderTable = Page.Locator(".grid-data");
         await Expect(workOrderTable).ToBeVisibleAsync();
-        
+
         var workOrderRows = workOrderTable.Locator("tbody tr");
         var rowCount = await workOrderRows.CountAsync();
         rowCount.ShouldBeGreaterThanOrEqualTo(1);
@@ -242,7 +237,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         // Assert
         var workOrderTable = Page.Locator(".grid-data");
         await Expect(workOrderTable).ToBeVisibleAsync();
-        
+
         var workOrderRows = workOrderTable.Locator("tbody tr");
         var rowCount = await workOrderRows.CountAsync();
         rowCount.ShouldBeGreaterThanOrEqualTo(1);
@@ -268,10 +263,10 @@ public class WorkOrderSearchTests : AcceptanceTestBase
 
         var workOrderTable = Page.Locator(".grid-data");
         await Expect(workOrderTable).ToBeVisibleAsync();
-        
+
         var firstWorkOrderLink = workOrderTable.Locator("tbody tr").First.Locator("td").First.Locator("a");
         var workOrderNumber = await firstWorkOrderLink.TextContentAsync();
-        
+
         if (!string.IsNullOrEmpty(workOrderNumber))
         {
             await firstWorkOrderLink.ClickAsync();
@@ -354,7 +349,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         headerCount.ShouldBe(5);
 
         var headerTexts = new List<string>();
-        for (int i = 0; i < headerCount; i++)
+        for (var i = 0; i < headerCount; i++)
         {
             var headerText = await headers.Nth(i).TextContentAsync();
             headerTexts.Add(headerText ?? "");
@@ -369,7 +364,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         // Check if there are data rows
         var dataRows = workOrderTable.Locator("tbody tr");
         var rowCount = await dataRows.CountAsync();
-        
+
         if (rowCount > 0)
         {
             // Verify first row has the expected number of columns
@@ -450,7 +445,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         var creatorSelect = Page.Locator($"#{WorkOrderSearch.Elements.CreatorSelect}");
         var assigneeSelect = Page.Locator($"#{WorkOrderSearch.Elements.AssigneeSelect}");
         var statusSelect = Page.Locator($"#{WorkOrderSearch.Elements.StatusSelect}");
-        
+
         (await creatorSelect.InputValueAsync()).ShouldBe("");
         (await assigneeSelect.InputValueAsync()).ShouldBe("");
         (await statusSelect.InputValueAsync()).ShouldBe("");

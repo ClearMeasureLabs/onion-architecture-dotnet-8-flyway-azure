@@ -1,5 +1,4 @@
-﻿using ClearMeasure.Bootcamp.Core.Model;
-using ClearMeasure.Bootcamp.Core.Model.StateCommands;
+﻿using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.UI.Shared;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
 
@@ -15,19 +14,17 @@ public class WorkOrderAssignTests : AcceptanceTestBase
         await Page.WaitForURLAsync("**/workorder/manage?mode=New");
     }
 
-    protected override bool? Headless { get; set; } = false;
-
     [Test]
     public async Task ShouldAssignEmployeeAndAssign()
     {
         await LoginAsCurrentUser();
 
-        WorkOrder order = await CreateAndSaveNewWorkOrder();
+        var order = await CreateAndSaveNewWorkOrder();
 
         await Click(nameof(WorkOrderSearch.Elements.WorkOrderLink) + order.Number);
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-        ILocator woNumberLocator = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
+        var woNumberLocator = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
         await woNumberLocator.WaitForAsync();
         (await woNumberLocator.InnerTextAsync())
             .ShouldBe(order.Number);
@@ -35,7 +32,7 @@ public class WorkOrderAssignTests : AcceptanceTestBase
         await Input(nameof(WorkOrderManage.Elements.Title), "newtitle");
         await Input(nameof(WorkOrderManage.Elements.Description), "newdesc");
         await Click(nameof(WorkOrderManage.Elements.CommandButton) + DraftToAssignedCommand.Name);
-        
+
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await Click(nameof(WorkOrderSearch.Elements.WorkOrderLink) + order.Number);
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
@@ -45,6 +42,7 @@ public class WorkOrderAssignTests : AcceptanceTestBase
 
         (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Title)).InputValueAsync()).ShouldBe("newtitle");
         (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Description)).InputValueAsync()).ShouldBe("newdesc");
-        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Assignee)).InputValueAsync()).ShouldBe(CurrentUser.UserName);
+        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Assignee)).InputValueAsync()).ShouldBe(CurrentUser
+            .UserName);
     }
 }

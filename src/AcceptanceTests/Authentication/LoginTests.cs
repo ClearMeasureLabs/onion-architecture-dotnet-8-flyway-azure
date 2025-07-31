@@ -1,7 +1,4 @@
-﻿using ClearMeasure.Bootcamp.Core.Model;
-using ClearMeasure.Bootcamp.IntegrationTests;
-
-namespace ClearMeasure.Bootcamp.AcceptanceTests.Authentication;
+﻿namespace ClearMeasure.Bootcamp.AcceptanceTests.Authentication;
 
 [TestFixture]
 public class LoginTests : AcceptanceTestBase
@@ -14,8 +11,9 @@ public class LoginTests : AcceptanceTestBase
 
         homer.ShouldNotBeNull();
     }
-    
-    [Test, Repeat(2)]
+
+    [Test]
+    [Repeat(2)]
     public async Task LoginWithUsernameOnlyForwardsToHomePage()
     {
         // Act: Go to home page

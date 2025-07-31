@@ -1,7 +1,6 @@
 ﻿using ClearMeasure.Bootcamp.UI.Client.Pages;
 using ClearMeasure.Bootcamp.UI.Shared.Components;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using ClearMeasure.Bootcamp.AcceptanceTests;
 
 namespace ClearMeasure.Bootcamp.AcceptanceTests.App;
 
@@ -17,6 +16,7 @@ public class ClientHealthCheckTests : AcceptanceTestBase
         var innerTextAsync = await statusSpan.InnerTextAsync();
         innerTextAsync.ShouldBe(nameof(HealthStatus.Healthy));
     }
+
     [Test]
     public async Task Should_NavigateToHealthCheck_WhenGearIconClicked()
     {

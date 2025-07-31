@@ -1,6 +1,5 @@
 ﻿using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model.StateCommands;
-using ClearMeasure.Bootcamp.IntegrationTests;
 using ClearMeasure.Bootcamp.UI.Shared;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
 
@@ -9,7 +8,7 @@ namespace ClearMeasure.Bootcamp.AcceptanceTests;
 public abstract class AcceptanceTestBase : PageTest
 {
     public Employee CurrentUser { get; set; } = null!;
-    protected virtual bool? Headless { get; set; } = false;
+    protected virtual bool? Headless { get; set; } = true;
     protected virtual bool LoadDataOnSetup { get; set; } = true;
     protected new IPage Page { get; private set; }
     public IBus Bus => TestHost.GetRequiredService<IBus>();
@@ -17,7 +16,7 @@ public abstract class AcceptanceTestBase : PageTest
     [SetUp]
     public async Task SetUpAsync()
     {
-        if(LoadDataOnSetup)
+        if (LoadDataOnSetup)
         {
             new ZDataLoader().LoadData();
             CurrentUser = new ZDataLoader().CreateUser();
@@ -63,7 +62,7 @@ public abstract class AcceptanceTestBase : PageTest
     {
         return new BrowserNewContextOptions
         {
-            BaseURL = ServerFixture.ApplicationLocalBaseURL,
+            BaseURL = ServerFixture.ApplicationLocalBaseURL
         };
     }
 
@@ -78,7 +77,7 @@ public abstract class AcceptanceTestBase : PageTest
         });
         TestContext.AddTestAttachment(Path.GetFullPath(fileName));
     }
-    
+
     protected TK Faker<TK>()
     {
         return TestHost.Faker<TK>();
@@ -88,10 +87,7 @@ public abstract class AcceptanceTestBase : PageTest
     {
         var username = CurrentUser.UserName;
         var welcomeText = Page.Locator($"text=Welcome {username}!");
-        if (await welcomeText.IsVisibleAsync())
-        {
-            return;
-        }
+        if (await welcomeText.IsVisibleAsync()) return;
 
         await Page.GotoAsync("/login");
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
@@ -118,6 +114,7 @@ public abstract class AcceptanceTestBase : PageTest
     {
         await Page.GetByTestId(elementTestId).FillAsync(value ?? "");
     }
+
     protected async Task Select(string elementTestId, string? value)
     {
         await Page.GetByTestId(elementTestId).SelectOptionAsync(value ?? "");
@@ -136,7 +133,8 @@ public abstract class AcceptanceTestBase : PageTest
         await Page.WaitForURLAsync("**/workorder/manage?mode=New");
         await TakeScreenshotAsync(1, "NewWorkOrderPage");
 
-        var newWorkOrderNumber = await Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber)).InnerTextAsync();
+        var newWorkOrderNumber =
+            await Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber)).InnerTextAsync();
         order.Number = newWorkOrderNumber;
         await Input(nameof(WorkOrderManage.Elements.Title), testTitle);
         await Input(nameof(WorkOrderManage.Elements.Description), testDescription);
