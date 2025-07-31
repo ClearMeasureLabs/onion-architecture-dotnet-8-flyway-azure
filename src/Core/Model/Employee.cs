@@ -30,7 +30,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
         public string EmailAddress { get; set; }
 
-        public ISet<Role> Roles { get; private set; } = new HashSet<Role>();
+        public ISet<Role> Roles { get; init; } = new HashSet<Role>();
 
         public int CompareTo(Employee? other)
         {

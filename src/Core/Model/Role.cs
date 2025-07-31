@@ -1,25 +1,16 @@
 namespace ClearMeasure.Bootcamp.Core.Model
 {
-    public class Role
+    public class Role(string name, bool canCreate, bool canFulfill) : EntityBase<Role>
     {
-        public Role(string name, bool canCreate, bool canFulfill)
+        public Role() : this(null!, false, false)
         {
-            Name = name;
-            CanCreateWorkOrder = canCreate;
-            CanFulfillWorkOrder = canFulfill;
         }
 
-        public Role()
-        {
-            Name = null!;
-        }
+        public string Name { get; set; } = name;
 
-        public string Name { get; set; }
+        public bool CanCreateWorkOrder { get; set; } = canCreate;
 
-        public Guid Id { get; set; }
-
-        public bool CanCreateWorkOrder { get; set; }
-
-        public bool CanFulfillWorkOrder { get; set; }
+        public bool CanFulfillWorkOrder { get; set; } = canFulfill;
+        public override Guid Id { get; set; }
     }
 }

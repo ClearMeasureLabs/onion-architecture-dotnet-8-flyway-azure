@@ -14,9 +14,10 @@ public class EmployeeQueryHandler(DataContext context)
 {
     public async Task<Employee> Handle(EmployeeByUserNameQuery request, CancellationToken cancellationToken = default)
     {
-        return await context.Set<Employee>()
+        Employee employee = await context.Set<Employee>()
             .Include("Roles")
             .SingleAsync(emp => emp.UserName == request.Username);
+        return employee;
     }
 
     public async Task<Employee[]> Handle(EmployeeGetAllQuery request, CancellationToken cancellationToken = default)

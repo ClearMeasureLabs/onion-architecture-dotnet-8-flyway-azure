@@ -22,11 +22,17 @@ public class RemotableRequestTests
         AssertRemotable(ObjectMother.Faker<WorkOrderSpecificationQuery>());
         AssertRemotable(WorkOrderStatus.Draft);
         AssertRemotable(ObjectMother.Faker<WorkOrder>());
-        AssertRemotable(ObjectMother.Faker<Employee>());
         AssertRemotable(new ServerHealthCheckQuery());
+        AssertRemotable(ObjectMother.Faker<Role>());
+        
+        Employee employee = ObjectMother.Faker<Employee>();
+        Role role = ObjectMother.Faker<Role>();
+        employee.AddRole(role);
+        var rehydratedRole = ((Employee)AssertRemotable(employee)).Roles.Single(role1 => role1 == role);
+        ObjectMother.AssertAllProperties(role, rehydratedRole);
     }
 
-    public static void AssertRemotable(object theObject)
+    public static object AssertRemotable(object theObject)
     {
         var json = new WebServiceMessage(theObject).GetJson();
         var message = JsonSerializer.Deserialize<WebServiceMessage>(json);
@@ -34,5 +40,6 @@ public class RemotableRequestTests
 
         ObjectMother.AssertAllProperties(theObject, rehydratedQuery);
         rehydratedQuery.ShouldBe(theObject);
+        return rehydratedQuery;
     }
 }

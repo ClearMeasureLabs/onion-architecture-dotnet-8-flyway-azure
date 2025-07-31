@@ -75,7 +75,8 @@ public abstract class AcceptanceTestBase : PageTest
     protected async Task LoginAsCurrentUser()
     {
         var username = CurrentUser.UserName;
-        if (await Page.Locator($"text=Welcome {username}!").IsVisibleAsync())
+        var welcomeText = Page.Locator($"text=Welcome {username}!");
+        if (await welcomeText.IsVisibleAsync())
         {
             return;
         }
@@ -92,6 +93,7 @@ public abstract class AcceptanceTestBase : PageTest
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         // Assert: Should be redirected to home and see welcome message
-        await Expect(Page.Locator($"text=Welcome {username}!")).ToBeVisibleAsync();
+        await Expect(welcomeText).ToBeVisibleAsync();
+        await welcomeText.DblClickAsync(); // causes the browser to finish DOM loading - HACK
     }
 }
