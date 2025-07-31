@@ -1,4 +1,5 @@
-﻿using ClearMeasure.Bootcamp.IntegrationTests;
+﻿using ClearMeasure.Bootcamp.Core;
+using ClearMeasure.Bootcamp.IntegrationTests;
 
 namespace ClearMeasure.Bootcamp.AcceptanceTests;
 
@@ -7,6 +8,7 @@ public abstract class AcceptanceTestBase : PageTest
     public Employee CurrentUser { get; set; }
     protected virtual bool? Headless { get; set; } = true;
     protected new IPage Page { get; private set; }
+    public IBus Bus => TestHost.GetRequiredService<IBus>();
 
 
     [SetUp]
@@ -96,5 +98,15 @@ public abstract class AcceptanceTestBase : PageTest
         // Assert: Should be redirected to home and see welcome message
         await Expect(welcomeText).ToBeVisibleAsync();
         await welcomeText.DblClickAsync(); // causes the browser to finish DOM loading - HACK
+    }
+
+    protected Task Click(string buttonTestId)
+    {
+        return Page.GetByTestId(buttonTestId).ClickAsync();
+    }
+
+    protected async Task Input(string elementTestId, string? value)
+    {
+        await Page.GetByTestId(elementTestId).FillAsync(value ?? "");
     }
 }

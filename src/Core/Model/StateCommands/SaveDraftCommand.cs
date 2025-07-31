@@ -5,6 +5,8 @@ namespace ClearMeasure.Bootcamp.Core.Model.StateCommands;
 public record SaveDraftCommand(WorkOrder WorkOrder, Employee CurrentUser) :
     StateCommandBase(WorkOrder, CurrentUser)
 {
+    public const string Name = "Save";
+
     public override WorkOrderStatus GetBeginStatus()
     {
         return WorkOrderStatus.Draft;
@@ -20,7 +22,7 @@ public record SaveDraftCommand(WorkOrder WorkOrder, Employee CurrentUser) :
         return currentUser == WorkOrder.Creator;
     }
 
-    public override string TransitionVerbPresentTense => "Save";
+    public override string TransitionVerbPresentTense => Name;
 
     public override string TransitionVerbPastTense => "Saved";
 
