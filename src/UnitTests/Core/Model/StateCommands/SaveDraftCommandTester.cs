@@ -19,7 +19,7 @@ public class SaveDraftCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Creator = employee;
 
-        var command = new SaveDraftCommand(order, employee, _calendar);
+        var command = new SaveDraftCommand(order, employee);
         Assert.That(command.IsValid(), Is.False);
     }
 
@@ -31,7 +31,7 @@ public class SaveDraftCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Creator = employee;
 
-        var command = new SaveDraftCommand(order, new Employee(), _calendar);
+        var command = new SaveDraftCommand(order, new Employee());
         Assert.That(command.IsValid(), Is.False);
     }
 
@@ -43,7 +43,7 @@ public class SaveDraftCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Creator = employee;
 
-        var command = new SaveDraftCommand(order, employee, _calendar);
+        var command = new SaveDraftCommand(order, employee);
         Assert.That(command.IsValid(), Is.True);
     }
 
@@ -56,20 +56,15 @@ public class SaveDraftCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Creator = employee;
 
-        var visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
+        var command = new SaveDraftCommand(order, employee);
+        command.Execute(new StateCommandContext());
 
-        var command = new SaveDraftCommand(order, employee, _calendar);
-        command.Execute(visitorStub, new LoggingNotifier());
-
-        visitorStub.SentMessage.ShouldBe("You have saved work order 123");
-        visitorStub.SavedWorkOrder.ShouldBe(order);
-        visitorStub.EditedWorkOrder.ShouldBe(order);
         Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Draft));
         Assert.That(order.CreatedDate, Is.Not.Null);
     }
 
     protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)
     {
-        return new SaveDraftCommand(order, employee, _calendar);
+        return new SaveDraftCommand(order, employee);
     }
 }

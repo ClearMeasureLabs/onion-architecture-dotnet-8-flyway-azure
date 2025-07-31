@@ -25,18 +25,12 @@ public class WorkflowFacilitatorTester
         var facilitator = new WorkflowFacilitator(new StubbedCalendar(new DateTime(2000, 1, 1)));
         var commands = facilitator.GetAllStateCommands(new WorkOrder(), new Employee());
 
-        Assert.That(commands.Length, Is.EqualTo(10));
+        Assert.That(commands.Length, Is.EqualTo(4));
 
         Assert.That(commands[0], Is.InstanceOf(typeof(SaveDraftCommand)));
         Assert.That(commands[1], Is.InstanceOf(typeof(DraftToAssignedCommand)));
-        Assert.That(commands[2], Is.InstanceOf(typeof(AssignedToDraftCommand)));
-        Assert.That(commands[3], Is.InstanceOf(typeof(AssignedToInProgressCommand)));
-        Assert.That(commands[4], Is.InstanceOf(typeof(InProgressToAssignedCommand)));
-        Assert.That(commands[5], Is.InstanceOf(typeof(InProgressToCompleteCommand)));
-        Assert.That(commands[6], Is.InstanceOf(typeof(CompleteToAssignedCommand)));
-        Assert.That(commands[7], Is.InstanceOf(typeof(AssignedToDraftForWithdrawCommand)));
-        Assert.That(commands[8], Is.InstanceOf(typeof(InProgressToCancelledCommand)));
-        Assert.That(commands[9], Is.InstanceOf(typeof(AssignedToCancelledCommand)));
+        Assert.That(commands[2], Is.InstanceOf(typeof(AssignedToInProgressCommand)));
+        Assert.That(commands[3], Is.InstanceOf(typeof(InProgressToCompleteCommand)));
     }
 
     [Test]
@@ -67,25 +61,13 @@ public class WorkflowFacilitatorTester
         }
     }
 
-    public class StubbedStateCommand : IStateCommand
+    public class StubbedStateCommand(bool isValid) : IStateCommand
     {
-        private readonly bool _isValid;
-
-        public StubbedStateCommand(bool isValid)
-        {
-            _isValid = isValid;
-        }
-
         public bool IsValid()
         {
-            return _isValid;
+            return isValid;
         }
-
-        public void Execute(IStateCommandVisitor commandVisitor, INotifier notifier)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public string TransitionVerbPresentTense => throw new NotImplementedException();
 
         public bool Matches(string commandName)
@@ -94,6 +76,11 @@ public class WorkflowFacilitatorTester
         }
 
         public WorkOrderStatus GetBeginStatus()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(StateCommandContext context)
         {
             throw new NotImplementedException();
         }

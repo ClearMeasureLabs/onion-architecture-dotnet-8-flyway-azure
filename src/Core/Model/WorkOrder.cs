@@ -4,13 +4,13 @@ namespace ClearMeasure.Bootcamp.Core.Model
 {
     public class WorkOrder : EntityBase<WorkOrder>
     {
-        private string _description = "";
+        private string? _description = "";
 
         public IList<AuditEntry> AuditEntries { get; set; } = new List<AuditEntry>();
 
-        public string Title { get; set; } = "";
+        public string? Title { get; set; } = "";
 
-        public string Description
+        public string? Description
         {
             get => _description;
             set => _description = getTruncatedString(value);
@@ -24,7 +24,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
         public Employee? Assignee { get; set; } = null; 
 
-        public string Number { get; set; } = null!;
+        public string? Number { get; set; } = null!;
 
         public string FriendlyStatus => getTextForStatus();
 
@@ -35,7 +35,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
         public DateTime? CompletedDate { get; set; }
 
-        private string getTruncatedString(string value)
+        private string? getTruncatedString(string? value)
         {
             if (value == null)
                 return string.Empty;

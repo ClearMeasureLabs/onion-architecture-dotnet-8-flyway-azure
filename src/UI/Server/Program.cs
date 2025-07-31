@@ -9,11 +9,11 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Host.UseLamar(registry => { registry.IncludeRegistry<UiServiceRegistry>(); });
+builder.Services.AddSingleton(TimeProvider.System);
 
 var ConnectionString = Environment.GetEnvironmentVariable("OpenTelemetry.ConnectionString");
 
-var resource = ResourceBuilder.CreateDefault()
-    .AddService("ChurchBulletin");
+var resource = ResourceBuilder.CreateDefault().AddService("ChurchBulletin");
 
 
 if (ConnectionString != null)

@@ -25,18 +25,10 @@ namespace ClearMeasure.Bootcamp.Core.Services.Impl
 		public virtual IStateCommand[] GetAllStateCommands(WorkOrder workOrder, Employee currentUser)
 		{
 			List<IStateCommand> commands = new List<IStateCommand>();
-            commands.Add(new SaveDraftCommand(workOrder, currentUser, _calendar));
-            commands.Add(new DraftToAssignedCommand(workOrder, currentUser, _calendar));
-            commands.Add(new AssignedToDraftCommand(workOrder, currentUser));
+            commands.Add(new SaveDraftCommand(workOrder, currentUser));
+            commands.Add(new DraftToAssignedCommand(workOrder, currentUser));
             commands.Add(new AssignedToInProgressCommand(workOrder, currentUser));
-            commands.Add(new InProgressToAssignedCommand(workOrder, currentUser));
-			commands.Add(new InProgressToCompleteCommand(workOrder, currentUser, _calendar));
-            commands.Add(new CompleteToAssignedCommand(workOrder, currentUser));
-commands.Add(new AssignedToDraftForWithdrawCommand(workOrder, currentUser));
-commands.Add(new InProgressToCancelledCommand(workOrder, currentUser));
-commands.Add(new AssignedToCancelledCommand(workOrder, currentUser));
-
-
+			commands.Add(new InProgressToCompleteCommand(workOrder, currentUser));
 
 			return commands.ToArray();	
 		}

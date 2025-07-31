@@ -1,13 +1,8 @@
-﻿using System.CodeDom;
-using AutoBogus;
-using AutoBogus.Conventions;
-using ClearMeasure.Bootcamp.Core;
-using ClearMeasure.Bootcamp.Core.Queries;
-using ClearMeasure.Bootcamp.DataAccess.Handlers;
+﻿using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.DataAccess.Mappings;
+using ClearMeasure.Bootcamp.UI.Server;
 using ClearMeasure.Bootcamp.UnitTests;
-using ClearMeasure.Bootcamp.Core.Model;
-using Microsoft.EntityFrameworkCore;
+using Lamar.Microsoft.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,6 +11,7 @@ namespace ClearMeasure.Bootcamp.IntegrationTests;
 
 public static class TestHost
 {
+    public static DateTimeOffset TestTime { get; set; } = new(2000, 1, 1, 1, 1, 1, TimeSpan.Zero);
     private static bool _dependenciesRegistered;
     private static readonly object Lock = new();
     private static IHost? _host;
@@ -40,6 +36,7 @@ public static class TestHost
     {
         var host = Host.CreateDefaultBuilder()
             .UseEnvironment("Development")
+            .UseLamar(registry => { registry.IncludeRegistry<UiServiceRegistry>(); })
             .ConfigureAppConfiguration((context, config) =>
             {
                 var env = context.HostingEnvironment;
@@ -52,16 +49,21 @@ public static class TestHost
             .ConfigureServices(s =>
             {
                 s.AddTransient<IDatabaseConfiguration, TestDatabaseConfiguration>();
-                s.AddTransient<IChurchBulletinItemByDateHandler, ChurchBulletinItemByDateHandler>();
-                s.AddTransient<ChurchBulletinItemByDateHandler>();
-                s.AddScoped<DbContext, DataContext>();
-                s.AddDbContextFactory<DataContext>();
-                s.AddDbContextFactory<DbContext>();
+                var stubTimeProvider = new StubTimeProvider(TestTime);
+                s.AddSingleton<TimeProvider>(stubTimeProvider);
             })
             .Build();
 
 
         _host = host;
+    }
+
+    private class StubTimeProvider(DateTimeOffset testTime) : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow()
+        {
+            return testTime;
+        }
     }
 
     private static void EnsureDependenciesRegistered()
@@ -79,7 +81,7 @@ public static class TestHost
 
     public static DataContext NewDbContext()
     {
-        return TestHost.GetRequiredService<DataContext>();
+        return GetRequiredService<DataContext>();
     }
 
     public static TK Faker<TK>()

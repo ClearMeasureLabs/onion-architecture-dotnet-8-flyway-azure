@@ -7,55 +7,33 @@ using ClearMeasure.Bootcamp.Core.Model;
 
 namespace ClearMeasure.Bootcamp.Core.Model.StateCommands
 {
-	public class DraftToAssignedCommand : StateCommandBase
-	{
-	    private ICalendar _calendar;
-
-	    public DraftToAssignedCommand(WorkOrder workOrder, Employee currentUser, ICalendar calendar) : base(workOrder, currentUser)
-	    {
-	        _calendar = calendar;
-	    }
-        
-	    public override WorkOrderStatus GetBeginStatus()
+	public class DraftToAssignedCommand(WorkOrder workOrder, Employee currentUser)
+        : StateCommandBase(workOrder, currentUser)
+    {
+        public override WorkOrderStatus GetBeginStatus()
 		{
 			return WorkOrderStatus.Draft;
 		}
 
-		protected override WorkOrderStatus GetEndStatus()
+        public override WorkOrderStatus GetEndStatus()
 		{
 			return WorkOrderStatus.Assigned;
 		}
 
-		protected override bool userCanExecute(Employee currentUser)
+        protected override bool UserCanExecute(Employee currentUser)
 		{
-			return currentUser == _workOrder.Creator;
+			return currentUser == WorkOrder.Creator;
 		}
 
-		public override string TransitionVerbPresentTense
-		{
-			get { return "Assign"; }
-		}
+        public override string TransitionVerbPresentTense => "Assign";
 
-		public override string TransitionVerbPastTense
-		{
-			get { return "Assigned"; }
-		}
+        public override string TransitionVerbPastTense => "Assigned";
 
-	    protected override void preExecute(IStateCommandVisitor commandVisitor)
+        public override void Execute(StateCommandContext context)
         {
-            _workOrder.AssignedDate = DateTime.Now;
-            _workOrder.Assignee = _currentUser;
-        }
-
-	    protected override void postExecute(IStateCommandVisitor commandVisitor)
-		{
-			commandVisitor.EditWorkOrder(_workOrder);
-		}
-
-        protected override void sendAssignedNotification(INotifier notifier)
-        {
-            Debug.Assert(_workOrder.Assignee != null, "_workOrder.Assignee != null");
-            notifier.SendAssignedNotification(string.Format("Work order {0} assigned to you.", _workOrder.Number), _workOrder.Assignee);
+            WorkOrder.AssignedDate = context.CurrentDateTime;
+            WorkOrder.Assignee = CurrentUser;
+            base.Execute(context);
         }
 	}
 }

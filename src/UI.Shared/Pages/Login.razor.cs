@@ -48,9 +48,9 @@ public partial class Login : AppComponentBase
         if (selectedEmployee != null)
         {
             // Successful login
-            AuthStateProvider.Login(loginModel.Username);
+            AuthStateProvider!.Login(loginModel.Username);
             EventBus.Notify(new UserLoggedInEvent(loginModel.Username));
-            NavigationManager.NavigateTo("/");
+            NavigationManager!.NavigateTo("/");
         }
         else
         {

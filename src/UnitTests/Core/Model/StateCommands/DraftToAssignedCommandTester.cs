@@ -19,7 +19,7 @@ public class DraftToAssignedCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Creator = employee;
 
-        var command = new DraftToAssignedCommand(order, employee, _calendar);
+        var command = new DraftToAssignedCommand(order, employee);
         Assert.That(command.IsValid(), Is.False);
     }
 
@@ -32,7 +32,7 @@ public class DraftToAssignedCommandTester : StateCommandBaseTester
         var differentEmployee = new Employee();
         order.Assignee = employee;
 
-        var command = new DraftToAssignedCommand(order, differentEmployee, _calendar);
+        var command = new DraftToAssignedCommand(order, differentEmployee);
         Assert.That(command.IsValid(), Is.False);
     }
 
@@ -44,7 +44,7 @@ public class DraftToAssignedCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Creator = employee;
 
-        var command = new DraftToAssignedCommand(order, employee, _calendar);
+        var command = new DraftToAssignedCommand(order, employee);
         Assert.That(command.IsValid(), Is.True);
     }
 
@@ -57,14 +57,8 @@ public class DraftToAssignedCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Creator = employee;
 
-        var visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
-
-        var command = new DraftToAssignedCommand(order, employee, _calendar);
-        command.Execute(visitorStub, new LoggingNotifier());
-
-        visitorStub.SentMessage.ShouldBe("You have assigned work order 123");
-        visitorStub.SavedWorkOrder.ShouldBe(order);
-        visitorStub.EditedWorkOrder.ShouldBe(order);
+        var command = new DraftToAssignedCommand(order, employee);
+        command.Execute(new StateCommandContext());
 
         Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Assigned));
         Assert.That(order.AssignedDate, Is.Not.Null);
@@ -72,6 +66,6 @@ public class DraftToAssignedCommandTester : StateCommandBaseTester
 
     protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)
     {
-        return new DraftToAssignedCommand(order, employee, new StubbedCalendar(DateTime.Now));
+        return new DraftToAssignedCommand(order, employee);
     }
 }

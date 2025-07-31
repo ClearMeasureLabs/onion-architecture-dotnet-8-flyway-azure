@@ -1,59 +1,31 @@
-using System;
-using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.Core.Services;
-using ClearMeasure.Bootcamp.Core.Model;
 
-namespace ClearMeasure.Bootcamp.Core.Model.StateCommands
+namespace ClearMeasure.Bootcamp.Core.Model.StateCommands;
+
+public class SaveDraftCommand(WorkOrder workOrder, Employee currentUser) : StateCommandBase(workOrder,
+    currentUser)
 {
-	public class SaveDraftCommand : StateCommandBase
-	{
-        private ICalendar _calendar;
-		
-	    public SaveDraftCommand(WorkOrder workOrder, Employee currentUser, ICalendar calendar) : base(workOrder, currentUser)
-	    {
-	        _calendar = calendar;
-	    }
+    public override WorkOrderStatus GetBeginStatus()
+    {
+        return WorkOrderStatus.Draft;
+    }
 
-	    public override WorkOrderStatus GetBeginStatus()
-		{
-			return WorkOrderStatus.Draft;
-		}
+    public override WorkOrderStatus GetEndStatus()
+    {
+        return WorkOrderStatus.Draft;
+    }
 
-		protected override WorkOrderStatus GetEndStatus()
-		{
-			return WorkOrderStatus.Draft;
-		}
+    protected override bool UserCanExecute(Employee currentUser)
+    {
+        return currentUser == WorkOrder.Creator;
+    }
 
-		protected override bool userCanExecute(Employee currentUser)
-		{
-			return currentUser == _workOrder.Creator;
-		}
+    public override string TransitionVerbPresentTense => "Save";
 
-		public override string TransitionVerbPresentTense
-		{
-			get { return "Save"; }
-		}
+    public override string TransitionVerbPastTense => "Saved";
 
-		public override string TransitionVerbPastTense
-		{
-			get { return "Saved"; }
-		}
-        protected override void preExecute(IStateCommandVisitor commandVisitor)
-        {
-           if (_workOrder.CreatedDate.Equals(null))
-           {
-               _workOrder.CreatedDate = DateTime.Now;
-           }
-        }
-		protected override void postExecute(IStateCommandVisitor commandVisitor)
-		{
-		   // _workOrder.CreatedDate = _calendar.GetCurrentTime();
-			commandVisitor.EditWorkOrder(_workOrder);
-		}
-
-        protected override void sendChangeStateNotification(INotifier notifier)
-        { 
-            //do nothing because state didn't change
-        }
-	}
+    public override void Execute(StateCommandContext context)
+    {
+        if (WorkOrder.CreatedDate.Equals(null)) WorkOrder.CreatedDate = context.CurrentDateTime;
+    }
 }

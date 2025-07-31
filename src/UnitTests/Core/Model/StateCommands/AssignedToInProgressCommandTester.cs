@@ -54,14 +54,9 @@ public class AssignedToInProgressCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Assignee = employee;
 
-        var visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
-
         var command = new AssignedToInProgressCommand(order, employee);
-        command.Execute(visitorStub, new LoggingNotifier());
+        command.Execute(new StateCommandContext());
 
-        visitorStub.SentMessage.ShouldBe("You have begun work order 123");
-        visitorStub.SavedWorkOrder.ShouldBe(order);
-        visitorStub.EditedWorkOrder.ShouldBe(order);
         Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.InProgress));
     }
 

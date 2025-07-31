@@ -1,43 +1,26 @@
-using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.Core.Services;
-using ClearMeasure.Bootcamp.Core.Model;
 
-namespace ClearMeasure.Bootcamp.Core.Model.StateCommands
+namespace ClearMeasure.Bootcamp.Core.Model.StateCommands;
+
+public class AssignedToInProgressCommand(WorkOrder workOrder, Employee currentUser)
+    : StateCommandBase(workOrder, currentUser)
 {
-	public class AssignedToInProgressCommand : StateCommandBase
-	{
-	    public AssignedToInProgressCommand(WorkOrder workOrder, Employee currentUser) : base(workOrder, currentUser)
-	    {
-	    }
+    public override WorkOrderStatus GetBeginStatus()
+    {
+        return WorkOrderStatus.Assigned;
+    }
 
-	    public override WorkOrderStatus GetBeginStatus()
-		{
-			return WorkOrderStatus.Assigned;
-		}
+    public override WorkOrderStatus GetEndStatus()
+    {
+        return WorkOrderStatus.InProgress;
+    }
 
-		protected override WorkOrderStatus GetEndStatus()
-		{
-			return WorkOrderStatus.InProgress;
-		}
+    protected override bool UserCanExecute(Employee currentUser)
+    {
+        return currentUser == WorkOrder.Assignee;
+    }
 
-		protected override bool userCanExecute(Employee currentUser)
-		{
-			return currentUser == _workOrder.Assignee;
-		}
+    public override string TransitionVerbPresentTense => "Begin";
 
-		public override string TransitionVerbPresentTense
-		{
-			get { return "Begin"; }
-		}
-
-		public override string TransitionVerbPastTense
-		{
-			get { return "Begun"; }
-		}
-
-		protected override void postExecute(IStateCommandVisitor commandVisitor)
-		{
-			commandVisitor.EditWorkOrder(_workOrder);
-		}
-	}
+    public override string TransitionVerbPastTense => "Begun";
 }

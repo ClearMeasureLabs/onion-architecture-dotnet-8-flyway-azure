@@ -1,54 +1,32 @@
-using System;
-using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.Core.Services;
-using ClearMeasure.Bootcamp.Core.Services.Impl;
-using ClearMeasure.Bootcamp.Core.Model;
 
-namespace ClearMeasure.Bootcamp.Core.Model.StateCommands
+namespace ClearMeasure.Bootcamp.Core.Model.StateCommands;
+
+public class InProgressToCompleteCommand(WorkOrder workOrder, Employee currentUser) : StateCommandBase(workOrder,
+    currentUser)
 {
-	public class InProgressToCompleteCommand : StateCommandBase
-	{
-        private ICalendar _calendar;
+    public override string TransitionVerbPresentTense => "Complete";
 
-	    public InProgressToCompleteCommand(WorkOrder workOrder, Employee currentUser, ICalendar calendar) : base(workOrder, currentUser)
-	    {
-	        _calendar = calendar;
-	    }
+    public override string TransitionVerbPastTense => "Completed";
 
-	    public override string TransitionVerbPresentTense
-		{
-			get { return "Complete"; }
-		}
+    public override WorkOrderStatus GetBeginStatus()
+    {
+        return WorkOrderStatus.InProgress;
+    }
 
-		public override string TransitionVerbPastTense
-		{
-			get { return "Completed"; }
-		}
+    public override WorkOrderStatus GetEndStatus()
+    {
+        return WorkOrderStatus.Complete;
+    }
 
-		public override WorkOrderStatus GetBeginStatus()
-		{
-			return WorkOrderStatus.InProgress;
-		}
+    protected override bool UserCanExecute(Employee currentUser)
+    {
+        return currentUser == WorkOrder.Assignee;
+    }
 
-		protected override WorkOrderStatus GetEndStatus()
-		{
-			return WorkOrderStatus.Complete;
-		}
-
-		protected override bool userCanExecute(Employee currentUser)
-		{
-			return currentUser == _workOrder.Assignee;
-		}
-
-        protected override void preExecute(IStateCommandVisitor commandVisitor)
-        {
-            _calendar.GetCurrentTime();
-            _workOrder.CompletedDate = DateTime.Now;
-        }
-		
-        protected override void postExecute(IStateCommandVisitor commandVisitor)
-		{
-			commandVisitor.EditWorkOrder(_workOrder);
-		}
-	}
+    public override void Execute(StateCommandContext context)
+    {
+        WorkOrder.CompletedDate = context.CurrentDateTime;
+        base.Execute(context);
+    }
 }

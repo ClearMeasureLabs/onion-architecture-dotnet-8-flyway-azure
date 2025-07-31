@@ -19,7 +19,7 @@ public class InProgressToCompleteCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Assignee = employee;
 
-        var command = new InProgressToCompleteCommand(order, employee, _calendar);
+        var command = new InProgressToCompleteCommand(order, employee);
         Assert.That(command.IsValid(), Is.False);
     }
 
@@ -31,7 +31,7 @@ public class InProgressToCompleteCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Assignee = employee;
 
-        var command = new InProgressToCompleteCommand(order, new Employee(), _calendar);
+        var command = new InProgressToCompleteCommand(order, new Employee());
         Assert.That(command.IsValid(), Is.False);
     }
 
@@ -43,7 +43,7 @@ public class InProgressToCompleteCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Assignee = employee;
 
-        var command = new InProgressToCompleteCommand(order, employee, _calendar);
+        var command = new InProgressToCompleteCommand(order, employee);
         Assert.That(command.IsValid(), Is.True);
     }
 
@@ -56,20 +56,15 @@ public class InProgressToCompleteCommandTester : StateCommandBaseTester
         var employee = new Employee();
         order.Assignee = employee;
 
-        var visitorStub = new VisitorStub(new StubbedCalendar(DateTime.Now));
+        var command = new InProgressToCompleteCommand(order, employee);
+        command.Execute(new StateCommandContext());
 
-        var command = new InProgressToCompleteCommand(order, employee, _calendar);
-        command.Execute(visitorStub, new LoggingNotifier());
-
-        visitorStub.SentMessage.ShouldBe("You have completed work order 123");
-        visitorStub.SavedWorkOrder.ShouldBe(order);
-        visitorStub.EditedWorkOrder.ShouldBe(order);
         Assert.That(order.Status, Is.EqualTo(WorkOrderStatus.Complete));
         Assert.That(order.CompletedDate, Is.Not.Null);
     }
 
     protected override StateCommandBase GetStateCommand(WorkOrder order, Employee employee)
     {
-        return new InProgressToCompleteCommand(order, employee, _calendar);
+        return new InProgressToCompleteCommand(order, employee);
     }
 }
