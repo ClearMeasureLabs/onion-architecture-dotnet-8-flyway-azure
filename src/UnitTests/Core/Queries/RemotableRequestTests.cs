@@ -53,12 +53,23 @@ public class RemotableRequestTests
 
     public static object AssertRemotable(object theObject)
     {
-        var json = new WebServiceMessage(theObject).GetJson();
-        var message = JsonSerializer.Deserialize<WebServiceMessage>(json);
-        var rehydratedQuery = message!.GetBodyObject();
+        var rehydratedQuery = SimulateRemoteObject(theObject);
 
         ObjectMother.AssertAllProperties(theObject, rehydratedQuery);
         rehydratedQuery.ShouldBe(theObject);
         return rehydratedQuery;
+    }
+
+    public static object SimulateRemoteObject(object theObject)
+    {
+        var json = new WebServiceMessage(theObject).GetJson();
+        var message = JsonSerializer.Deserialize<WebServiceMessage>(json);
+        var rehydratedQuery = message!.GetBodyObject();
+        return rehydratedQuery;
+    }
+
+    public static T SimulateRemoteObject<T>(T theObject)
+    {
+        return (T)SimulateRemoteObject((object)theObject! ?? throw new InvalidOperationException());
     }
 }

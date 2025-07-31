@@ -232,13 +232,11 @@ public class WorkOrderMappingTests
         rehydratedWorkOrder.AuditEntries.Count.ShouldBe(2);
 
         var firstAudit = rehydratedWorkOrder.AuditEntries[0];
-        firstAudit.Employee.Id.ShouldBe(creator.Id);
         firstAudit.ArchivedEmployeeName.ShouldBe(creator.GetFullName());
         firstAudit.BeginStatus.ShouldBe(WorkOrderStatus.Draft);
         firstAudit.EndStatus.ShouldBe(WorkOrderStatus.Assigned);
 
         var secondAudit = rehydratedWorkOrder.AuditEntries[1];
-        secondAudit.Employee.Id.ShouldBe(assignee.Id);
         secondAudit.ArchivedEmployeeName.ShouldBe(assignee.GetFullName());
         secondAudit.BeginStatus.ShouldBe(WorkOrderStatus.Assigned);
         secondAudit.EndStatus.ShouldBe(WorkOrderStatus.InProgress);
@@ -464,7 +462,6 @@ public class WorkOrderMappingTests
         {
             rehydratedWorkOrder = context.Set<WorkOrder>()
                 .Include(wo => wo.AuditEntries)
-                .ThenInclude(ae => ae.Employee)
                 .Single(wo => wo.Id == workOrder.Id);
         }
 

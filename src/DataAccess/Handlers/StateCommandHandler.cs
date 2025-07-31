@@ -1,5 +1,4 @@
-﻿using ClearMeasure.Bootcamp.Core.Model;
-using ClearMeasure.Bootcamp.Core.Model.StateCommands;
+﻿using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.Core.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +13,7 @@ public class StateCommandHandler(DbContext dbContext, TimeProvider time, ILogger
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Executing");
-        request.Execute(new StateCommandContext(){CurrentDateTime = time.GetUtcNow().DateTime});
+        request.Execute(new StateCommandContext { CurrentDateTime = time.GetUtcNow().DateTime });
 
         var order = request.WorkOrder;
         if (order.Assignee == order.Creator)

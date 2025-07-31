@@ -81,13 +81,6 @@ namespace ClearMeasure.Bootcamp.DataAccess.Mappings
                       .HasColumnType("datetime")
                       .IsRequired(true); // nullable in database
 
-                // Configure Employee relationship - nullable in database
-                entity.HasOne(e => e.Employee)
-                      .WithMany()
-                      .HasForeignKey("EmployeeId")
-                      .OnDelete(DeleteBehavior.Restrict)
-                      .IsRequired(true);
-
                 // Configure conversion for the WorkOrderStatus properties - nullable in database
                 entity.Property(e => e.BeginStatus)
                       .HasConversion(statusConverter)

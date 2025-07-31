@@ -1,22 +1,21 @@
 using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
-using ClearMeasure.Bootcamp.IntegrationTests;
 
-namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess
+namespace ClearMeasure.Bootcamp.IntegrationTests.DataAccess;
+
+[TestFixture]
+public class DatabaseTester
 {
-    [TestFixture]
-    public class DatabaseTester
+    [Test]
+    [Explicit]
+    [Category("DataSchema")]
+    public void CreateDatabaseSchema()
     {
-        [Test, Explicit, Category("DataSchema")]
-        public void CreateDatabaseSchema()
-        {
-            var context = TestHost.GetRequiredService<DbContext>();
-            context.Database.EnsureCreated();
-        }
+        var context = TestHost.GetRequiredService<DbContext>();
+        context.Database.EnsureCreated();
+    }
 
-        public void Clean()
-        {
-            new DatabaseEmptier(TestHost.GetRequiredService<DbContext>().Database).DeleteAllData();
-        }
+    public void Clean()
+    {
+        new DatabaseEmptier(TestHost.GetRequiredService<DbContext>().Database).DeleteAllData();
     }
 }

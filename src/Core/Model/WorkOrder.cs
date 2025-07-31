@@ -67,7 +67,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
             Status = status;
         }
 
-        public string GetTweetMessage()
+        public string GetMessage()
         {
             return "Work Order " + Number + " is now in Status " + Status;
         }

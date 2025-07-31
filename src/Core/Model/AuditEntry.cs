@@ -6,7 +6,6 @@ namespace ClearMeasure.Bootcamp.Core.Model
     {
         public AuditEntry()
         {
-            Employee = null!;
             Date = DateTime.MinValue;
             ArchivedEmployeeName = null!;
             BeginStatus = WorkOrderStatus.None;
@@ -15,14 +14,11 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
         public AuditEntry(Employee employee, DateTime date, WorkOrderStatus beginStatus, WorkOrderStatus endStatus)
         {
-            Employee = employee;
             Date = date;
             ArchivedEmployeeName = employee.GetFullName();
             BeginStatus = beginStatus;
             EndStatus = endStatus;
         }
-
-        public Employee Employee { get; set; }
 
         public DateTime Date { get; set; }
 
@@ -37,8 +33,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return Equals(Employee, other.Employee) &&
-                   TruncateToSeconds(Date) == TruncateToSeconds(other.Date) &&
+            return TruncateToSeconds(Date) == TruncateToSeconds(other.Date) &&
                    ArchivedEmployeeName == other.ArchivedEmployeeName &&
                    Equals(BeginStatus, other.BeginStatus) &&
                    Equals(EndStatus, other.EndStatus);
@@ -54,7 +49,7 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Employee, TruncateToSeconds(Date), ArchivedEmployeeName, BeginStatus, EndStatus);
+            return HashCode.Combine(TruncateToSeconds(Date), ArchivedEmployeeName, BeginStatus, EndStatus);
         }
 
         public static bool operator ==(AuditEntry? left, AuditEntry? right)

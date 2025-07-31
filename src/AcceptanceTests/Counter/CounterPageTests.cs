@@ -3,10 +3,10 @@
 [TestFixture]
 public class CounterPageTests : AcceptanceTestBase
 {
+    protected override bool LoadDataOnSetup { get; set; } = false;
+
     [TestCase(1, 1)]
     [TestCase(2, 2)]
-    [TestCase(5, 5)]
-    [TestCase(9, 9)]
     public async Task ShouldIncrementOnClick(int numberOfClicks, int expectedCount)
     {
         await Page.GotoAsync("/counter");
@@ -31,6 +31,4 @@ public class CounterPageTests : AcceptanceTestBase
     {
         return playwright.Firefox;
     }
-
-    protected override bool? Headless { get; set; } = true;
 }

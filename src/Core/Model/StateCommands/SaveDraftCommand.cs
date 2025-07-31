@@ -29,5 +29,6 @@ public record SaveDraftCommand(WorkOrder WorkOrder, Employee CurrentUser) :
     public override void Execute(StateCommandContext context)
     {
         if (WorkOrder.CreatedDate.Equals(null)) WorkOrder.CreatedDate = context.CurrentDateTime;
+        base.Execute(context);
     }
 }

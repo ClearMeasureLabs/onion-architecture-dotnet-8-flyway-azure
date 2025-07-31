@@ -8,17 +8,21 @@ namespace ClearMeasure.Bootcamp.AcceptanceTests;
 
 public abstract class AcceptanceTestBase : PageTest
 {
-    public Employee CurrentUser { get; set; }
-    protected virtual bool? Headless { get; set; } = true;
+    public Employee CurrentUser { get; set; } = null!;
+    protected virtual bool? Headless { get; set; } = false;
+    protected virtual bool LoadDataOnSetup { get; set; } = true;
     protected new IPage Page { get; private set; }
     public IBus Bus => TestHost.GetRequiredService<IBus>();
-
 
     [SetUp]
     public async Task SetUpAsync()
     {
-        new ZDataLoader().LoadData();
-        CurrentUser = new ZDataLoader().CreateUser();
+        if(LoadDataOnSetup)
+        {
+            new ZDataLoader().LoadData();
+            CurrentUser = new ZDataLoader().CreateUser();
+        }
+
         await Context.Tracing.StartAsync(new TracingStartOptions
         {
             Title = $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}",
@@ -51,6 +55,8 @@ public abstract class AcceptanceTestBase : PageTest
             Path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "playwright-traces",
                 $"{TestContext.CurrentContext.Test.ClassName}.{TestContext.CurrentContext.Test.Name}.zip")
         });
+
+        await Page.CloseAsync();
     }
 
     public override BrowserNewContextOptions ContextOptions()

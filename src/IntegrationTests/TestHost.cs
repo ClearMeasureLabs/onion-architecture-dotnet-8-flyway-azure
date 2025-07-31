@@ -6,6 +6,7 @@ using Lamar.Microsoft.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace ClearMeasure.Bootcamp.IntegrationTests;
 
@@ -25,11 +26,16 @@ public static class TestHost
         }
     }
 
-    public static T GetRequiredService<T>() where T : notnull
+    public static T GetRequiredService<T>(bool newScope = true) where T : notnull
     {
-        var serviceScope = Instance.Services.CreateScope();
-        var provider = serviceScope.ServiceProvider;
-        return provider.GetRequiredService<T>();
+        if (newScope)
+        {
+            var serviceScope = Instance.Services.CreateScope();
+            var provider = serviceScope.ServiceProvider;
+            return provider.GetRequiredService<T>();
+        }
+
+        return Instance.Services.GetRequiredService<T>();
     }
 
     private static void Initialize()
@@ -37,6 +43,7 @@ public static class TestHost
         var host = Host.CreateDefaultBuilder()
             .UseEnvironment("Development")
             .UseLamar(registry => { registry.IncludeRegistry<UiServiceRegistry>(); })
+            .ConfigureLogging(builder => builder.AddConsole().SetMinimumLevel(LogLevel.Debug))
             .ConfigureAppConfiguration((context, config) =>
             {
                 var env = context.HostingEnvironment;
