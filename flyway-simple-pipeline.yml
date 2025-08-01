@@ -92,7 +92,7 @@ stages:
       - task: Docker@2
         displayName: 'Build & Push Docker Image'
         inputs:
-          containerRegistry: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC-CR'
+          containerRegistry: 'onion8flywaytddworkshop'
           repository: 'ChurchBulletin.UI'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
@@ -129,7 +129,7 @@ stages:
                 AdditionalArguments: '--deploymenttimeout=00:30:00 --variable=ResourceGroupName:$(TDDResourceGroup) --variable=container_app_name:$(TDDAppName)' 
             - task: AzureCLI@2
               inputs:
-                azureSubscription: 'Onion-Architecture-Dotnet-8-Flyway-Azure-SC-ARM-MVP'
+                azureSubscription: 'Clear Measure Playground'
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
