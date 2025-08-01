@@ -59,10 +59,9 @@ stages:
           testRunTitle: 'CI Tests'
         continueOnError: true
         condition: succeededOrFailed()
-      - task: PublishCodeCoverageResults@1
+      - task: PublishCodeCoverageResults@2
         displayName: 'Publish code coverage UnitTests'
         inputs:
-          codeCoverageTool: Cobertura
           summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/**/In/**/coverage.cobertura.xml'
         
       - task: NuGetCommand@2

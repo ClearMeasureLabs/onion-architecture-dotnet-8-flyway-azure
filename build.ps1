@@ -144,19 +144,19 @@ Function PackageUI {
         & dotnet publish $uiProjectPath -nologo --no-restore --no-build -v $verbosity --configuration $projectConfig
     }
 	exec{
-		& octopus package nuget create --id "$projectName.UI" --title="$projectName.UI" --version $version --base-path $uiProjectPath\bin\$projectConfig\$framework\publish --out-folder $build_dir --title "$projectName.UI" --include "**" --author "Jeffrey Palermo" --description "A deployment package created from files on disk." --verbose --overwrite --no-prompt
+		& octopus package nuget create --id "$projectName.UI" --title="$projectName.UI" --version $version --base-path $uiProjectPath\bin\$projectConfig\$framework\publish --out-folder $build_dir --title "$projectName.UI" --include "**" --author "Jeffrey Palermo" --description "A deployment package created from files on disk." --overwrite --no-prompt
 	}
 }
 
 Function PackageDatabase {    
     exec{
-		& octopus package nuget create --id "$projectName.Database" --version $version --base-path $databaseProjectPath --out-folder $build_dir --title "$projectName.UI" --include "**" --author "Jeffrey Palermo" --description "A deployment package created from files on disk." --verbose --overwrite --no-prompt
+		& octopus package nuget create --id "$projectName.Database" --version $version --base-path $databaseProjectPath --out-folder $build_dir --title "$projectName.UI" --include "**" --author "Jeffrey Palermo" --description "A deployment package created from files on disk." --overwrite --no-prompt
 	}
 }
 
 Function PackageDatabaseFlyway {    
     exec{
-		& octopus package nuget create --id "$projectName.DatabaseFlyway" --version $version --base-path $databaseFlywayProjectPath --out-folder $build_dir --title "$projectName.UI" --include "**" --author "Jeffrey Palermo" --description "A deployment package created from files on disk." --verbose --overwrite --no-prompt
+		& octopus package nuget create --id "$projectName.DatabaseFlyway" --version $version --base-path $databaseFlywayProjectPath --out-folder $build_dir --title "$projectName.UI" --include "**" --author "Jeffrey Palermo" --description "A deployment package created from files on disk."--overwrite --no-prompt
 	}
 }
 
@@ -166,7 +166,7 @@ Function PackageAcceptanceTests {
         & dotnet publish $acceptanceTestProjectPath -nologo --no-restore -v $verbosity --configuration Debug
     }
 	exec{
-		& octopus package nuget create --id "$projectName.AcceptanceTests" --version $version --base-path $acceptanceTestProjectPath\bin\Debug\$framework\publish --out-folder $build_dir --title "$projectName.UI" --include "**" --author "Jeffrey Palermo" --description "A deployment package created from files on disk." --verbose --overwrite --no-prompt
+		& octopus package nuget create --id "$projectName.AcceptanceTests" --version $version --base-path $acceptanceTestProjectPath\bin\Debug\$framework\publish --out-folder $build_dir --title "$projectName.UI" --include "**" --author "Jeffrey Palermo" --description "A deployment package created from files on disk." --overwrite --no-prompt
 	}
 }
 
@@ -175,7 +175,7 @@ Function PackageScript {
         & dotnet publish $uiProjectPath -nologo --no-restore --no-build -v $verbosity --configuration $projectConfig
     }
 	exec{
-		& octopus package nuget create --id "$projectName.Script" --version $version --base-path $uiProjectPath --include "*.ps1" --out-folder $build_dir  --title "$projectName.UI" --include "**" --author "Jeffrey Palermo" --description "A deployment package created from files on disk." --verbose --overwrite --no-prompt
+		& octopus package nuget create --id "$projectName.Script" --version $version --base-path $uiProjectPath --include "*.ps1" --out-folder $build_dir  --title "$projectName.UI" --include "**" --author "Jeffrey Palermo" --description "A deployment package created from files on disk." --overwrite --no-prompt
 	}
 }
 
