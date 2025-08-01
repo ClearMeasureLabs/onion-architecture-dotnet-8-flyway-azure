@@ -379,6 +379,4 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         await statusSelect.DblClickAsync();
         await Expect(statusSelect).ToHaveValueAsync(order1.Status.Key);
     }
-
-    protected override bool? Headless { get; set; } = true;
 }

@@ -7,8 +7,6 @@ namespace ClearMeasure.Bootcamp.AcceptanceTests.WorkOrders;
 
 public class WorkOrderCompleteTests : AcceptanceTestBase
 {
-    protected override bool? Headless { get; set; } = false;
-
     [Test]
     public async Task ShouldCompleteWorkOrder()
     {
