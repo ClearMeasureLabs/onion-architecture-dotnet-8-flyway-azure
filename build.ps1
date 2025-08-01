@@ -144,19 +144,19 @@ Function PackageUI {
         & dotnet publish $uiProjectPath -nologo --no-restore --no-build -v $verbosity --configuration $projectConfig
     }
 	exec{
-		& octo pack --id="$projectName.UI" --version="$version" --base-path="$uiProjectPath\bin\$projectConfig\$framework\publish" --out-folder="$build_dir"  --overwrite
+		& octopus package nuget create --id "$projectName.UI" --version $version --base-path $uiProjectPath\bin\$projectConfig\$framework\publish --out-folder $build_dir  --overwrite
 	}
 }
 
 Function PackageDatabase {    
     exec{
-		& octo pack --id="$projectName.Database" --version="$version" --base-path="$databaseProjectPath" --out-folder="$build_dir" --overwrite
+		& octopus package nuget create --id "$projectName.Database" --version $version --base-path $databaseProjectPath --out-folder $build_dir --overwrite
 	}
 }
 
 Function PackageDatabaseFlyway {    
     exec{
-		& octo pack --id="$projectName.DatabaseFlyway" --version="$version" --base-path="$databaseFlywayProjectPath" --out-folder="$build_dir" --overwrite
+		& octopus package nuget create --id "$projectName.DatabaseFlyway" --version $version --base-path $databaseFlywayProjectPath --out-folder $build_dir --overwrite
 	}
 }
 
@@ -166,7 +166,7 @@ Function PackageAcceptanceTests {
         & dotnet publish $acceptanceTestProjectPath -nologo --no-restore -v $verbosity --configuration Debug
     }
 	exec{
-		& octo pack --id="$projectName.AcceptanceTests" --version="$version" --base-path="$acceptanceTestProjectPath\bin\Debug\$framework\publish" --out-folder="$build_dir" --overwrite
+		& octopus package nuget create --id "$projectName.AcceptanceTests" --version $version --base-path $acceptanceTestProjectPath\bin\Debug\$framework\publish --out-folder $build_dir --overwrite
 	}
 }
 
@@ -175,7 +175,7 @@ Function PackageScript {
         & dotnet publish $uiProjectPath -nologo --no-restore --no-build -v $verbosity --configuration $projectConfig
     }
 	exec{
-		& octo pack --id="$projectName.Script" --version="$version" --base-path="$uiProjectPath" --include="*.ps1" --out-folder="$build_dir" --overwrite
+		& octopus package nuget create --id "$projectName.Script" --version $version --base-path $uiProjectPath --include "*.ps1" --out-folder $build_dir  --overwrite
 	}
 }
 
