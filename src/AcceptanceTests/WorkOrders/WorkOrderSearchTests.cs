@@ -1,7 +1,6 @@
-﻿using ClearMeasure.Bootcamp.UI.Shared;
+﻿using System.Text.RegularExpressions;
+using ClearMeasure.Bootcamp.UI.Shared;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
-using Spectre.Console;
-using System.Text.RegularExpressions;
 
 namespace ClearMeasure.Bootcamp.AcceptanceTests.WorkOrders;
 
@@ -11,21 +10,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
     public async Task Setup()
     {
         var username = CurrentUser.UserName;
-        if (await Page.Locator($"text=Welcome {username}!").IsVisibleAsync()) return;
-
-        await Page.GotoAsync("/login");
-        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Fill in username only
-        await Page.SelectOptionAsync("#employee", username);
-
-        // Submit form
-        var loginButton = Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Login" });
-        await loginButton.ClickAsync();
-        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Assert: Should be redirected to home and see welcome message
-        await Expect(Page.Locator($"text=Welcome {username}!")).ToBeVisibleAsync();
+        await LoginAsCurrentUser();
     }
 
     [Test]
@@ -45,12 +30,13 @@ public class WorkOrderSearchTests : AcceptanceTestBase
         await Expect(assigneeSelect).ToBeVisibleAsync();
         await Expect(statusSelect).ToBeVisibleAsync();
 
+        var employeeCount = (await Bus.Send(new EmployeeGetAllQuery())).Length;
         var creatorOptions = creatorSelect.Locator("option");
-        await Expect(creatorOptions).ToHaveCountAsync(await creatorOptions.CountAsync());
+        await Expect(creatorOptions).ToHaveCountAsync(employeeCount + 1); //including the "all" option
         await Expect(creatorOptions.First).ToHaveTextAsync("All");
 
         var assigneeOptions = assigneeSelect.Locator("option");
-        await Expect(assigneeOptions).ToHaveCountAsync(await assigneeOptions.CountAsync());
+        await Expect(assigneeOptions).ToHaveCountAsync(employeeCount + 1);
         await Expect(assigneeOptions.First).ToHaveTextAsync("All");
 
         // Verify status options are loaded (5 statuses + "All" option = 6 options)
@@ -376,7 +362,7 @@ public class WorkOrderSearchTests : AcceptanceTestBase
 
         await Expect(creatorSelect).ToHaveValueAsync("");
         await Expect(assigneeSelect).ToHaveValueAsync("");
-        await Expect(statusSelect).ToHaveValueAsync("" );
+        await Expect(statusSelect).ToHaveValueAsync("");
 
         await Click(nameof(NavMenu.Elements.MyWorkOrders));
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
