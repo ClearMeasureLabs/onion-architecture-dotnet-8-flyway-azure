@@ -16,11 +16,15 @@ public class LogoutTests : AcceptanceTestBase
     {
         var newLink = Page.GetByTestId(nameof(NavMenu.Elements.NewWorkOrder));
         await newLink.WaitForAsync();
-        (await newLink.IsVisibleAsync()).ShouldBe(true);
+        await Expect(newLink).ToBeVisibleAsync();
 
         await Click(nameof(Logout.Elements.LogoutLink));
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        (await Page.GetByTestId(nameof(Login.Elements.LoginLink)).IsVisibleAsync()).ShouldBe(true);
-        (await Page.GetByTestId(nameof(NavMenu.Elements.NewWorkOrder)).IsVisibleAsync()).ShouldBe(false);
+        
+        var loginLink = Page.GetByTestId(nameof(Login.Elements.LoginLink));
+        await Expect(loginLink).ToBeVisibleAsync();
+        
+        var newWorkOrderLink = Page.GetByTestId(nameof(NavMenu.Elements.NewWorkOrder));
+        await Expect(newWorkOrderLink).ToBeHiddenAsync();
     }
 }

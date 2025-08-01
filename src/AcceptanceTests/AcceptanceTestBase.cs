@@ -10,6 +10,7 @@ public abstract class AcceptanceTestBase : PageTest
     public Employee CurrentUser { get; set; } = null!;
     protected virtual bool? Headless { get; set; } = true;
     protected virtual bool LoadDataOnSetup { get; set; } = true;
+    protected virtual bool SkipScreenshotsForSpeed { get; set; } = true;
     protected new IPage Page { get; private set; }
     public IBus Bus => TestHost.GetRequiredService<IBus>();
 
@@ -68,6 +69,8 @@ public abstract class AcceptanceTestBase : PageTest
 
     protected async Task TakeScreenshotAsync(int stepNumber, string? stepName = null)
     {
+        if (SkipScreenshotsForSpeed) return;
+
         var test = TestContext.CurrentContext.Test;
         var testName = test.ClassName + "-" + test.Name;
         var fileName = $"{testName}-{stepNumber}{stepName}.png";
@@ -93,11 +96,10 @@ public abstract class AcceptanceTestBase : PageTest
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         // Fill in username only
-        await Page.SelectOptionAsync("#employee", username);
+        await Select(nameof(Login.Elements.User), username);
 
         // Submit form
-        var loginButton = Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Login" });
-        await loginButton.ClickAsync();
+        await Click(nameof(Login.Elements.LoginButton));
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         // Assert: Should be redirected to home and see welcome message
@@ -105,21 +107,26 @@ public abstract class AcceptanceTestBase : PageTest
         await welcomeText.DblClickAsync(); // causes the browser to finish DOM loading - HACK
     }
 
-    protected async Task Click(string buttonTestId)
+    protected async Task Click(string elementTestId)
     {
-        ILocator byTestId = Page.GetByTestId(buttonTestId);
-        await byTestId.WaitForAsync();
-        await byTestId.ClickAsync();
+        ILocator clickableLocator = Page.GetByTestId(elementTestId);
+        await Expect(clickableLocator).ToBeVisibleAsync();
+        await clickableLocator.WaitForAsync();
+        await clickableLocator.ClickAsync();
     }
 
     protected async Task Input(string elementTestId, string? value)
     {
-        await Page.GetByTestId(elementTestId).FillAsync(value ?? "");
+        var locator = Page.GetByTestId(elementTestId);
+        await Expect(locator).ToBeVisibleAsync();
+        await locator.FillAsync(value ?? "");
     }
 
     protected async Task Select(string elementTestId, string? value)
     {
-        await Page.GetByTestId(elementTestId).SelectOptionAsync(value ?? "");
+        var locator = Page.GetByTestId(elementTestId);
+        await Expect(locator).ToBeVisibleAsync();
+        await locator.SelectOptionAsync(value ?? "");
     }
 
     protected async Task<WorkOrder> CreateAndSaveNewWorkOrder()

@@ -1,7 +1,7 @@
 @inject CustomAuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 
-<span>
+<span data-testid="@Elements.WelcomeText">
     Welcome
     @{
         var userIdentity = AuthStateProvider.GetUsername();
@@ -21,7 +21,8 @@
 
     public enum Elements
     {
-        LogoutLink
+        LogoutLink,
+        WelcomeText
     }
 
 }

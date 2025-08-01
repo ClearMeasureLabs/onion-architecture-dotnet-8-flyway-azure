@@ -26,8 +26,8 @@ public class WorkOrderAssignTests : AcceptanceTestBase
 
         var woNumberLocator = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
         await woNumberLocator.WaitForAsync();
-        (await woNumberLocator.InnerTextAsync())
-            .ShouldBe(order.Number);
+        await Expect(woNumberLocator).ToHaveTextAsync(order.Number);
+        
         await Select(nameof(WorkOrderManage.Elements.Assignee), CurrentUser.UserName);
         await Input(nameof(WorkOrderManage.Elements.Title), "newtitle");
         await Input(nameof(WorkOrderManage.Elements.Description), "newdesc");
@@ -38,11 +38,15 @@ public class WorkOrderAssignTests : AcceptanceTestBase
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         await woNumberLocator.WaitForAsync();
-        (await woNumberLocator.InnerTextAsync()).ShouldBe(order.Number);
+        await Expect(woNumberLocator).ToHaveTextAsync(order.Number);
 
-        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Title)).InputValueAsync()).ShouldBe("newtitle");
-        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Description)).InputValueAsync()).ShouldBe("newdesc");
-        (await Page.GetByTestId(nameof(WorkOrderManage.Elements.Assignee)).InputValueAsync()).ShouldBe(CurrentUser
-            .UserName);
+        var titleField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Title));
+        await Expect(titleField).ToHaveValueAsync("newtitle");
+        
+        var descriptionField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Description));
+        await Expect(descriptionField).ToHaveValueAsync("newdesc");
+        
+        var assigneeField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Assignee));
+        await Expect(assigneeField).ToHaveValueAsync(CurrentUser.UserName);
     }
 }
