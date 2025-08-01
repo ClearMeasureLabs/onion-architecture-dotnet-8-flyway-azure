@@ -37,7 +37,7 @@ public abstract class AcceptanceTestBase : PageTest
         var browser = await GetBrowserTypeInstance(playwright).LaunchAsync(new BrowserTypeLaunchOptions
         {
             Headless = Headless,
-            SlowMo = 20
+            SlowMo = 50
         });
 
         var context = await browser.NewContextAsync(ContextOptions());
@@ -116,9 +116,9 @@ public abstract class AcceptanceTestBase : PageTest
     protected async Task Click(string elementTestId)
     {
         ILocator clickableLocator = Page.GetByTestId(elementTestId);
-        if (await clickableLocator.IsVisibleAsync()) clickableLocator.FocusAsync();
-        if (await clickableLocator.IsVisibleAsync()) clickableLocator.BlurAsync();
-        if (await clickableLocator.IsVisibleAsync()) clickableLocator.ClickAsync();
+        if (await clickableLocator.IsVisibleAsync()) await clickableLocator.FocusAsync();
+        if (await clickableLocator.IsVisibleAsync()) await clickableLocator.BlurAsync();
+        if (await clickableLocator.IsVisibleAsync()) await clickableLocator.ClickAsync();
     }
 
     protected async Task Input(string elementTestId, string? value)

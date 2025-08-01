@@ -61,7 +61,7 @@ public class WorkOrderSaveDraftTests : AcceptanceTestBase
 
         var woNumberLocator = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
         await woNumberLocator.WaitForAsync();
-        await Expect(woNumberLocator).ToHaveTextAsync(order.Number);
+        await Expect(woNumberLocator).ToHaveTextAsync(order.Number!);
 
         await Select(nameof(WorkOrderManage.Elements.Assignee), CurrentUser.UserName);
         await Input(nameof(WorkOrderManage.Elements.Title), "newtitle");
@@ -73,7 +73,7 @@ public class WorkOrderSaveDraftTests : AcceptanceTestBase
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         await woNumberLocator.WaitForAsync();
-        await Expect(woNumberLocator).ToHaveTextAsync(order.Number);
+        await Expect(woNumberLocator).ToHaveTextAsync(order.Number!);
 
         var titleField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Title));
         await Expect(titleField).ToHaveValueAsync("newtitle");
