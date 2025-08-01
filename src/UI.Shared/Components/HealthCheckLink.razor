@@ -1,26 +1,10 @@
-@code {
+<a data-testid="@HealthCheckLink.Elements.HealthCheckLink" href="/_clienthealthcheck" class="health-check-link" title="Health Check">
+    <i class="bi bi-gear-fill" aria-hidden="true"></i> Health Check
+</a>
 
+@code {
     public enum Elements
     {
         HealthCheckLink
     }
-
 }
-    <style>
-    .health-check-link {
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-        color: #ccc;
-        font-size: 16px;
-        text-decoration: none;
-    }
-    
-    .health-check-link:hover {
-        color: #fff;
-    }
-</style>
-
-<a data-testid="@HealthCheckLink.Elements.HealthCheckLink" href="/_clienthealthcheck" class="health-check-link" title="Health Check">
-    <span class="oi oi-cog" aria-hidden="true"></span>
-</a>

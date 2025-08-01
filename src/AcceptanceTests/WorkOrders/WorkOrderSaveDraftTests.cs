@@ -88,7 +88,7 @@ public class WorkOrderSaveDraftTests : AcceptanceTestBase
         var assigneeField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Assignee));
         await Expect(assigneeField).ToHaveValueAsync(CurrentUser.UserName);
 
-        WorkOrder rehyratedOrder = await Bus.Send(new WorkOrderByNumberQuery(order.Number)) ?? throw new InvalidOperationException();
+        WorkOrder rehyratedOrder = await Bus.Send(new WorkOrderByNumberQuery(order.Number!)) ?? throw new InvalidOperationException();
         await Expect(Page.GetByTestId(nameof(WorkOrderManage.Elements.CreatedDate)))
             .ToHaveTextAsync(rehyratedOrder.CreatedDate!.Value.ToString(CultureInfo.CurrentCulture));
     }
