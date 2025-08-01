@@ -11,17 +11,20 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                <i class="bi bi-house-door-fill nav-icon" aria-hidden="true"></i>
+                <span class="nav-text">Home</span>
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+                <i class="bi bi-calculator-fill nav-icon" aria-hidden="true"></i>
+                <span class="nav-text">Counter</span>
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+                <i class="bi bi-cloud-arrow-down-fill nav-icon" aria-hidden="true"></i>
+                <span class="nav-text">Fetch data</span>
             </NavLink>
         </div>
         
@@ -29,7 +32,8 @@
         {
             <div class="nav-item px-3">
                 <NavLink data-testid="@Elements.NewWorkOrder" class="nav-link" href="workorder/manage?mode=New">
-                    <span class="oi oi-plus" aria-hidden="true"></span> New
+                    <i class="bi bi-file-earmark-plus-fill nav-icon" aria-hidden="true"></i>
+                    <span class="nav-text">New Work Order</span>
                 </NavLink>
             </div>
         }
@@ -38,27 +42,32 @@
         {
             <div class="nav-item px-3">
                 <NavLink data-testid="@Elements.Search" class="nav-link" href="workorder/search">
-                    <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Search
+                    <i class="bi bi-search nav-icon" aria-hidden="true"></i>
+                    <span class="nav-text">Search</span>
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink data-testid="@Elements.MyWorkOrders" class="nav-link" href="@($"workorder/search?Creator={CurrentUser?.UserName}")">
-                    <span class="oi oi-list" aria-hidden="true"></span> My Work Orders
+                    <i class="bi bi-person-badge-fill nav-icon" aria-hidden="true"></i>
+                    <span class="nav-text">My Work Orders</span>
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink data-testid="@Elements.WorkOrdersAssignedToMe" class="nav-link" href="@($"workorder/search?Assignee={CurrentUser?.UserName}")">
-                    <span class="oi oi-task" aria-hidden="true"></span> Work Orders Assigned To Me
+                    <i class="bi bi-person-check-fill nav-icon" aria-hidden="true"></i>
+                    <span class="nav-text">Assigned To Me</span>
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink data-testid="@Elements.AllAssignedWorkOrders" class="nav-link" href="@($"workorder/search?Status={WorkOrderStatus.Assigned.Key}")">
-                    <span class="oi oi-clock" aria-hidden="true"></span> All Assigned Work Orders
+                    <i class="bi bi-clipboard2-check-fill nav-icon" aria-hidden="true"></i>
+                    <span class="nav-text">All Assigned</span>
                 </NavLink>
             </div>
             <div class="nav-item px-3">
                 <NavLink data-testid="@Elements.AllWorkOrdersInProgress" class="nav-link" href="@($"workorder/search?Status={WorkOrderStatus.InProgress.Key}")">
-                    <span class="oi oi-clock" aria-hidden="true"></span> All Work Orders In Progress
+                    <i class="bi bi-gear-fill nav-icon" aria-hidden="true"></i>
+                    <span class="nav-text">In Progress</span>
                 </NavLink>
             </div>
         }
