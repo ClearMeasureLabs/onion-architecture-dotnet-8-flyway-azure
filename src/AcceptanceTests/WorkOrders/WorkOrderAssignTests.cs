@@ -1,19 +1,12 @@
 ﻿using ClearMeasure.Bootcamp.Core.Model.StateCommands;
-using ClearMeasure.Bootcamp.UI.Shared;
+using ClearMeasure.Bootcamp.Core.Queries;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
+using System.Globalization;
 
 namespace ClearMeasure.Bootcamp.AcceptanceTests.WorkOrders;
 
 public class WorkOrderAssignTests : AcceptanceTestBase
 {
-    [Test]
-    public async Task ShouldLoadScreenForNewWorkOrder()
-    {
-        await LoginAsCurrentUser();
-        await Page.GetByTestId(nameof(NavMenu.Elements.NewWorkOrder)).ClickAsync();
-        await Page.WaitForURLAsync("**/workorder/manage?mode=New");
-    }
-
     [Test]
     public async Task ShouldAssignEmployeeAndAssign()
     {
@@ -48,5 +41,9 @@ public class WorkOrderAssignTests : AcceptanceTestBase
         
         var assigneeField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Assignee));
         await Expect(assigneeField).ToHaveValueAsync(CurrentUser.UserName);
+
+        WorkOrder rehyratedOrder = await Bus.Send(new WorkOrderByNumberQuery(order.Number!)) ?? throw new InvalidOperationException();
+        await Expect(Page.GetByTestId(nameof(WorkOrderManage.Elements.AssignedDate)))
+            .ToHaveTextAsync(rehyratedOrder.AssignedDate!.Value.ToString(CultureInfo.CurrentCulture));
     }
 }

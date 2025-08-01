@@ -13,22 +13,16 @@ namespace ClearMeasure.Bootcamp.UI.Shared.Models
         
         public string? Status { get; set; }
         
-        public string? CreatorUserName { get; set; }
-
-        [DisplayName("Creator")]
         public string? CreatorFullName { get; set; }
 
-        [DisplayName("Assigned To")]
         public string? AssignedToUserName { get; set; }
         
         [Required]
         public string? Title { get; set; }
 
         [Required]
-        [DataType(DataType.MultilineText)]
         public string? Description { get; set; }
 
-        public bool CanReassign { get; set; }
         public bool IsReadOnly { get; set; }
 
         public string? AssignedDate { get; set; }
@@ -37,7 +31,6 @@ namespace ClearMeasure.Bootcamp.UI.Shared.Models
         
         public string? CreatedDate { get; set; }
 
-        [DisplayName("Room Number")]
         public string? RoomNumber { get; set; }
     }
 }

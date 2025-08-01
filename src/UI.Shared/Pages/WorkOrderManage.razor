@@ -1,6 +1,8 @@
 <div class="work-order-container">
     <div class="work-order-header">
-        <h2>Work Order #<span data-testid="@Elements.WorkOrderNumber">@Model.WorkOrderNumber</span> (@Model.Status)</h2>
+        <h2>Work Order #<span data-testid="@Elements.WorkOrderNumber">@Model.WorkOrderNumber</span>
+            (<span data-testid="@Elements.Status">@Model.Status</span>)
+        </h2>
     </div>
 
     <EditForm Model="@Model" OnValidSubmit="HandleSubmit">
@@ -13,7 +15,6 @@
                     <label class="form-label">Creator:</label>
                     <div>
                         <span class="value">@Model.CreatorFullName</span>
-                        <input type="hidden" @bind-value="Model.CreatorUserName"/>
                     </div>
                 </div>
 
@@ -59,14 +60,16 @@
             </div>
 
             <div class="readonly-info">
+                <span class="label">Created Date:</span>
+                <span data-testid="@Elements.CreatedDate" class="value">@Model.CreatedDate</span>
+
                 <span class="label">Assigned Date:</span>
                 <span data-testid="@Elements.AssignedDate" class="value">@Model.AssignedDate</span>
-
+                
                 <span class="label">Completed Date:</span>
                 <span data-testid="@Elements.CompletedDate" class="value">@Model.CompletedDate</span>
 
-                <span class="label">Created Date:</span>
-                <span data-testid="@Elements.CreatedDate" class="value">@Model.CreatedDate</span>
+
             </div>
         </div>
 
@@ -107,6 +110,7 @@
         AuditEntriesTable,
         ReadOnlyMessage,
         CommandButton,
-        WorkOrderNumber
+        WorkOrderNumber,
+        Status
     }
 }

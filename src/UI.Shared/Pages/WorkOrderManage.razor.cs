@@ -64,7 +64,6 @@ public partial class WorkOrderManage : AppComponentBase
             Mode = mode,
             WorkOrderNumber = workOrder.Number,
             Status = workOrder.Status!.FriendlyName,
-            CreatorUserName = workOrder.Creator!.UserName,
             CreatorFullName = workOrder.Creator!.GetFullName(),
             AssignedToUserName = workOrder.Assignee?.UserName,
             Title = workOrder.Title,

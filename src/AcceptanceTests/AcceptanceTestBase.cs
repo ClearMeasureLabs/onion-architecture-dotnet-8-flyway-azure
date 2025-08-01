@@ -1,8 +1,10 @@
 ﻿using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model.StateCommands;
+using ClearMeasure.Bootcamp.Core.Queries;
 using ClearMeasure.Bootcamp.UI.Shared;
 using ClearMeasure.Bootcamp.UI.Shared.Components;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
+using System.Globalization;
 using Login = ClearMeasure.Bootcamp.UI.Shared.Pages.Login;
 
 namespace ClearMeasure.Bootcamp.AcceptanceTests;
@@ -167,6 +169,36 @@ public abstract class AcceptanceTestBase : PageTest
         await Click(saveButtonTestId);
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
+        WorkOrder rehyratedOrder = await Bus.Send(new WorkOrderByNumberQuery(order.Number)) ?? throw new InvalidOperationException();
+        
+        return rehyratedOrder;
+    }
+
+    protected async Task<WorkOrder> ClickWorkOrderNumberFromSearchPage(WorkOrder order)
+    {
+        await Click(nameof(WorkOrderSearch.Elements.WorkOrderLink) + order.Number);
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         return order;
+    }
+
+    protected async Task<WorkOrder> AssignExistingWorkOrder(WorkOrder order, string username)
+    {
+        await Click(nameof(WorkOrderSearch.Elements.WorkOrderLink) + order.Number);
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        var woNumberLocator = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
+        await woNumberLocator.WaitForAsync();
+        await Expect(woNumberLocator).ToHaveTextAsync(order.Number!);
+        
+        await Select(nameof(WorkOrderManage.Elements.Assignee), username);
+        await Input(nameof(WorkOrderManage.Elements.Title), order.Title);
+        await Input(nameof(WorkOrderManage.Elements.Description), order.Description);
+        await Click(nameof(WorkOrderManage.Elements.CommandButton) + DraftToAssignedCommand.Name);
+
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        WorkOrder rehyratedOrder = await Bus.Send(new WorkOrderByNumberQuery(order.Number!)) ?? throw new InvalidOperationException();
+
+        return rehyratedOrder;
     }
 }
