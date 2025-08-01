@@ -37,7 +37,7 @@ public abstract class AcceptanceTestBase : PageTest
         var browser = await GetBrowserTypeInstance(playwright).LaunchAsync(new BrowserTypeLaunchOptions
         {
             Headless = Headless,
-            SlowMo = 50
+            SlowMo = 100//milliseconds delay to thwart race conditions (slower computer needs higher number)
         });
 
         var context = await browser.NewContextAsync(ContextOptions());
@@ -115,15 +115,21 @@ public abstract class AcceptanceTestBase : PageTest
 
     protected async Task Click(string elementTestId)
     {
-        ILocator clickableLocator = Page.GetByTestId(elementTestId);
-        if (await clickableLocator.IsVisibleAsync()) await clickableLocator.FocusAsync();
-        if (await clickableLocator.IsVisibleAsync()) await clickableLocator.BlurAsync();
-        if (await clickableLocator.IsVisibleAsync()) await clickableLocator.ClickAsync();
+        ILocator locator = Page.GetByTestId(elementTestId);
+        if(!await locator.IsVisibleAsync()) await locator.WaitForAsync();
+        if (!await locator.IsVisibleAsync()) await locator.WaitForAsync();
+        if (!await locator.IsVisibleAsync()) await locator.WaitForAsync();
+        if (await locator.IsVisibleAsync()) await locator.FocusAsync();
+        if (await locator.IsVisibleAsync()) await locator.BlurAsync();
+        if (await locator.IsVisibleAsync()) await locator.ClickAsync();
     }
 
     protected async Task Input(string elementTestId, string? value)
     {
         var locator = Page.GetByTestId(elementTestId);
+        if (!await locator.IsVisibleAsync()) await locator.WaitForAsync();
+        if (!await locator.IsVisibleAsync()) await locator.WaitForAsync();
+        if (!await locator.IsVisibleAsync()) await locator.WaitForAsync();
         await Expect(locator).ToBeVisibleAsync();
         await locator.FillAsync(value ?? "");
     }
