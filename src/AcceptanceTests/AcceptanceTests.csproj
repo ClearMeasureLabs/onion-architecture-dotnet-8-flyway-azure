@@ -43,4 +43,8 @@
 		<ProjectReference Include="..\IntegrationTests\IntegrationTests.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Counter\" />
+	</ItemGroup>
+
 </Project>
