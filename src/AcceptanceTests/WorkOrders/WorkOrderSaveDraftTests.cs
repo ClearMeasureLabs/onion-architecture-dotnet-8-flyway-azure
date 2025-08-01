@@ -18,8 +18,6 @@ public class WorkOrderSaveDraftTests : AcceptanceTestBase
         await Page.WaitForURLAsync("**/workorder/manage?mode=New");
     }
 
-    // protected override bool? Headless { get; set; } = false;
-
     [Test]
     public async Task ShouldCreateNewWorkOrderAndVerifyOnSearchScreen()
     {
@@ -54,8 +52,6 @@ public class WorkOrderSaveDraftTests : AcceptanceTestBase
         await Expect(Page.GetByTestId(nameof(WorkOrderManage.Elements.CreatedDate)))
             .ToHaveTextAsync(rehyratedOrder.CreatedDate!.Value.ToString(CultureInfo.CurrentCulture));
     }
-
-    protected override bool? Headless { get; set; } = false;
 
     [Test]
     public async Task ShouldAssignEmployeeAndSave()

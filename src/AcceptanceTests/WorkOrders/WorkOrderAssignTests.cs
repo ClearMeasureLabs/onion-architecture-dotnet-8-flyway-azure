@@ -40,6 +40,7 @@ public class WorkOrderAssignTests : AcceptanceTestBase
         await Expect(descriptionField).ToHaveValueAsync("newdesc");
         
         var assigneeField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Assignee));
+        await Expect(assigneeField).ToBeDisabledAsync();
         await Expect(assigneeField).ToHaveValueAsync(CurrentUser.UserName);
 
         WorkOrder rehyratedOrder = await Bus.Send(new WorkOrderByNumberQuery(order.Number!)) ?? throw new InvalidOperationException();

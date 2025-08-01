@@ -23,7 +23,10 @@
                     <div>
                         @if (!Model.IsReadOnly)
                         {
-                            <InputSelect data-testid="@Elements.Assignee" id="AssignedToUserName" @bind-Value="Model.AssignedToUserName" class="form-control input-select">
+                            <InputSelect data-testid="@Elements.Assignee" id="AssignedToUserName" 
+                                         @bind-Value="Model.AssignedToUserName"
+                                         disabled="@(Model.WorkOrder != null && !Model.WorkOrder.CanReassign())"
+                                         class="form-control input-select">
                                 @foreach (var user in UserOptions)
                                 {
                                     <option value="@user.Value">@user.Text</option>

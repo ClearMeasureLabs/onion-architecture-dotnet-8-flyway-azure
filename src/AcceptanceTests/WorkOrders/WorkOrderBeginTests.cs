@@ -13,7 +13,7 @@ public class WorkOrderBeginTests : AcceptanceTestBase
         await LoginAsCurrentUser();
 
         var order = await CreateAndSaveNewWorkOrder();
-        
+        order = await ClickWorkOrderNumberFromSearchPage(order);
         order = await AssignExistingWorkOrder(order, CurrentUser.UserName);
         order = await ClickWorkOrderNumberFromSearchPage(order);
 

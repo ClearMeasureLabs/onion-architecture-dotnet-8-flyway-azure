@@ -88,8 +88,6 @@ public class StateCommandHandlerForAssignTests : IntegratedTestBase
             await context.SaveChangesAsync();
         }
 
-        //TODO another instance of Creator Employee is already being tracked by the DBcontext, and the IDs are the same.
-        //Get another instance of Employee from the context and then clone it.
         WorkOrder remotedOrder = (WorkOrder)RemotableRequestTests.SimulateRemoteObject(o);
         var command = new DraftToAssignedCommand(remotedOrder, currentUser);
 

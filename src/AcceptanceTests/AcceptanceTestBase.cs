@@ -183,9 +183,6 @@ public abstract class AcceptanceTestBase : PageTest
 
     protected async Task<WorkOrder> AssignExistingWorkOrder(WorkOrder order, string username)
     {
-        await Click(nameof(WorkOrderSearch.Elements.WorkOrderLink) + order.Number);
-        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
         var woNumberLocator = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
         await woNumberLocator.WaitForAsync();
         await Expect(woNumberLocator).ToHaveTextAsync(order.Number!);
@@ -199,6 +196,36 @@ public abstract class AcceptanceTestBase : PageTest
 
         WorkOrder rehyratedOrder = await Bus.Send(new WorkOrderByNumberQuery(order.Number!)) ?? throw new InvalidOperationException();
 
+        return rehyratedOrder;
+    }
+
+    protected async Task<WorkOrder> BeginExistingWorkOrder(WorkOrder order)
+    {
+        var woNumberLocator = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
+        await woNumberLocator.WaitForAsync();
+        await Expect(woNumberLocator).ToHaveTextAsync(order.Number!);
+
+        await Input(nameof(WorkOrderManage.Elements.Title), order.Title);
+        await Input(nameof(WorkOrderManage.Elements.Description), order.Description);
+        await Click(nameof(WorkOrderManage.Elements.CommandButton) + AssignedToInProgressCommand.Name);
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        WorkOrder rehyratedOrder = await Bus.Send(new WorkOrderByNumberQuery(order.Number!)) ?? throw new InvalidOperationException();
+
+        return rehyratedOrder;
+    }
+
+    protected async Task<WorkOrder> CompleteExistingWorkOrder(WorkOrder order)
+    {
+        var woNumberLocator = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
+        await woNumberLocator.WaitForAsync();
+        await Expect(woNumberLocator).ToHaveTextAsync(order.Number!);
+
+        await Input(nameof(WorkOrderManage.Elements.Title), order.Title);
+        await Input(nameof(WorkOrderManage.Elements.Description), order.Description);
+        await Click(nameof(WorkOrderManage.Elements.CommandButton) + InProgressToCompleteCommand.Name);
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        WorkOrder rehyratedOrder = await Bus.Send(new WorkOrderByNumberQuery(order.Number!)) ?? throw new InvalidOperationException();
         return rehyratedOrder;
     }
 }

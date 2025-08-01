@@ -67,5 +67,10 @@ namespace ClearMeasure.Bootcamp.Core.Model
         {
             return "Work Order " + Number + " is now in Status " + Status;
         }
+
+        public bool CanReassign()
+        {
+            return Status == WorkOrderStatus.Draft;
+        }
     }
 }
