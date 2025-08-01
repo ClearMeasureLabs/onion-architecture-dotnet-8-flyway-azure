@@ -1,124 +1,104 @@
-<div class="work-order-page">
-    <div class="work-order-container">
-        <div class="work-order-header">
-            <h2><i class="bi bi-tools" aria-hidden="true"></i> Work Order #<span data-testid="@Elements.WorkOrderNumber">@Model.WorkOrderNumber</span>
-                (<span data-testid="@Elements.Status">@Model.Status</span>)
-            </h2>
-        </div>
+<div class="work-order-container">
+    <div class="work-order-header">
+        <h2>Work Order #<span data-testid="@Elements.WorkOrderNumber">@Model.WorkOrderNumber</span>
+            (<span data-testid="@Elements.Status">@Model.Status</span>)
+        </h2>
+    </div>
 
-        <EditForm Model="@Model" OnValidSubmit="HandleSubmit">
-            <DataAnnotationsValidator/>
-            <ValidationSummary/>
+    <EditForm Model="@Model" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
 
-            <div class="form-container">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Creator:</label>
-                        <div>
-                            <span class="value"><i class="bi bi-person-fill" aria-hidden="true"></i> @Model.CreatorFullName</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="AssignedToUserName" class="form-label">Assigned To:</label>
-                        <div>
-                            @if (!Model.IsReadOnly)
-                            {
-                                <InputSelect data-testid="@Elements.Assignee" id="AssignedToUserName" 
-                                             @bind-Value="Model.AssignedToUserName"
-                                             disabled="@(Model.WorkOrder != null && !Model.WorkOrder.CanReassign())"
-                                             class="form-control input-select">
-                                    @foreach (var user in UserOptions)
-                                    {
-                                        <option value="@user.Value">@user.Text</option>
-                                    }
-                                </InputSelect>
-                            }
-                            else
-                            {
-                                <span data-testid="@Elements.AssigneeFullName" class="value"><i class="bi bi-people-fill" aria-hidden="true"></i> @Model.WorkOrder?.Assignee?.GetFullName()</span>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="Title" class="form-label">Title:</label>
-                        <div>
-                            <InputText data-testid="@Elements.Title" id="Title" @bind-Value="Model.Title" class="form-control input-text" disabled="@Model.IsReadOnly" placeholder="Enter work order title..."/>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="Description" class="form-label">Description:</label>
-                        <div>
-                            <InputTextArea data-testid="@Elements.Description" id="Description" @bind-Value="Model.Description" class="form-control input-textarea" disabled="@Model.IsReadOnly" placeholder="Describe the work needed..." />
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="RoomNumber" class="form-label">Room/Location:</label>
-                        <div>
-                            <InputText data-testid="@Elements.RoomNumber" id="RoomNumber" @bind-Value="Model.RoomNumber" class="form-control input-text" disabled="@Model.IsReadOnly" placeholder="e.g. Sanctuary, Fellowship Hall..." />
-                        </div>
+        <div class="form-container">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Creator:</label>
+                    <div>
+                        <span class="value">@Model.CreatorFullName</span>
                     </div>
                 </div>
 
-                <div class="readonly-info">
+                <div class="form-group">
+                    <label for="AssignedToUserName" class="form-label">Assigned To:</label>
                     <div>
-                        <span class="label"><i class="bi bi-calendar-date" aria-hidden="true"></i> Created Date:</span>
-                        <span data-testid="@Elements.CreatedDate" class="value">@Model.CreatedDate</span>
-                    </div>
-
-                    <div>
-                        <span class="label"><i class="bi bi-clipboard-check" aria-hidden="true"></i> Assigned Date:</span>
-                        <span data-testid="@Elements.AssignedDate" class="value">@(Model.AssignedDate ?? "Not assigned")</span>
-                    </div>
-                    
-                    <div>
-                        <span class="label"><i class="bi bi-check-circle" aria-hidden="true"></i> Completed Date:</span>
-                        <span data-testid="@Elements.CompletedDate" class="value">@(Model.CompletedDate ?? "Not completed")</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="action-section">
-                @if (Model.IsReadOnly)
-                {
-                    <div data-testid="@Elements.ReadOnlyMessage" class="readonly-message">
-                        <i class="bi bi-lock-fill" aria-hidden="true"></i> This work order is read-only for you at this time.
-                    </div>
-                }
-                else
-                {
-                    <div class="action-buttons">
-                        @foreach (var command in ValidCommands)
+                        @if (!Model.IsReadOnly)
                         {
-                            var buttonTestId = Elements.CommandButton + command.TransitionVerbPresentTense;
-                            <button data-testid="@buttonTestId" type="submit" @onclick="@(() => SelectedCommand = command.TransitionVerbPresentTense)" class="btn btn-primary">
-                                <i class="@GetCommandIcon(command.TransitionVerbPresentTense)" aria-hidden="true"></i> @command.TransitionVerbPresentTense
-                            </button>
+                            <InputSelect data-testid="@Elements.Assignee" id="AssignedToUserName" 
+                                         @bind-Value="Model.AssignedToUserName"
+                                         disabled="@(Model.WorkOrder != null && !Model.WorkOrder.CanReassign())"
+                                         class="form-control input-select">
+                                @foreach (var user in UserOptions)
+                                {
+                                    <option value="@user.Value">@user.Text</option>
+                                }
+                            </InputSelect>
+                        }
+                        else
+                        {
+                            <span data-testid="@Elements.AssigneeFullName" class="value">@Model.WorkOrder?.Assignee?.GetFullName()</span>
                         }
                     </div>
-                }
+                </div>
+
+                <div class="form-group">
+                    <label for="Title" class="form-label">Title:</label>
+                    <div>
+                        <InputText data-testid="@Elements.Title" id="Title" @bind-Value="Model.Title" class="form-control input-text" disabled="@Model.IsReadOnly"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="Description" class="form-label">Description:</label>
+                    <div>
+                        <InputTextArea data-testid="@Elements.Description" id="Description" @bind-Value="Model.Description" class="form-control input-textarea" disabled="@Model.IsReadOnly" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="RoomNumber" class="form-label">Room Number:</label>
+                    <div>
+                        <InputText data-testid="@Elements.RoomNumber" id="RoomNumber" @bind-Value="Model.RoomNumber" class="form-control input-text" disabled="@Model.IsReadOnly" />
+                    </div>
+                </div>
             </div>
-        </EditForm>
-    </div>
+
+            <div class="readonly-info">
+                <span class="label">Created Date:</span>
+                <span data-testid="@Elements.CreatedDate" class="value">@Model.CreatedDate</span>
+
+                <span class="label">Assigned Date:</span>
+                <span data-testid="@Elements.AssignedDate" class="value">@Model.AssignedDate</span>
+                
+                <span class="label">Completed Date:</span>
+                <span data-testid="@Elements.CompletedDate" class="value">@Model.CompletedDate</span>
+
+
+            </div>
+        </div>
+
+        <div class="action-section">
+            @if (Model.IsReadOnly)
+            {
+                <div data-testid="@Elements.ReadOnlyMessage" class="readonly-message">This work order is read-only for you at this time.</div>
+            }
+            else
+            {
+                <div class="action-buttons">
+                    @foreach (var command in ValidCommands)
+                    {
+                        var buttonTestId = Elements.CommandButton + command.TransitionVerbPresentTense;
+                        <button data-testid="@buttonTestId" type="submit" @onclick="@(() => SelectedCommand = command.TransitionVerbPresentTense)" class="btn btn-primary">
+                            @command.TransitionVerbPresentTense
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    </EditForm>
 </div>
 
 @code
 {
-    private string GetCommandIcon(string command)
-    {
-        return command.ToLower() switch
-        {
-            "save" => "bi bi-floppy",
-            "assign" => "bi bi-person-plus",
-            "complete" => "bi bi-check-circle",
-            "cancel" => "bi bi-x-circle",
-            "start" => "bi bi-play-circle",
-            _ => "bi bi-lightning"
-        };
-    }
 
     public enum Elements
     {

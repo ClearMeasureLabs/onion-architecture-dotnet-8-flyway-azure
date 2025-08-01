@@ -18,5 +18,6 @@ public partial class FetchData : AppComponentBase
     {
         Logger.LogInformation("FetchDataController");
         Model = await ApplicationBus!.Send(new ForecastQuery());
+        //TODO: Make Azure OpenAI query for current weather in Austin, TX
     }
 }

@@ -1,10 +1,12 @@
 ﻿using BlazorApplicationInsights.Models.Context;
 using ClearMeasure.Bootcamp.Core.Model;
+using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.Core.Queries;
 using ClearMeasure.Bootcamp.Core.Services;
 using ClearMeasure.Bootcamp.Core.Services.Impl;
 using ClearMeasure.Bootcamp.UI.Shared.Models;
 using Microsoft.AspNetCore.Components;
+using Palermo.BlazorMvc;
 
 namespace ClearMeasure.Bootcamp.UI.Shared.Pages;
 
@@ -109,7 +111,12 @@ public partial class WorkOrderManage : AppComponentBase
             .GetMatchingCommand(workOrder, currentUser, SelectedCommand!);
 
         var result = await Bus.Send(matchingCommand);
+        EventBus.Notify(new WorkOrderChangedEvent(result));
 
         NavigationManager!.NavigateTo("/workorder/search");
     }
+}
+
+public record WorkOrderChangedEvent(StateCommandResult Result) : IUiBusEvent
+{
 }
