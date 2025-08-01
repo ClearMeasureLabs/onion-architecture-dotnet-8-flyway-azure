@@ -105,9 +105,11 @@ public abstract class AcceptanceTestBase : PageTest
         await welcomeText.DblClickAsync(); // causes the browser to finish DOM loading - HACK
     }
 
-    protected Task Click(string buttonTestId)
+    protected async Task Click(string buttonTestId)
     {
-        return Page.GetByTestId(buttonTestId).ClickAsync();
+        ILocator byTestId = Page.GetByTestId(buttonTestId);
+        await byTestId.WaitForAsync();
+        await byTestId.ClickAsync();
     }
 
     protected async Task Input(string elementTestId, string? value)
