@@ -22,7 +22,6 @@ public class DataContext : DbContext
     {
         optionsBuilder.EnableSensitiveDataLogging();
         optionsBuilder.UseSqlServer(_config.GetConnectionString());
-        optionsBuilder.AddInterceptors(new AuditEntrySequenceInterceptor());
 
         base.OnConfiguring(optionsBuilder);
     }

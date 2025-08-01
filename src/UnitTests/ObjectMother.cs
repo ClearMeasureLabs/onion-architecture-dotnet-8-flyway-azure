@@ -37,7 +37,6 @@ public class ObjectMother
         AutoFaker.Configure(builder =>
         {
             builder.WithConventions()
-                .WithSkip<WorkOrder>(wo => wo.AuditEntries)
                 .WithSkip<WorkOrder>(wo => wo.Creator)
                 .WithSkip<WorkOrder>(wo => wo.Assignee)
                 .WithSkip<Employee>(wo => wo.Roles)

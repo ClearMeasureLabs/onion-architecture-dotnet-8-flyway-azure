@@ -6,8 +6,6 @@ namespace ClearMeasure.Bootcamp.Core.Model
     {
         private string? _description = "";
 
-        public IList<AuditEntry> AuditEntries { get; set; } = new List<AuditEntry>();
-
         public string? Title { get; set; } = "";
 
         public string? Description
@@ -62,8 +60,6 @@ namespace ClearMeasure.Bootcamp.Core.Model
 
         public void ChangeStatus(Employee employee, DateTime date, WorkOrderStatus status)
         {
-            var auditItem = new AuditEntry(employee, date, Status, status);
-            AuditEntries.Add(auditItem);
             Status = status;
         }
 

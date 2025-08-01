@@ -112,8 +112,6 @@ public class WorkOrderMappingTests
         };
         order.ChangeStatus(WorkOrderStatus.InProgress);
         order.Number = "123";
-        order.AuditEntries.Add(new AuditEntry(creator, DateTime.Now, WorkOrderStatus.Cancelled,
-            WorkOrderStatus.Complete));
 
         await using (var context = TestHost.GetRequiredService<DbContext>())
         {
@@ -129,11 +127,7 @@ public class WorkOrderMappingTests
         await using (var context = TestHost.GetRequiredService<DbContext>())
         {
             var rehydratedWorkOrder = context.Set<WorkOrder>()
-                .Include(wo => wo.AuditEntries)
                 .Single(wo => wo.Id == order.Id);
-            var x = order.AuditEntries[0];
-            var y = rehydratedWorkOrder.AuditEntries[0];
-            x.BeginStatus.ShouldBe(y.BeginStatus);
         }
     }
 
@@ -174,72 +168,6 @@ public class WorkOrderMappingTests
         rehydratedWorkOrder.Assignee.ShouldNotBeNull();
         rehydratedWorkOrder.Creator!.Id.ShouldBe(creator.Id);
         rehydratedWorkOrder.Assignee!.Id.ShouldBe(assignee.Id);
-    }
-
-    [Test]
-    public void ShouldMapWorkOrderWithAuditEntries()
-    {
-        new DatabaseTester().Clean();
-
-        var creator = new Employee("creator1", "John", "Doe", "john@example.com");
-        var assignee = new Employee("assignee1", "Jane", "Smith", "jane@example.com");
-
-        // Save employees first in separate context
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            context.Add(creator);
-            context.Add(assignee);
-            context.SaveChanges();
-        }
-
-        var workOrder = new WorkOrder
-        {
-            Number = "WO-03",
-            Title = "Fix HVAC",
-            Description = "Repair air conditioning unit",
-            Creator = creator,
-            Assignee = assignee,
-            Status = WorkOrderStatus.InProgress
-        };
-
-        var auditEntry1 = new AuditEntry(creator, DateTime.Now.AddDays(-2), WorkOrderStatus.Draft,
-            WorkOrderStatus.Assigned);
-        var auditEntry2 = new AuditEntry(assignee, DateTime.Now.AddDays(-1), WorkOrderStatus.Assigned,
-            WorkOrderStatus.InProgress);
-
-        workOrder.AuditEntries.Add(auditEntry1);
-        workOrder.AuditEntries.Add(auditEntry2);
-
-        // Save WorkOrder with AuditEntries in new context
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            // Attach employees to avoid tracking conflicts
-            context.Attach(creator);
-            context.Attach(assignee);
-            context.Add(workOrder);
-            context.SaveChanges();
-        }
-
-        WorkOrder rehydratedWorkOrder;
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            rehydratedWorkOrder = context.Set<WorkOrder>()
-                .Include(wo => wo.Creator)
-                .Include(wo => wo.Assignee)
-                .Single(wo => wo.Id == workOrder.Id);
-        }
-
-        rehydratedWorkOrder.AuditEntries.Count.ShouldBe(2);
-
-        var firstAudit = rehydratedWorkOrder.AuditEntries[0];
-        firstAudit.ArchivedEmployeeName.ShouldBe(creator.GetFullName());
-        firstAudit.BeginStatus.ShouldBe(WorkOrderStatus.Draft);
-        firstAudit.EndStatus.ShouldBe(WorkOrderStatus.Assigned);
-
-        var secondAudit = rehydratedWorkOrder.AuditEntries[1];
-        secondAudit.ArchivedEmployeeName.ShouldBe(assignee.GetFullName());
-        secondAudit.BeginStatus.ShouldBe(WorkOrderStatus.Assigned);
-        secondAudit.EndStatus.ShouldBe(WorkOrderStatus.InProgress);
     }
 
     [Test]
@@ -318,58 +246,6 @@ public class WorkOrderMappingTests
     }
 
     [Test]
-    public void ShouldDeleteAuditEntriesWhenWorkOrderIsDeleted()
-    {
-        new DatabaseTester().Clean();
-
-        var creator = new Employee("creator1", "John", "Doe", "john@example.com");
-        var workOrder = new WorkOrder
-        {
-            Number = "WO-05",
-            Title = "Test Cascade Delete",
-            Description = "Testing cascade delete behavior",
-            Creator = creator,
-            Status = WorkOrderStatus.Draft
-        };
-
-        var auditEntry = new AuditEntry(creator, DateTime.Now, WorkOrderStatus.Draft, WorkOrderStatus.Assigned);
-        workOrder.AuditEntries.Add(auditEntry);
-
-        Guid workOrderId;
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            context.Add(creator);
-            context.Add(workOrder);
-            context.SaveChanges();
-            workOrderId = workOrder.Id;
-        }
-
-        // Verify audit entry exists
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            var auditCount = context.Set<AuditEntry>().Count();
-            auditCount.ShouldBeGreaterThan(0);
-        }
-
-        // Delete work order
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            var woToDelete = context.Set<WorkOrder>().Find(workOrderId);
-            context.Remove(woToDelete!);
-            context.SaveChanges();
-        }
-
-        // Verify audit entries are deleted (cascade delete)
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            var remainingAudits = context.Set<AuditEntry>()
-                .Where(ae => EF.Property<Guid>(ae, "WorkOrderId") == workOrderId)
-                .ToList();
-            remainingAudits.Count.ShouldBe(0);
-        }
-    }
-
-    [Test]
     public void ShouldEagerFetchCreatorAndAssigneeByDefault()
     {
         new DatabaseTester().Clean();
@@ -411,66 +287,5 @@ public class WorkOrderMappingTests
         rehydratedWorkOrder.Assignee!.Id.ShouldBe(assignee.Id);
         rehydratedWorkOrder.Assignee.FirstName.ShouldBe("Jane");
         rehydratedWorkOrder.Assignee.LastName.ShouldBe("Smith");
-    }
-
-    [Test]
-    public void ShouldGenerateSequenceBasedOnListIndex()
-    {
-        new DatabaseTester().Clean();
-
-        var creator = new Employee("creator1", "John", "Doe", "john@example.com");
-        var assignee = new Employee("assignee1", "Jane", "Smith", "jane@example.com");
-
-        // Save employees first in separate context
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            context.Add(creator);
-            context.Add(assignee);
-            context.SaveChanges();
-        }
-
-        var workOrder = new WorkOrder
-        {
-            Number = "WO-07",
-            Title = "Test Sequence Generation",
-            Description = "Testing sequence based on list index",
-            Creator = creator,
-            Status = WorkOrderStatus.Draft
-        };
-
-        // Add audit entries to list
-        var auditEntry1 = new AuditEntry(creator, DateTime.Now.AddDays(-3), WorkOrderStatus.Draft,
-            WorkOrderStatus.Assigned);
-        var auditEntry2 = new AuditEntry(assignee, DateTime.Now.AddDays(-2), WorkOrderStatus.Assigned,
-            WorkOrderStatus.InProgress);
-        var auditEntry3 = new AuditEntry(creator, DateTime.Now.AddDays(-1), WorkOrderStatus.InProgress,
-            WorkOrderStatus.Complete);
-        workOrder.AuditEntries.Add(auditEntry1);
-        workOrder.AuditEntries.Add(auditEntry2);
-        workOrder.AuditEntries.Add(auditEntry3);
-
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            context.Attach(creator);
-            context.Attach(assignee);
-            context.Add(workOrder);
-            context.SaveChanges();
-        }
-
-        WorkOrder rehydratedWorkOrder;
-        using (var context = TestHost.GetRequiredService<DbContext>())
-        {
-            rehydratedWorkOrder = context.Set<WorkOrder>()
-                .Include(wo => wo.AuditEntries)
-                .Single(wo => wo.Id == workOrder.Id);
-        }
-
-        rehydratedWorkOrder.AuditEntries.Count.ShouldBe(3);
-
-        // Sequence should match list index
-        var auditEntries = rehydratedWorkOrder.AuditEntries.ToList();
-        auditEntries[0].ShouldBe(auditEntry1);
-        auditEntries[1].ShouldBe(auditEntry2);
-        auditEntries[2].ShouldBe(auditEntry3);
     }
 }

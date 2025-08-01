@@ -16,7 +16,6 @@ public class WorkOrderTester
         Assert.That(workOrder.Number, Is.EqualTo(null));
         Assert.That(workOrder.Creator, Is.EqualTo(null));
         Assert.That(workOrder.Assignee, Is.EqualTo(null));
-        Assert.That(workOrder.AuditEntries.Count, Is.EqualTo(0));
     }
 
     [Test]
@@ -37,7 +36,6 @@ public class WorkOrderTester
         var createdDate = new DateTime(2000, 1, 1);
         var completedDate = new DateTime(2000, 10, 1);
         var auditDate = new DateTime(2000, 1, 1, 8, 0, 0);
-        var testAudit = new AuditEntry(creator, auditDate, WorkOrderStatus.Assigned, WorkOrderStatus.InProgress);
 
         workOrder.Id = guid;
         workOrder.Title = "Title";
@@ -46,7 +44,6 @@ public class WorkOrderTester
         workOrder.Number = "Number";
         workOrder.Creator = creator;
         workOrder.Assignee = assignee;
-        workOrder.AuditEntries.Add(testAudit);
 
         Assert.That(workOrder.Id, Is.EqualTo(guid));
         Assert.That(workOrder.Title, Is.EqualTo("Title"));
@@ -55,10 +52,6 @@ public class WorkOrderTester
         Assert.That(workOrder.Number, Is.EqualTo("Number"));
         Assert.That(workOrder.Creator, Is.EqualTo(creator));
         Assert.That(workOrder.Assignee, Is.EqualTo(assignee));
-        Assert.That(workOrder.AuditEntries[0].BeginStatus, Is.EqualTo(WorkOrderStatus.Assigned));
-        Assert.That(workOrder.AuditEntries[0].EndStatus, Is.EqualTo(WorkOrderStatus.InProgress));
-        Assert.That(workOrder.AuditEntries[0].Date, Is.EqualTo(auditDate));
-        Assert.That(workOrder.AuditEntries[0].ArchivedEmployeeName, Is.EqualTo(" "));
     }
 
     [Test]

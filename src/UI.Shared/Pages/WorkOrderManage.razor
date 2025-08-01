@@ -70,38 +70,6 @@
             </div>
         </div>
 
-        @if (Model.WorkOrder != null && Model.WorkOrder.AuditEntries.Any())
-        {
-            <div class="audit-section">
-                <h3>Audit History</h3>
-                <table data-testid="@Elements.AuditEntriesTable" class="audit-table">
-                    <thead>
-                    <tr>
-                        <th>Employee Name</th>
-                        <th style="width:20%;">Date</th>
-                        <th style="width:20%;">Begin Status</th>
-                        <th style="width:20%;">End Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @{
-                        var i = 0;
-                        foreach (var auditEntry in Model.WorkOrder.AuditEntries)
-                        {
-                            var rowClass = i++ % 2 == 0 ? "odd" : "even";
-                            <tr class="@rowClass">
-                                <td>@auditEntry.ArchivedEmployeeName</td>
-                                <td>@auditEntry.Date</td>
-                                <td>@auditEntry.BeginStatus</td>
-                                <td>@auditEntry.EndStatus</td>
-                            </tr>
-                        }
-                    }
-                    </tbody>
-                </table>
-            </div>
-        }
-
         <div class="action-section">
             @if (Model.IsReadOnly)
             {
