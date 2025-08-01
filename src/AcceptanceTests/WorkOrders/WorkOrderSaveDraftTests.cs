@@ -1,4 +1,5 @@
-﻿using ClearMeasure.Bootcamp.Core.Model.StateCommands;
+﻿using System.Diagnostics;
+using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.UI.Shared;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
 using System.Text.RegularExpressions;
@@ -15,33 +16,37 @@ public class WorkOrderSaveDraftTests : AcceptanceTestBase
         await Page.WaitForURLAsync("**/workorder/manage?mode=New");
     }
 
+    // protected override bool? Headless { get; set; } = false;
+
     [Test]
     public async Task ShouldCreateNewWorkOrderAndVerifyOnSearchScreen()
     {
         await LoginAsCurrentUser();
 
-        var order = await CreateAndSaveNewWorkOrder();
+        WorkOrder order = await CreateAndSaveNewWorkOrder();
 
         await Page.WaitForURLAsync("**/workorder/search");
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await TakeScreenshotAsync(3, "WorkOrderSearchAfterSave");
 
-        await Click(nameof(WorkOrderSearch.Elements.WorkOrderLink) + order.Number);
+        Debug.Assert(order.Number != null, "order.Number != null");
+        string orderNumber = order.Number;
+        await Click(nameof(WorkOrderSearch.Elements.WorkOrderLink) + orderNumber);
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await Expect(Page).ToHaveURLAsync(new Regex($"/workorder/manage/{Regex.Escape(order.Number)}"));
+        await Expect(Page).ToHaveURLAsync($"/workorder/manage/{orderNumber}?mode=Edit");
         await TakeScreenshotAsync(5, "WorkOrderManagePage");
 
         var workOrderNumber = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
-        await Expect(workOrderNumber).ToHaveTextAsync(order.Number);
+        await Expect(workOrderNumber).ToHaveTextAsync(orderNumber);
 
         var titleField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Title));
-        await Expect(titleField).ToHaveValueAsync(order.Title);
+        await Expect(titleField).ToHaveValueAsync(order.Title!);
 
         var descriptionField = Page.GetByTestId(nameof(WorkOrderManage.Elements.Description));
-        await Expect(descriptionField).ToHaveValueAsync(order.Description);
+        await Expect(descriptionField).ToHaveValueAsync(order.Description!);
 
         var roomNumberField = Page.GetByTestId(nameof(WorkOrderManage.Elements.RoomNumber));
-        await Expect(roomNumberField).ToHaveValueAsync(order.RoomNumber);
+        await Expect(roomNumberField).ToHaveValueAsync(order.RoomNumber!);
     }
 
     [Test]

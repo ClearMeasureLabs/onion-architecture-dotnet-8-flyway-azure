@@ -21,7 +21,7 @@ public class LogoutTests : AcceptanceTestBase
         await Click(nameof(Logout.Elements.LogoutLink));
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         
-        var loginLink = Page.GetByTestId(nameof(Login.Elements.LoginLink));
+        var loginLink = Page.GetByTestId(nameof(LoginLink.Elements.LoginLink));
         await Expect(loginLink).ToBeVisibleAsync();
         
         var newWorkOrderLink = Page.GetByTestId(nameof(NavMenu.Elements.NewWorkOrder));

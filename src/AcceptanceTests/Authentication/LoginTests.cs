@@ -31,7 +31,7 @@ public class LoginTests : AcceptanceTestBase
         }
 
         // Click Login link in top bar
-        await Click(nameof(Login.Elements.LoginLink));
+        await Click(nameof(LoginLink.Elements.LoginLink));
         await Page.WaitForURLAsync("**/login");
         await TakeScreenshotAsync(2);
 

@@ -1,7 +1,9 @@
 ﻿using ClearMeasure.Bootcamp.Core;
 using ClearMeasure.Bootcamp.Core.Model.StateCommands;
 using ClearMeasure.Bootcamp.UI.Shared;
+using ClearMeasure.Bootcamp.UI.Shared.Components;
 using ClearMeasure.Bootcamp.UI.Shared.Pages;
+using Login = ClearMeasure.Bootcamp.UI.Shared.Pages.Login;
 
 namespace ClearMeasure.Bootcamp.AcceptanceTests;
 
@@ -34,12 +36,16 @@ public abstract class AcceptanceTestBase : PageTest
         var playwright = Playwright;
         var browser = await GetBrowserTypeInstance(playwright).LaunchAsync(new BrowserTypeLaunchOptions
         {
-            Headless = Headless
+            Headless = Headless,
+            SlowMo = 20
         });
 
         var context = await browser.NewContextAsync(ContextOptions());
         context.SetDefaultTimeout(10_000);
         Page = await context.NewPageAsync().ConfigureAwait(false);
+        await Page.GotoAsync("/");
+        await Page.WaitForURLAsync("/");
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
     protected virtual IBrowserType GetBrowserTypeInstance(IPlaywright playwright)
@@ -89,11 +95,10 @@ public abstract class AcceptanceTestBase : PageTest
     protected async Task LoginAsCurrentUser()
     {
         var username = CurrentUser.UserName;
-        var welcomeText = Page.Locator($"text=Welcome {username}!");
-        if (await welcomeText.IsVisibleAsync()) return;
 
-        await Page.GotoAsync("/login");
-        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await Click(nameof(LoginLink.Elements.LoginLink));
+        await Page.WaitForURLAsync("**/login");
+        await Expect(Page.GetByTestId(nameof(Login.Elements.User))).ToBeVisibleAsync();
 
         // Fill in username only
         await Select(nameof(Login.Elements.User), username);
@@ -103,16 +108,17 @@ public abstract class AcceptanceTestBase : PageTest
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         // Assert: Should be redirected to home and see welcome message
-        await Expect(welcomeText).ToBeVisibleAsync();
-        await welcomeText.DblClickAsync(); // causes the browser to finish DOM loading - HACK
+        var welcomeTextLocator = Page.GetByTestId(nameof(Logout.Elements.WelcomeText));
+        await Expect(welcomeTextLocator).ToContainTextAsync($"Welcome {CurrentUser.UserName}");
+        await welcomeTextLocator.DblClickAsync(); // causes the browser to finish DOM loading - HACK
     }
 
     protected async Task Click(string elementTestId)
     {
         ILocator clickableLocator = Page.GetByTestId(elementTestId);
-        await Expect(clickableLocator).ToBeVisibleAsync();
-        await clickableLocator.WaitForAsync();
-        await clickableLocator.ClickAsync();
+        if (await clickableLocator.IsVisibleAsync()) clickableLocator.FocusAsync();
+        if (await clickableLocator.IsVisibleAsync()) clickableLocator.BlurAsync();
+        if (await clickableLocator.IsVisibleAsync()) clickableLocator.ClickAsync();
     }
 
     protected async Task Input(string elementTestId, string? value)
@@ -142,8 +148,9 @@ public abstract class AcceptanceTestBase : PageTest
         await Page.WaitForURLAsync("**/workorder/manage?mode=New");
         await TakeScreenshotAsync(1, "NewWorkOrderPage");
 
-        var newWorkOrderNumber =
-            await Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber)).InnerTextAsync();
+        ILocator woNumberLocator = Page.GetByTestId(nameof(WorkOrderManage.Elements.WorkOrderNumber));
+        await Expect(woNumberLocator).ToBeVisibleAsync();
+        var newWorkOrderNumber = await woNumberLocator.InnerTextAsync();
         order.Number = newWorkOrderNumber;
         await Input(nameof(WorkOrderManage.Elements.Title), testTitle);
         await Input(nameof(WorkOrderManage.Elements.Description), testDescription);

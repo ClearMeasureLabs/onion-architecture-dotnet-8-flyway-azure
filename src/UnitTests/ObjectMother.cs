@@ -40,6 +40,7 @@ public class ObjectMother
                 .WithSkip<WorkOrder>(wo => wo.AuditEntries)
                 .WithSkip<WorkOrder>(wo => wo.Creator)
                 .WithSkip<WorkOrder>(wo => wo.Assignee)
+                .WithSkip<Employee>(wo => wo.Roles)
                 .WithOverride(new BogusOverrides());
         });
     }

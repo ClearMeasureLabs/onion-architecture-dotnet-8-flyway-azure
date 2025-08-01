@@ -57,7 +57,7 @@ public class LoginPageTester
 
         var component = ctx.RenderComponent<Login>();
 
-        var employeeSelect = component.Find("#employee");
+        var employeeSelect = component.Find($"[data-testid='{Login.Elements.User}']");
         employeeSelect.ShouldNotBeNull();
 
         var options = component.FindAll("option");
@@ -77,8 +77,8 @@ public class LoginPageTester
 
         var component = ctx.RenderComponent<Login>();
 
-        var employeeSelect = component.Find("#employee");
-        var submitButton = component.Find("button[type='submit']");
+        var employeeSelect = component.Find($"[data-testid='{Login.Elements.User}']");
+        var submitButton = component.Find($"[data-testid='{Login.Elements.LoginButton}']");
 
         employeeSelect.Change("hsimpson");
         submitButton.Click();
