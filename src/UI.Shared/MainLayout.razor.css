@@ -9,7 +9,7 @@
 /* Modern Sidebar */
 .modern-sidebar {
     width: 280px;
-    background: linear-gradient(180deg, #4a90e2 0%, #7b68ee 50%, #5d4e75 100%);
+    background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e0 50%, #a0aec0 100%);
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
@@ -28,31 +28,32 @@
 }
 
 .modern-sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
 }
 
 .modern-sidebar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.3);
 }
 
 /* Sidebar Header */
 .sidebar-header {
     padding: 2rem 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .church-brand {
     display: flex;
     align-items: center;
     gap: 1rem;
-    color: white;
+    color: #2d3748;
 }
 
 .church-icon {
     font-size: 2.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: #4a5568;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .brand-text h4 {
@@ -60,12 +61,13 @@
     font-size: 1.4rem;
     font-weight: 700;
     font-family: 'Georgia', serif;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: #2d3748;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .brand-text span {
     font-size: 0.9rem;
-    opacity: 0.8;
+    color: #4a5568;
     font-style: italic;
 }
 
@@ -78,13 +80,13 @@
 /* Sidebar Footer */
 .sidebar-footer {
     padding: 1rem 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.1);
     text-align: center;
 }
 
 .sidebar-footer ::deep a {
-    color: rgba(255, 255, 255, 0.8);
+    color: #4a5568;
     text-decoration: none;
     font-size: 0.875rem;
     transition: color 0.3s ease;
@@ -96,8 +98,8 @@
 }
 
 .sidebar-footer ::deep a:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
+    color: #2d3748;
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-footer ::deep a i {
@@ -107,7 +109,7 @@
 /* Health Check Link Specific Styling */
 .health-check-link {
     position: static !important;
-    color: rgba(255, 255, 255, 0.8) !important;
+    color: #4a5568 !important;
     text-decoration: none !important;
     font-size: 0.875rem !important;
     display: inline-flex !important;
@@ -119,8 +121,8 @@
 }
 
 .health-check-link:hover {
-    color: white !important;
-    background: rgba(255, 255, 255, 0.1) !important;
+    color: #2d3748 !important;
+    background: rgba(255, 255, 255, 0.2) !important;
 }
 
 /* Main Container */
@@ -192,7 +194,7 @@
 
 .user-section ::deep a,
 .auth-section ::deep a {
-    color: #7b68ee;
+    color: #4a5568;
     text-decoration: none;
     font-weight: 500;
     transition: all 0.3s ease;
@@ -202,8 +204,8 @@
 
 .user-section ::deep a:hover,
 .auth-section ::deep a:hover {
-    background: #7b68ee;
-    color: white;
+    background: #e2e8f0;
+    color: #2d3748;
     text-decoration: none;
 }
 
@@ -297,7 +299,7 @@
 /* Focus states for accessibility */
 .user-section ::deep a:focus,
 .auth-section ::deep a:focus {
-    outline: 2px solid #7b68ee;
+    outline: 2px solid #4a5568;
     outline-offset: 2px;
 }
 

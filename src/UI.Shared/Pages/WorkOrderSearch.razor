@@ -42,7 +42,9 @@
                     </div>
                     
                     <div class="filter-group">
-                        <button id="@WorkOrderSearch.Elements.SearchButton" type="submit" class="btn btn-primary">?? Search</button>
+                        <button id="@WorkOrderSearch.Elements.SearchButton" type="submit" class="btn btn-primary">
+                            <i class="bi bi-search" aria-hidden="true"></i> Search
+                        </button>
                     </div>
                 </div>
             </EditForm>
@@ -50,13 +52,15 @@
 
         <div class="results-card">
             <div class="results-header">
-                ?? Search Results (@Model.Results.Length work orders)
+                <i class="bi bi-list-task" aria-hidden="true"></i> Search Results (@Model.Results.Length work orders)
             </div>
             
             @if (Model.Results.Length == 0)
             {
                 <div class="empty-results">
-                    <div class="empty-results-icon">??</div>
+                    <div class="empty-results-icon">
+                        <i class="bi bi-inbox" aria-hidden="true"></i>
+                    </div>
                     <p>No work orders found matching your search criteria.</p>
                     <p>Try adjusting your filters or create a new work order.</p>
                 </div>

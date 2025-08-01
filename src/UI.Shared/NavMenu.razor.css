@@ -4,36 +4,36 @@
     cursor: pointer;
     width: 3.5rem;
     height: 2.5rem;
-    color: white;
+    color: #2d3748;
     position: absolute;
     top: 0.5rem;
     right: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 6px;
-    background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") no-repeat center/1.75rem rgba(255, 255, 255, 0.1);
+    background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2845, 55, 72, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") no-repeat center/1.75rem rgba(255, 255, 255, 0.8);
     transition: all 0.2s ease-in-out;
 }
 
 .navbar-toggler:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.3);
 }
 
 .navbar-toggler:checked {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 1);
 }
 
 /* Top Navigation Bar */
 .top-row {
     min-height: 3.5rem;
-    background: rgba(0, 0, 0, 0.4);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
     font-size: 1.25rem;
     font-weight: 600;
-    color: white !important;
+    color: #2d3748 !important;
     text-decoration: none;
 }
 
@@ -57,7 +57,7 @@
     display: flex;
     align-items: center;
     padding: 0.75rem 1rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: #2d3748;
     text-decoration: none;
     border-radius: 8px;
     margin: 0 0.5rem;
@@ -71,17 +71,17 @@
 }
 
 .nav-item .nav-link:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
+    background: rgba(255, 255, 255, 0.3);
+    color: #1a202c;
     transform: translateX(4px);
-    box-shadow: 0 2px 12px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
 .nav-item .nav-link.active {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
-    color: #ffffff;
-    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
-    border-left: 3px solid #64b5f6;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.4) 100%);
+    color: #1a202c;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    border-left: 3px solid #4a5568;
 }
 
 .nav-item .nav-link.active::before {
@@ -91,7 +91,7 @@
     top: 0;
     bottom: 0;
     width: 3px;
-    background: linear-gradient(180deg, #64b5f6 0%, #42a5f5 100%);
+    background: linear-gradient(180deg, #4a5568 0%, #2d3748 100%);
     border-radius: 0 2px 2px 0;
 }
 
@@ -105,13 +105,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.8);
+    color: #4a5568;
     transition: all 0.3s ease-in-out;
 }
 
 .nav-item .nav-link:hover .nav-icon,
 .nav-item .nav-link.active .nav-icon {
-    color: #ffffff;
+    color: #1a202c;
     transform: scale(1.1);
 }
 
@@ -127,39 +127,39 @@
 
 /* Modern Icon Styles for Specific Items */
 .nav-item .nav-link[href=""] .nav-icon {
-    color: #64b5f6;
+    color: #4a5568;
 }
 
 .nav-item .nav-link[href="counter"] .nav-icon {
-    color: #81c784;
+    color: #38a169;
 }
 
 .nav-item .nav-link[href="fetchdata"] .nav-icon {
-    color: #ffb74d;
+    color: #3182ce;
 }
 
 .nav-item .nav-link[href*="workorder/manage"] .nav-icon {
-    color: #a1c4fd;
+    color: #805ad5;
 }
 
 .nav-item .nav-link[href*="workorder/search"]:not([href*="Creator"]):not([href*="Assignee"]):not([href*="Status"]) .nav-icon {
-    color: #f8bbd9;
+    color: #e53e3e;
 }
 
 .nav-item .nav-link[href*="Creator"] .nav-icon {
-    color: #c2e9fb;
+    color: #00b5d8;
 }
 
 .nav-item .nav-link[href*="Assignee"] .nav-icon {
-    color: #b2fefa;
+    color: #38b2ac;
 }
 
 .nav-item .nav-link[href*="Status=Assigned"] .nav-icon {
-    color: #ffecd2;
+    color: #d69e2e;
 }
 
 .nav-item .nav-link[href*="Status=InProgress"] .nav-icon {
-    color: #fcb69f;
+    color: #dd6b20;
 }
 
 /* Mobile Toggle State */
@@ -219,22 +219,22 @@
     }
     
     .nav-scrollable::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.2);
         border-radius: 3px;
     }
     
     .nav-scrollable::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(0, 0, 0, 0.3);
     }
 }
 
 /* Focus states for accessibility */
 .nav-item .nav-link:focus {
-    outline: 2px solid #64b5f6;
+    outline: 2px solid #4a5568;
     outline-offset: 2px;
 }
 
 .navbar-toggler:focus {
-    outline: 2px solid white;
+    outline: 2px solid #2d3748;
     outline-offset: 2px;
 }
