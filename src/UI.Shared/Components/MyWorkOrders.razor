@@ -4,18 +4,18 @@
 @inherits AppComponentBase
 @inject IUserSession UserSession
 
-My Work Orders (@_myWorkOrders.Count)
+My Work Orders (@Count)
 
 @code {
     private Employee? _currentUser = null;
     private readonly HashSet<WorkOrder> _myWorkOrders = new HashSet<WorkOrder>();
-
+    public int Count => _myWorkOrders.Count;
 
     public void Handle(WorkOrderChangedEvent theEvent)
     {
         WorkOrder order = theEvent.Result.WorkOrder;
         _myWorkOrders.Add(order);
-        StateHasChanged();
+        InvokeAsync(StateHasChanged);
     }
 
     protected override async Task OnInitializedAsync()

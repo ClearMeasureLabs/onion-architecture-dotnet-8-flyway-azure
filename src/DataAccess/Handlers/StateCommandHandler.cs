@@ -40,6 +40,6 @@ public class StateCommandHandler(DbContext dbContext, TimeProvider time, ILogger
         logger.LogDebug(debugMessage);
         logger.LogInformation("Executed");
 
-        return new StateCommandResult(request.TransitionVerbPresentTense, order, debugMessage);
+        return new StateCommandResult(order, request.TransitionVerbPresentTense, debugMessage);
     }
 }

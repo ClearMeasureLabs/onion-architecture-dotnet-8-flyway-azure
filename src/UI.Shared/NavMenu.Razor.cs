@@ -47,14 +47,4 @@ public partial class NavMenu : AppComponentBase,
         CurrentUser = null;
         StateHasChanged();
     }
-
-    public enum Elements
-    {
-        MyWorkOrders,
-        WorkOrdersAssignedToMe,
-        AllAssignedWorkOrders,
-        AllWorkOrdersInProgress,
-        Search,
-        NewWorkOrder
-    }
 }

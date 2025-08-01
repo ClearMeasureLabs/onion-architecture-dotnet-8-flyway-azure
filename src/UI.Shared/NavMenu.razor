@@ -70,6 +70,22 @@
                     <span class="nav-text">In Progress</span>
                 </NavLink>
             </div>
+            <div class="nav-item px-3">
+                <span class="nav-text"><LastWorkOrder/></span>
+            </div>
         }
     </nav>
 </div>
+@code
+{
+    public enum Elements
+    {
+        MyWorkOrders,
+        WorkOrdersAssignedToMe,
+        AllAssignedWorkOrders,
+        AllWorkOrdersInProgress,
+        Search,
+        NewWorkOrder,
+        LastWorkOrder
+    }
+}

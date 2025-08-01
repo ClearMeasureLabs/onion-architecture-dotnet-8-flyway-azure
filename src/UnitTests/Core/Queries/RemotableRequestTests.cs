@@ -39,7 +39,7 @@ public class RemotableRequestTests
         ObjectMother.AssertAllProperties(role, rehydratedRole);
 
         AssertRemotable(new SaveDraftCommand(order, employee));
-        AssertRemotable(new StateCommandResult("Save", order, "message"));
+        AssertRemotable(new StateCommandResult(order, "Save", "message"));
     }
 
     [Test]
