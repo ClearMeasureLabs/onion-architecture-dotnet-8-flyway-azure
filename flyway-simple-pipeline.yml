@@ -31,6 +31,10 @@ stages:
         inputs:
           packageType: 'runtime'
           version: '9.0.7'
+      - task: OctoInstaller@4
+        displayName: Install Octo
+        inputs:
+          version: 9.0.0
       # Set environment variables
       - task: PowerShell@2
         inputs:
